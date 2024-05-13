@@ -1,5 +1,31 @@
 <?php
+// Set the error display level
+ini_set('display_errors', '0');
+// report all errors
+error_reporting(E_ALL);
+
+// Set secure session cookie flags
+ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_httponly', '1');
+
+// Use strict mode
+ini_set('session.use_strict_mode', '1');
+// start session
 session_start();
+// Regenerate session ID upon login
+if (!isset($_SESSION['initialized'])) {
+    session_regenerate_id();
+    $_SESSION['initialized'] = true;
+}
+
+// Set session expiration time
+ini_set('session.gc_maxlifetime', 3600); // 1 hour
+// Implement HTTPS enforcement in .htaccess or web server configuration
+
+// Validate session ID (example pattern)
+if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', session_id())) {
+    // Invalid session ID, handle accordingly
+}
 error_reporting(0);
 include('includes/dbconnection.php');
 
