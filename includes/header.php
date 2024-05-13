@@ -20,7 +20,8 @@
                 
                 <li><a href="contact.php"><span data-hover="Contact">Contact</span></a></li>
                 <li><a href="admin/login.php"><span data-hover="Contact">Admin</span></a></li>
-                <li><a href="user/login.php"><span data-hover="Shortcodes">Student</span></a></li>
+                <li><a href="student/login.php"><span data-hover="Shortcodes">Student</span></a></li>
+                <li><a href="teacher/login.php"><span data-hover="Shortcodes">Teacher</span></a></li>
               </ul>
               <div class="clearfix"> </div>
             </div><!-- /.navbar-collapse -->
