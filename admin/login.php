@@ -60,10 +60,12 @@ setcookie ("userpassword","");
 $_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 } else { 
-  echo $result->ID;
+  // echo $result->ID;
+  echo "<script>alert('Invalid Details');</script>";
 
 } }else{
-echo $result->ID;
+// echo $result->ID;
+echo "<script>alert('Invalid Details');</script>";
 }
 }
 
