@@ -9,22 +9,22 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
 if(isset($_POST['submit']))
 {
 $adminid=$_SESSION['sturecmsaid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$sql ="SELECT ID FROM tbladmin WHERE ID=:adminid and Password=:cpassword";
+$cpassword=($_POST['currentpassword']);
+$newpassword=($_POST['newpassword']);
+$sql ="SELECT ID, SaltPassword FROM tbladmin WHERE ID=:adminid";
 $query= $dbh -> prepare($sql);
 $query-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
-$query-> bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
 $query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
-
-if($query -> rowCount() > 0)
+$result = $query -> fetch(PDO::FETCH_OBJ);
+if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->SaltPassword)))
 {
-$con="update tbladmin set Password=:newpassword where ID=:adminid";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
+//insert value in the SaltPassword col, the value is the hashed password of the Password col
+$saltpassword = password_hash($newpassword, PASSWORD_DEFAULT);
+$chngpwd2 = $dbh->prepare("update tbladmin set SaltPassword=:saltpassword where ID=:adminid");
+$chngpwd2-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
+$chngpwd2-> bindParam(':saltpassword', $saltpassword, PDO::PARAM_STR);
+$chngpwd2->execute();
+
 
 echo '<script>alert("Your password successully changed")</script>';
 } else {

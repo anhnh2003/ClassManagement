@@ -32,18 +32,17 @@ include('includes/dbconnection.php');
 if(isset($_POST['login'])) 
   {
     $username=$_POST['username'];
-    $password=md5($_POST['password']);
-    $sql ="SELECT ID FROM tbladmin WHERE UserName=:username and Password=:password";
+    $password=$_POST['password'];
+    $sql ="SELECT ID, SaltPassword FROM tbladmin WHERE UserName=:username";
     $query=$dbh->prepare($sql);
     $query-> bindParam(':username', $username, PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
     $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
-    if($query->rowCount() > 0)
+    $result=$query->fetch(PDO::FETCH_OBJ);
+    if($query->rowCount()>0)
 {
-foreach ($results as $result) {
+if(password_verify($password, $result->SaltPassword)){
 $_SESSION['sturecmsaid']=$result->ID;
-}
+
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
@@ -60,8 +59,11 @@ setcookie ("userpassword","");
 }
 $_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} else{
-echo "<script>alert('Invalid Details');</script>";
+} else { 
+  echo $result->ID;
+
+} }else{
+echo $result->ID;
 }
 }
 
