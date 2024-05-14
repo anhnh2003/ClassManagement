@@ -1,18 +1,34 @@
 <?php
 session_start();
-error_reporting(0);
 include('includes/dbconnection.php');
-
+// function notify($status, $msg){
+//   return die('<script type="text/javascript">Swal.fire("Error", "'.$msg.'", "'.$status.'"); setTimeout(function(){location.href="/classmanagement/student/login.php";},2000);</script>');
+//   }
 if(isset($_POST['login'])) 
   {
     $stuid=$_POST['stuid'];
     $password=md5($_POST['password']);
+    $captcha = $_POST['g-recaptcha-response'];
+    if (!$captcha){
+      // notify('error', "Please check the captcha form");
+    }
+    else {
+      $secret = '6LctYtwpAAAAAEP0w5UdNiqxoKbvdQo8WfQI-QtG';
+      $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha);
+      $response_data = json_decode($verify_response);
+      if (!$response_data->success) {
+        // notify('error', "Captcha verification failed! Please try again.");
+            
+      }
+      
+    }
     $sql ="SELECT StuID,ID,StudentClass FROM tblstudent WHERE (UserName=:stuid || StuID=:stuid) and Password=:password";
     $query=$dbh->prepare($sql);
     $query-> bindParam(':stuid', $stuid, PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
+    $query-> bindParam(':password', $password, PDO::PARAM_STR);
     $query-> execute();
     $results=$query->fetchAll(PDO::FETCH_OBJ);
+    
     if($query->rowCount() > 0)
 {
 foreach ($results as $result) {
@@ -58,7 +74,7 @@ echo "<script>alert('Invalid Details');</script>";
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css">
-   
+   <script src="https://www.google.com/recaptcha/api.js" ></script>
   </head>
   <body>
     <div class="container-scroller">
@@ -77,9 +93,11 @@ echo "<script>alert('Invalid Details');</script>";
                     <input type="text" class="form-control form-control-lg" placeholder="enter your student id or username" required="true" name="stuid" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
                   <div class="form-group">
-                    
                     <input type="password" class="form-control form-control-lg" placeholder="enter your password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                   </div>
+                  
+                    <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
+                  
                   <div class="mt-3">
                     <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
                   </div>
