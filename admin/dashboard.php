@@ -119,6 +119,23 @@ $totpublicnotice=$query4->rowCount();
                           <i class="icon-doc"></i>
                         </div>
                       </div>
+                      <div class="col-md-6 col-xl report-inner-card">
+                        <div class="inner-card-text">
+                          <?php 
+                        $sql5 ="SELECT * from  tblteacher";
+$query5 = $dbh -> prepare($sql5);
+$query5->execute();
+$results5=$query5->fetchAll(PDO::FETCH_OBJ);
+$totstu=$query5->rowCount();
+?>
+                          <span class="report-title">Total Teachers</span>
+                          <h4><?php echo htmlentities($totstu);?></h4>
+                          <a href="manage-students.php"><span class="report-count"> View Teachers</span></a>
+                        </div>
+                        <div class="inner-card-icon bg-danger">
+                          <i class="icon-user"></i>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
