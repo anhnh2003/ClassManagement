@@ -1,6 +1,7 @@
 <?php
 session_start();
 include('includes/dbconnection.php');
+
 // function notify($status, $msg){
 //   return die('<script type="text/javascript">Swal.fire("Error", "'.$msg.'", "'.$status.'"); setTimeout(function(){location.href="/classmanagement/student/login.php";},2000);</script>');
 //   }
@@ -10,6 +11,7 @@ if(isset($_POST['login']))
     $password=md5($_POST['password']);
     $captcha = $_POST['g-recaptcha-response'];
     if (!$captcha){
+      return;
       // notify('error', "Please check the captcha form");
     }
     else {
@@ -17,10 +19,9 @@ if(isset($_POST['login']))
       $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha);
       $response_data = json_decode($verify_response);
       if (!$response_data->success) {
+        return;
         // notify('error', "Captcha verification failed! Please try again.");
-            
       }
-      
     }
     $sql ="SELECT StuID,ID,StudentClass FROM tblstudent WHERE (UserName=:stuid || StuID=:stuid) and Password=:password";
     $query=$dbh->prepare($sql);
