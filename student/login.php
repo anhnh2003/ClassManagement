@@ -6,26 +6,24 @@ include('includes/dbconnection.php');
 if(isset($_POST['login'])) 
   {
     $stuid=$_POST['stuid'];
-    $password=md5($_POST['password']);
-    $sql ="SELECT StuID,ID,StudentClass FROM tblstudent WHERE (UserName=:stuid || StuID=:stuid) and Password=:password";
+    $password=($_POST['password']);
+    $sql ="SELECT StuID,ID,StudentClass, Password FROM tblstudent WHERE UserName=:stuid";
     $query=$dbh->prepare($sql);
     $query-> bindParam(':stuid', $stuid, PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
     $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
+    $result=$query->fetch(PDO::FETCH_OBJ);
     if($query->rowCount() > 0)
 {
-foreach ($results as $result) {
+  if(password_verify($password, $result->Password)){
+
 $_SESSION['sturecmsstuid']=$result->StuID;
 $_SESSION['sturecmsuid']=$result->ID;
 $_SESSION['stuclass']=$result->StudentClass;
-}
+
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("user_login",$_POST["stuid"],time()+ (10 * 365 * 24 * 60 * 60));
-//COOKIES for password
-setcookie ("userpassword",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("student_login",$_POST["stuid"],time()+ (10 * 365 * 24 * 60 * 60));
 } else {
 if(isset($_COOKIE["user_login"])) {
 setcookie ("user_login","");
@@ -36,7 +34,7 @@ setcookie ("userpassword","");
 }
 $_SESSION['login']=$_POST['stuid'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} else{
+} } else{
 echo "<script>alert('Invalid Details');</script>";
 }
 }

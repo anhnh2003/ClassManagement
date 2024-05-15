@@ -1,43 +1,61 @@
 <?php
+// Set the error display level
+ini_set('display_errors', '0');
+// report all errors
+error_reporting(E_ALL);
+
+// Set secure session cookie flags
+ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_httponly', '1');
+
+// Use strict mode
+ini_set('session.use_strict_mode', '1');
+// start session
 session_start();
+// Regenerate session ID upon login
+if (!isset($_SESSION['initialized'])) {
+    session_regenerate_id();
+    $_SESSION['initialized'] = true;
+}
+
+// Set session expiration time
+ini_set('session.gc_maxlifetime', 3600); // 1 hour
+// Implement HTTPS enforcement in .htaccess or web server configuration
+
+// Validate session ID (example pattern)
+if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', session_id())) {
+    // Invalid session ID, handle accordingly
+}
 error_reporting(0);
 include('includes/dbconnection.php');
 
 if(isset($_POST['login'])) 
   {
-    $stuid=$_POST['stuid'];
-    $password=md5($_POST['password']);
-    $sql ="SELECT StuID,ID,StudentClass FROM tblstudent WHERE (UserName=:stuid || StuID=:stuid) and Password=:password";
+    $username=$_POST['username'];
+    $password=$_POST['password'];
+    $sql ="SELECT ID, Password FROM tblteacher WHERE UserName=:username";
     $query=$dbh->prepare($sql);
-    $query-> bindParam(':stuid', $stuid, PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
+    $query-> bindParam(':username', $username, PDO::PARAM_STR);
     $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
-    if($query->rowCount() > 0)
+    $result=$query->fetch(PDO::FETCH_OBJ);
+    if($query->rowCount()>0)
 {
-foreach ($results as $result) {
-$_SESSION['sturecmsstuid']=$result->StuID;
-$_SESSION['sturecmsuid']=$result->ID;
-$_SESSION['stuclass']=$result->StudentClass;
-}
+if(password_verify($password, $result->Password)){
+$_SESSION['sturecmsaid']=$result->ID;
+
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("user_login",$_POST["stuid"],time()+ (10 * 365 * 24 * 60 * 60));
-//COOKIES for password
-setcookie ("userpassword",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("teacher_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
 } else {
-if(isset($_COOKIE["user_login"])) {
-setcookie ("user_login","");
-if(isset($_COOKIE["userpassword"])) {
-setcookie ("userpassword","");
-        }
+if(isset($_COOKIE["teacher_login"])) {
+setcookie ("teacher_login","");
       }
 }
-$_SESSION['login']=$_POST['stuid'];
+$_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} else{
-echo "<script>alert('Invalid Details');</script>";
+} }else{
+echo "<script>alert('Wrong username or password');</script>";
 }
 }
 
@@ -74,7 +92,7 @@ echo "<script>alert('Invalid Details');</script>";
                 <h6 class="font-weight-light">Sign in to continue.</h6>
                 <form class="pt-3" id="login" method="post" name="login">
                   <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="enter your student id or username" required="true" name="stuid" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
+                    <input type="text" class="form-control form-control-lg" placeholder="enter your username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
                   <div class="form-group">
                     

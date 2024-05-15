@@ -19,8 +19,7 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
  $altconnum=$_POST['altconnum'];
  $address=$_POST['address'];
  $uname=$_POST['uname'];
- $password=md5($_POST['password']);
- $image=$_FILES["image"]["name"];
+ $password=password_hash($_POST['password'],PASSWORD_DEFAULT);
  $ret="select UserName from tblstudent where UserName=:uname || StuID=:stuid";
  $query= $dbh -> prepare($ret);
 $query->bindParam(':uname',$uname,PDO::PARAM_STR);
@@ -29,17 +28,8 @@ $query-> execute();
      $results = $query -> fetchAll(PDO::FETCH_OBJ);
 if($query -> rowCount() == 0)
 {
-$extension = substr($image,strlen($image)-4,strlen($image));
-$allowed_extensions = array(".jpg","jpeg",".png",".gif");
-if(!in_array($extension,$allowed_extensions))
 {
-echo "<script>alert('Logo has Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
-}
-else
-{
-$image=md5($image).time().$extension;
- move_uploaded_file($_FILES["image"]["tmp_name"],"images/".$image);
-$sql="insert into tblstudent(StudentName,StudentEmail,StudentClass,Gender,DOB,StuID,FatherName,MotherName,ContactNumber,AltenateNumber,Address,UserName,Password,Image)values(:stuname,:stuemail,:stuclass,:gender,:dob,:stuid,:fname,:mname,:connum,:altconnum,:address,:uname,:password,:image)";
+$sql="insert into tblstudent(StudentName,StudentEmail,StudentClass,Gender,DOB,StuID,FatherName,MotherName,ContactNumber,AltenateNumber,Address,UserName,Password)values(:stuname,:stuemail,:stuclass,:gender,:dob,:stuid,:fname,:mname,:connum,:altconnum,:address,:uname,:password)";
 $query=$dbh->prepare($sql);
 $query->bindParam(':stuname',$stuname,PDO::PARAM_STR);
 $query->bindParam(':stuemail',$stuemail,PDO::PARAM_STR);
@@ -54,7 +44,6 @@ $query->bindParam(':altconnum',$altconnum,PDO::PARAM_STR);
 $query->bindParam(':address',$address,PDO::PARAM_STR);
 $query->bindParam(':uname',$uname,PDO::PARAM_STR);
 $query->bindParam(':password',$password,PDO::PARAM_STR);
-$query->bindParam(':image',$image,PDO::PARAM_STR);
  $query->execute();
    $LastInsertId=$dbh->lastInsertId();
    if ($LastInsertId>0) {
@@ -165,10 +154,6 @@ foreach($result2 as $row1)
                       <div class="form-group">
                         <label for="exampleInputName1">Student ID</label>
                         <input type="text" name="stuid" value="" class="form-control" required='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Student Photo</label>
-                        <input type="file" name="image" value="" class="form-control" required='true'>
                       </div>
                       <h3>Parents/Guardian's details</h3>
                       <div class="form-group">

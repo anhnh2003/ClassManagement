@@ -12,27 +12,18 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
   $teaemail=$_POST['teaemail'];
   $gender=$_POST['gender'];
   $uname=$_POST['uname'];
-  $password=md5($_POST['password']);
-  $image=$_FILES["image"]["name"];
+  $password=password_hash($_POST['password'], PASSWORD_DEFAULT);
   $ret="select UserName from tblteacher where UserName=:uname || TeaID=:teaid";
   $query= $dbh -> prepare($ret);
 $query->bindParam(':uname',$uname,PDO::PARAM_STR);
 $query->bindParam(':teaid',$teaid,PDO::PARAM_STR);
 $query-> execute();
      $results = $query -> fetchAll(PDO::FETCH_OBJ);
+// If there is no result, insert the new teacher
 if($query -> rowCount() == 0)
 {
-$extension = substr($image,strlen($image)-4,strlen($image));
-$allowed_extensions = array(".jpg","jpeg",".png",".gif");
-if(!in_array($extension,$allowed_extensions))
-{
-echo "<script>alert('Logo has Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
-}
-else
-{
-$image=md5($image).time().$extension;
- move_uploaded_file($_FILES["image"]["tmp_name"],"images/".$image);
-$sql="insert into tblteacher(TeaID,TeacherName,TeacherEmail,Gender,UserName,Password,image) values(:teaid,:teaname,:teaemail,:gender,:uname,:password,:image)";
+
+$sql="insert into tblteacher(TeaID,TeacherName,TeacherEmail,Gender,UserName,Password) values(:teaid,:teaname,:teaemail,:gender,:uname,:password)";
 $query=$dbh->prepare($sql);
 $query->bindParam(':teaname',$teaname,PDO::PARAM_STR);
 $query->bindParam(':teaemail',$teaemail,PDO::PARAM_STR);
@@ -40,7 +31,6 @@ $query->bindParam(':gender',$gender,PDO::PARAM_STR);
 $query->bindParam(':teaid',$teaid,PDO::PARAM_STR);
 $query->bindParam(':uname',$uname,PDO::PARAM_STR);
 $query->bindParam(':password',$password,PDO::PARAM_STR);
-$query->bindParam(':image',$image,PDO::PARAM_STR);
  $query->execute();
    $LastInsertId=$dbh->lastInsertId();
    if ($LastInsertId>0) {
@@ -51,7 +41,7 @@ echo "<script>window.location.href ='add-teacher.php'</script>";
     {
          echo '<script>alert("Something Went Wrong. Please try again")</script>';
     }
-}}
+}
 
 else
 {
@@ -129,10 +119,6 @@ echo "<script>alert('Username or Teacher Id  already exist. Please try again');<
                       <div class="form-group">
                         <label for="exampleInputName1">Teacher ID</label>
                         <input type="text" name="teaid" value="" class="form-control" required='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Teacher Photo</label>
-                        <input type="file" name="image" value="" class="form-control" required='true'>
                       </div>
 <h3>Login details</h3>
 <div class="form-group">
