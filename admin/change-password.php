@@ -11,18 +11,18 @@ if(isset($_POST['submit']))
 $adminid=$_SESSION['sturecmsaid'];
 $cpassword=($_POST['currentpassword']);
 $newpassword=($_POST['newpassword']);
-$sql ="SELECT ID, SaltPassword FROM tbladmin WHERE ID=:adminid";
+$sql ="SELECT ID, Password FROM tbladmin WHERE ID=:adminid";
 $query= $dbh -> prepare($sql);
 $query-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
 $query-> execute();
 $result = $query -> fetch(PDO::FETCH_OBJ);
-if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->SaltPassword)))
+if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->Password)))
 {
-//insert value in the SaltPassword col, the value is the hashed password of the Password col
-$saltpassword = password_hash($newpassword, PASSWORD_DEFAULT);
-$chngpwd2 = $dbh->prepare("update tbladmin set SaltPassword=:saltpassword where ID=:adminid");
+//insert value in the Password col, the value is the hashed password of the Password col
+$password = password_hash($newpassword, PASSWORD_DEFAULT);
+$chngpwd2 = $dbh->prepare("update tbladmin set Password=:password where ID=:adminid");
 $chngpwd2-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
-$chngpwd2-> bindParam(':saltpassword', $saltpassword, PDO::PARAM_STR);
+$chngpwd2-> bindParam(':password', $password, PDO::PARAM_STR);
 $chngpwd2->execute();
 
 

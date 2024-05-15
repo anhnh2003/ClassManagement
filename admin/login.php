@@ -33,28 +33,23 @@ if(isset($_POST['login']))
   {
     $username=$_POST['username'];
     $password=$_POST['password'];
-    $sql ="SELECT ID, SaltPassword FROM tbladmin WHERE UserName=:username";
+    $sql ="SELECT ID, Password FROM tbladmin WHERE UserName=:username";
     $query=$dbh->prepare($sql);
     $query-> bindParam(':username', $username, PDO::PARAM_STR);
     $query-> execute();
     $result=$query->fetch(PDO::FETCH_OBJ);
     if($query->rowCount()>0)
 {
-if(password_verify($password, $result->SaltPassword)){
+if(password_verify($password, $result->Password)){
 $_SESSION['sturecmsaid']=$result->ID;
 
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
 setcookie ("user_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
-//COOKIES for password
-setcookie ("userpassword",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
 } else {
 if(isset($_COOKIE["user_login"])) {
 setcookie ("user_login","");
-if(isset($_COOKIE["userpassword"])) {
-setcookie ("userpassword","");
-        }
       }
 }
 $_SESSION['login']=$_POST['username'];
