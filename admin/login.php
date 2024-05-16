@@ -60,10 +60,11 @@ $_SESSION['sturecmsaid']=$result->ID;
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("user_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("admin_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
 } else {
-if(isset($_COOKIE["user_login"])) {
-setcookie ("user_login","");
+if(isset($_COOKIE["admin_login"])) {
+setcookie ("admin_login","");
+
       }
 }
 $_SESSION['login']=$_POST['username'];
@@ -73,7 +74,6 @@ echo "<script type='text/javascript'> document.location ='dashboard.php'; </scri
   echo "<script>alert('Invalid Details');</script>";
 
 } }else{
-// echo $result->ID;
 echo "<script>alert('Invalid Details');</script>";
 }
 }

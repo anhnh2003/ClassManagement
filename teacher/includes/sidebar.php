@@ -2,14 +2,10 @@
           <ul class="nav">
             <li class="nav-item nav-profile">
               <a href="#" class="nav-link">
-                <div class="profile-image">
-                  <img class="img-xs rounded-circle" src="images/faces/face8.jpg" alt="profile image">
-                  <div class="dot-indicator bg-success"></div>
-                </div>
                 <div class="text-wrapper">
                   <?php
          $uid= $_SESSION['sturecmsuid'];
-$sql="SELECT * from tblstudent where ID=:uid";
+$sql="SELECT * from tblteacher where ID=:uid";
 
 $query = $dbh -> prepare($sql);
 $query->bindParam(':uid',$uid,PDO::PARAM_STR);
@@ -21,8 +17,8 @@ if($query->rowCount() > 0)
 {
 foreach($results as $row)
 {               ?>
-                  <p class="profile-name"><?php  echo htmlentities($row->StudentName);?></p>
-                  <p class="designation"><?php  echo htmlentities($row->StudentEmail);?></p><?php $cnt=$cnt+1;}} ?>
+                  <p class="profile-name"><?php  echo htmlentities($row->TeacherName);?></p>
+                  <p class="designation"><?php  echo htmlentities($row->TeacherEmail);?></p><?php $cnt=$cnt+1;}} ?>
                 </div>
              
               </a>
