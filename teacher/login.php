@@ -60,10 +60,10 @@ $_SESSION['sturecmsuid']=$result->ID;
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("admin_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
 } else {
-if(isset($_COOKIE["admin_login"])) {
-setcookie ("admin_login","");
+if(isset($_COOKIE["login"])) {
+setcookie ("login","");
 
       }
 }
