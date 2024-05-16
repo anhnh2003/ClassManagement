@@ -7,12 +7,25 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
   } else{
    if(isset($_POST['submit']))
   {
+  //check if the teacher ID exists
+  $teaid=$_POST['TeaID'];
+  $sql ="SELECT TeaID FROM tblteacher WHERE TeaID=:teaid";
+  $query= $dbh -> prepare($sql);
+  $query-> bindParam(':teaid', $teaid, PDO::PARAM_STR);
+  $query-> execute();
+    if($query -> rowCount() == 0)
+  {
+    echo "<script>alert('Teacher ID does not exist. Please try again');</script>";
+  }
+  else
+  {
  $cname=$_POST['cname'];
  $section=$_POST['section'];
-$sql="insert into tblclass(ClassName,Section)values(:cname,:section)";
+$sql="insert into tblclass(ClassName,Section,TeaID)values(:cname,:section,;TeaID)";
 $query=$dbh->prepare($sql);
 $query->bindParam(':cname',$cname,PDO::PARAM_STR);
 $query->bindParam(':section',$section,PDO::PARAM_STR);
+$query->bindParam(':TeaID',$teaid,PDO::PARAM_STR);
  $query->execute();
    $LastInsertId=$dbh->lastInsertId();
    if ($LastInsertId>0) {
@@ -23,7 +36,7 @@ echo "<script>window.location.href ='add-class.php'</script>";
     {
          echo '<script>alert("Something Went Wrong. Please try again")</script>';
     }
-}
+}}
   ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -89,6 +102,10 @@ echo "<script>window.location.href ='add-class.php'</script>";
                           <option value="E">E</option>
                           <option value="F">F</option>
                         </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Teacher ID</label>
+                        <input type="text" name="TeaID" value="" class="form-control" required='true'>
                       </div>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Add</button>
                      
