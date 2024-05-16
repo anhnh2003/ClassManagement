@@ -41,21 +41,27 @@ if(isset($_POST['login']))
     if($query->rowCount()>0)
 {
 if(password_verify($password, $result->Password)){
-$_SESSION['sturecmsaid']=$result->ID;
+$_SESSION['sturecmsuid']=$result->ID;
 
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("teacher_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("admin_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
 } else {
-if(isset($_COOKIE["teacher_login"])) {
-setcookie ("teacher_login","");
+if(isset($_COOKIE["admin_login"])) {
+setcookie ("admin_login","");
+
       }
 }
 $_SESSION['login']=$_POST['username'];
+
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+} else { 
+  // echo $result->ID;
+  echo "<script>alert('Invalid Details');</script>";
+
 } }else{
-echo "<script>alert('Wrong username or password');</script>";
+echo "<script>alert('Invalid Details');</script>";
 }
 }
 

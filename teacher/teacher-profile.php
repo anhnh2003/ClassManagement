@@ -11,7 +11,7 @@ if (strlen($_SESSION['sturecmsstuid']==0)) {
 <html lang="en">
   <head>
    
-    <title>Student Management System|| View Students Profile</title>
+    <title>teacher Management System|| View teachers Profile</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -39,11 +39,11 @@ if (strlen($_SESSION['sturecmsstuid']==0)) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> View Students Profile </h3>
+              <h3 class="page-title"> View Teachers Profile </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> View Students Profile</li>
+                  <li class="breadcrumb-item active" aria-current="page"> View Teachers Profile</li>
                 </ol>
               </nav>
             </div>
@@ -56,7 +56,7 @@ if (strlen($_SESSION['sturecmsstuid']==0)) {
                     <table border="1" class="table table-bordered mg-b-0">
                       <?php
 $sid=$_SESSION['sturecmsstuid'];
-$sql="SELECT tblstudent.StudentName,tblstudent.StudentEmail,tblstudent.StudentClass,tblstudent.Gender,tblstudent.DOB,tblstudent.StuID,tblstudent.FatherName,tblstudent.MotherName,tblstudent.ContactNumber,tblstudent.AltenateNumber,tblstudent.Address,tblstudent.UserName,tblstudent.Password,tblstudent.Image,tblstudent.DateofAdmission,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass where tblstudent.StuID=:sid";
+$sql="SELECT tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.Gender,tblteacher.UserName,tblteacher.Password,tblteacher.DateofAdmission,tblclass.Section from tblteacher join tblclass on tblclass.ID=tblteacher.teacherClass where tblteacher.StuID=:sid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':sid',$sid,PDO::PARAM_STR);
 $query->execute();
@@ -68,16 +68,16 @@ foreach($results as $row)
 {               ?>
  <tr align="center" class="table-warning">
 <td colspan="4" style="font-size:20px;color:blue">
- Students Details</td></tr>
+ teachers Details</td></tr>
 
     <tr class="table-info">
-    <th>Student Name</th>
-    <td><?php  echo $row->StudentName;?></td>
-     <th>Student Email</th>
-    <td><?php  echo $row->StudentEmail;?></td>
+    <th>teacher Name</th>
+    <td><?php  echo $row->teacherName;?></td>
+     <th>teacher Email</th>
+    <td><?php  echo $row->teacherEmail;?></td>
   </tr>
   <tr class="table-warning">
-     <th>Student Class</th>
+     <th>teacher Class</th>
     <td><?php  echo $row->ClassName;?> <?php  echo $row->Section;?></td>
      <th>Gender</th>
     <td><?php  echo $row->Gender;?></td>
@@ -85,7 +85,7 @@ foreach($results as $row)
   <tr class="table-danger">
     <th>Date of Birth</th>
     <td><?php  echo $row->DOB;?></td>
-    <th>Student ID</th>
+    <th>teacher ID</th>
     <td><?php  echo $row->StuID;?></td>
   </tr>
   <tr class="table-success">
