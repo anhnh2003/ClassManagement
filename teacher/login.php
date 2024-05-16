@@ -60,14 +60,14 @@ $_SESSION['sturecmsuid']=$result->ID;
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("user_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
 } else {
-if(isset($_COOKIE["login"])) {
-setcookie ("login","");
+if(isset($_COOKIE["user_login"])) {
+setcookie ("user_login","");
 
       }
 }
-$_SESSION['login']=$_POST['username'];
+$_SESSION['user_login']=$_POST['username'];
 
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 } else { 
@@ -110,7 +110,7 @@ echo "<script>alert('Invalid Details');</script>";
                 </div>
                 <h4>Hello! let's get started</h4>
                 <h6 class="font-weight-light">Sign in to continue.</h6>
-                <form class="pt-3" id="login" method="post" name="login">
+                <form class="pt-3" id="user_login" method="post" name="user_login">
                   <div class="form-group">
                     <input type="text" class="form-control form-control-lg" placeholder="enter your username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
