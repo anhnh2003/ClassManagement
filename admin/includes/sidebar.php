@@ -45,7 +45,7 @@ foreach($results as $row)
               <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="add-class.php">Add Class</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="manage-class.php">Manage Class</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="manage-class.php">Manage Classes</a></li>
                 </ul>
               </div>
             </li>
@@ -56,7 +56,7 @@ foreach($results as $row)
               </a>
               <div class="collapse" id="ui-basic1">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="add-students.php">Add Students</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="add-students.php">Add Student</a></li>
                   <li class="nav-item"> <a class="nav-link" href="manage-students.php">Manage Students</a></li>
                 </ul>
               </div>
@@ -69,7 +69,7 @@ foreach($results as $row)
               <div class="collapse" id="ui-basic2">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="add-teacher.php">Add Teacher</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="manage-teacher.php">Manage Teacher</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="manage-teacher.php">Manage Teachers</a></li>
                 </ul>
               </div>
             </li>

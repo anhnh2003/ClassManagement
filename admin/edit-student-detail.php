@@ -30,7 +30,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
 <html lang="en">
   <head>
    
-    <title>Student  Management System || Update Students</title>
+    <title>Student Management System || Update Student</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -58,11 +58,11 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> Update Students </h3>
+              <h3 class="page-title"> Update Student </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Update Students</li>
+                  <li class="breadcrumb-item active" aria-current="page"> Update Student</li>
                 </ol>
               </nav>
             </div>
@@ -71,7 +71,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Update Students</h4>
+                    <h4 class="card-title" style="text-align: center;">Update Student</h4>
                    
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
@@ -87,11 +87,11 @@ if($query->rowCount() > 0)
 foreach($results as $row)
 {               ?>
                       <div class="form-group">
-                        <label for="exampleInputName1">Student Name</label>
+                        <label for="exampleInputName1">Name</label>
                         <input type="text" name="name" value="<?php  echo htmlentities($row->StudentName);?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputName1">Student Email</label>
+                        <label for="exampleInputName1">Email</label>
                         <input type="text" name="email" value="<?php  echo htmlentities($row->Email);?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
@@ -109,7 +109,7 @@ foreach($results as $row)
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Contact Number</label>
-                        <input type="text" name="connum" value="<?php  echo htmlentities($row->ContactNumber);?>" class="form-control" required='true' maxlength="10" pattern="[0-9]+">
+                        <input type="text" name="connum" value="<?php  echo htmlentities($row->ContactNumber);?>" class="form-control" required='true' maxlength="15" pattern="[0-9]+">
                       </div><?php $cnt=$cnt+1;}} ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
                      

@@ -55,7 +55,7 @@ echo "<script>alert('Username or Student Id already exist. Please try again');</
 <html lang="en">
   <head>
    
-    <title>Student Management System || Add Students</title>
+    <title>Student Management System || Add Student</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -83,11 +83,11 @@ echo "<script>alert('Username or Student Id already exist. Please try again');</
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> Add Students </h3>
+              <h3 class="page-title"> Add Student </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Add Students</li>
+                  <li class="breadcrumb-item active" aria-current="page"> Add Student</li>
                 </ol>
               </nav>
             </div>
@@ -114,7 +114,7 @@ echo "<script>alert('Username or Student Id already exist. Please try again');</
                           <option value="">Choose Gender</option>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
-                          <option value="Female">Other</option>
+                          <option value="Other">Other</option>
                         </select>
                       </div>
                       <div class="form-group">
