@@ -66,7 +66,7 @@ foreach($results as $row)
  Notice</td></tr>
 <tr class="table-info">
     <th>Notice Announced Date</th>
-    <td><?php  echo $row->CreationDate;?></td>
+    <td><?php  echo $row->CreationTime;?></td>
   </tr>
     <tr class="table-info">
     <th>Noitice Title</th>
