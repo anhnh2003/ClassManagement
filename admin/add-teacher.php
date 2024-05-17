@@ -7,11 +7,21 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
   } else{
    if(isset($_POST['submit']))
   {
-  $teaname=$_POST['teaname'];
-  $teaid=$_POST['teaid'];
-  $teaemail=$_POST['teaemail'];
+  $name=$_POST['name'];
+  $teaid=
+  $teaid = "";
+  $maxIdQuery = "SELECT MAX(ID) AS maxId FROM tblteacher";
+  $maxIdResult = $dbh->query($maxIdQuery);
+  $maxIdRow = $maxIdResult->fetch(PDO::FETCH_ASSOC);
+  if ($maxIdRow['maxId']) {
+    $teaid = $maxIdRow['maxId'] + 1;
+  } else {
+    $teaid = RAND(20000, 29999);
+  }
+  $email=$_POST['email'];
   $gender=$_POST['gender'];
   $uname=$_POST['uname'];
+  $connum=$_POST['connum'];
   $password=password_hash($_POST['password'], PASSWORD_DEFAULT);
   $ret="select UserName from tblteacher where UserName=:uname || TeaID=:teaid";
   $query= $dbh -> prepare($ret);
@@ -23,12 +33,13 @@ $query-> execute();
 if($query -> rowCount() == 0)
 {
 
-$sql="insert into tblteacher(TeaID,TeacherName,TeacherEmail,Gender,UserName,Password) values(:teaid,:teaname,:teaemail,:gender,:uname,:password)";
+$sql="insert into tblteacher(TeaID,TeacherName,Email,Gender,UserName,Password,ContactNumber) values(:teaid,:name,:email,:gender,:uname,:password,:connum)";
 $query=$dbh->prepare($sql);
-$query->bindParam(':teaname',$teaname,PDO::PARAM_STR);
-$query->bindParam(':teaemail',$teaemail,PDO::PARAM_STR);
+$query->bindParam(':name',$name,PDO::PARAM_STR);
+$query->bindParam(':email',$email,PDO::PARAM_STR);
 $query->bindParam(':gender',$gender,PDO::PARAM_STR);
 $query->bindParam(':teaid',$teaid,PDO::PARAM_STR);
+$query->bindParam(':connum',$connum,PDO::PARAM_STR);
 $query->bindParam(':uname',$uname,PDO::PARAM_STR);
 $query->bindParam(':password',$password,PDO::PARAM_STR);
  $query->execute();
@@ -54,7 +65,7 @@ echo "<script>alert('Username or Teacher Id  already exist. Please try again');<
 <html lang="en">
   <head>
    
-    <title>Student  Management System|| Add Teacher</title>
+    <title>Student  Management System || Add Teacher</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -95,17 +106,17 @@ echo "<script>alert('Username or Teacher Id  already exist. Please try again');<
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Add Teacher</h4>
+                    <h4 class="card-title" style="text-align: center;">Teacher Info</h4>
                    
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       
                       <div class="form-group">
-                        <label for="exampleInputName1">Teacher Name</label>
-                        <input type="text" name="teaname" value="" class="form-control" required='true'>
+                        <label for="exampleInputName1">Name</label>
+                        <input type="text" name="name" value="" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputName1">Teacher Email</label>
-                        <input type="text" name="teaemail" value="" class="form-control" required='true'>
+                        <label for="exampleInputName1">Email</label>
+                        <input type="text" name="email" value="" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Gender</label>
@@ -113,14 +124,14 @@ echo "<script>alert('Username or Teacher Id  already exist. Please try again');<
                           <option value="">Choose Gender</option>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
+                          <option value="Other">Other</option>
                         </select>
                       </div>
-                     
                       <div class="form-group">
-                        <label for="exampleInputName1">Teacher ID</label>
-                        <input type="text" name="teaid" value="" class="form-control" required='true'>
+                        <label for="exampleInputName1">Contact Number</label>
+                        <input type="text" name="connum" value="" class="form-control" required='true' maxlength="15" pattern="[0-9]+">
                       </div>
-<h3>Login details</h3>
+                      <h4 class="card-title" style="text-align: center;">Login Details</h4>
 <div class="form-group">
                         <label for="exampleInputName1">User Name</label>
                         <input type="text" name="uname" value="" class="form-control" required='true'>
