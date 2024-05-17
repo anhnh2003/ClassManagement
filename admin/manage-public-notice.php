@@ -23,7 +23,7 @@ $query->execute();
 <html lang="en">
   <head>
    
-    <title>Student  Management System|||Manage Public Notice</title>
+    <title>Student  Management System || Manage Public Notice</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -72,9 +72,9 @@ $query->execute();
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="font-weight-bold">S.No</th>
-                            <th class="font-weight-bold">Notice Title</th>
-                            <th class="font-weight-bold">Notice Date</th>
+                            <th class="font-weight-bold">No.</th>
+                            <th class="font-weight-bold">Title</th>
+                            <th class="font-weight-bold">Date</th>
                             <th class="font-weight-bold">Action</th>
                             
                           </tr>
@@ -95,7 +95,7 @@ $query1->execute();
 $results1=$query1->fetchAll(PDO::FETCH_OBJ);
 $total_rows=$query1->rowCount();
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT * from tblpublicnotice";
+$sql="SELECT * from tblpublicnotice ORDER BY ID DESC LIMIT $offset, $no_of_records_per_page";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
