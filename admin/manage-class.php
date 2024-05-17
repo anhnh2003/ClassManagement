@@ -23,7 +23,7 @@ $query->execute();
 <html lang="en">
   <head>
    
-    <title>Student  Management System|||Manage Class</title>
+    <title>Student Management System || Manage Class</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -72,10 +72,11 @@ $query->execute();
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="font-weight-bold">S.No</th>
-                            <th class="font-weight-bold">Class Name</th>
-                            <th class="font-weight-bold">Section</th>
-                            <th class="font-weight-bold">Creation Date</th>
+                            <th class="font-weight-bold">No.</th>
+                            <th class="font-weight-bold">Name</th>
+                            <th class="font-weight-bold">Code</th>
+                            <th class="font-weight-bold">Teacher</th>
+                            <th class="font-weight-bold">Creation Time</th>
                             <th class="font-weight-bold">Action</th>
                             
                           </tr>
@@ -96,7 +97,7 @@ $query1->execute();
 $results1=$query1->fetchAll(PDO::FETCH_OBJ);
 $total_rows=$query1->rowCount();
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT * from tblclass LIMIT $offset, $no_of_records_per_page";
+$sql="SELECT tblclass.*, tblteacher.TeacherName from tblclass, tblteacher where teacher_id=tblteacher.ID LIMIT $offset, $no_of_records_per_page";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -110,7 +111,8 @@ foreach($results as $row)
                            
                             <td><?php echo htmlentities($cnt);?></td>
                             <td><?php  echo htmlentities($row->ClassName);?></td>
-                            <td><?php  echo htmlentities($row->Section);?></td>
+                            <td><?php  echo htmlentities($row->JoinCode);?></td>
+                            <td><?php  echo htmlentities($row->TeacherName);?></td>
                             <td><?php  echo htmlentities($row->CreationTime);?></td>
                             <td>
                               <div><a href="edit-class-detail.php?editid=<?php echo htmlentities ($row->ID);?>"><i class="icon-eye"></i></a>

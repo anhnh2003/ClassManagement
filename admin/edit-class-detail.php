@@ -7,25 +7,42 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
   } else{
    if(isset($_POST['submit']))
   {
- $cname=$_POST['cname'];
- $section=$_POST['section'];
- $eid=$_GET['editid'];
+    $teaid = $_POST['teaid'];
+    $cname = $_POST['cname'];
+    $room = $_POST['room'];
+    $eid=$_GET['editid'];
 
-$sql="update tblclass set ClassName=:cname,Section=:section where ID=:eid";
+$sql="update tblclass set ClassName=:cname, Room=:room, teacher_id=:teaid where ID=:eid";
 $query=$dbh->prepare($sql);
-$query->bindParam(':cname',$cname,PDO::PARAM_STR);
-$query->bindParam(':section',$section,PDO::PARAM_STR);
+$query->bindParam(':cname', $cname, PDO::PARAM_STR);
+$query->bindParam(':room', $room, PDO::PARAM_STR);
+$query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
  $query->execute();
   echo '<script>alert("Class has been updated")</script>';
-}
+} if(isset($_POST['regencode']))
+  {
+    $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    $joincode = '';
+    for ($i = 0; $i < 6; $i++) {
+      $index = rand(0, strlen($characters) - 1);
+      $joincode .= $characters[$index];
+    }
+    $eid=$_GET['editid'];
+    $sql="update tblclass set JoinCode=:joincode where ID=:eid";
+    $query=$dbh->prepare($sql);
+    $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
+    $query->bindParam(':eid',$eid,PDO::PARAM_STR);
+    $query->execute();
+    echo '<script>alert("Join Code has been changed")</script>';
+  }
 
   ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
    
-    <title>Student  Management System|| Manage Class</title>
+    <title>Student Management System || Manage Class</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -71,7 +88,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
                     <form class="forms-sample" method="post">
                       <?php
 $eid=$_GET['editid'];
-$sql="SELECT * from  tblclass where ID=$eid";
+$sql="SELECT * from tblclass, tblteacher where teacher_id=tblteacher.ID and tblclass.ID=$eid";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -85,18 +102,32 @@ foreach($results as $row)
                         <input type="text" name="cname" value="<?php  echo htmlentities($row->ClassName);?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputEmail3">Section</label>
-                        <select  name="section" class="form-control" required='true'>
-                          <option value="<?php  echo htmlentities($row->Section);?>"><?php  echo htmlentities($row->Section);?></option>
-                          <option value="A">A</option>
-                          <option value="B">B</option>
-                          <option value="C">C</option>
-                          <option value="D">D</option>
-                          <option value="E">E</option>
-                          <option value="F">F</option>
-                        </select>
-                      </div><?php $cnt=$cnt+1;}} ?>
+                        <label for="exampleInputName1">Room</label>
+                        <input type="text" name="room" value="<?php  echo htmlentities($row->Room);?>" class="form-control" required='true'>
+                      </div>
+                      <div class="form-group">
+                      <label for="exampleInputEmail3">Teacher</label>
+                      <select name="teaid" class="form-control" required='true'>
+                        <option value="<?php  echo htmlentities($row->teacher_id);?>"><?php  echo htmlentities($row->TeacherName);?></option>
+                        <?php
+                        $sql2 = "SELECT ID, TeacherName from tblteacher where ID != ".$row->teacher_id;
+                        $query2 = $dbh->prepare($sql2);
+                        $query2->execute();
+                        $result2 = $query2->fetchAll(PDO::FETCH_OBJ);
+
+                        foreach ($result2 as $row1) { ?>
+                          <option value="<?php echo htmlentities($row1->ID); ?>"><?php echo htmlentities($row1->TeacherName); ?> </option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputName1">Join Code</label>
+                        <input type="text" name="joincode" value="<?php  echo htmlentities($row->JoinCode);?>" class="form-control" required='true' readonly="">
+                      </div>
+                    <?php $cnt=$cnt+1;}} ?>
+                      
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
+                      <button type="submit" class="btn btn-primary mr-2" name="regencode">Change Code</button>
                      
                     </form>
                   </div>
