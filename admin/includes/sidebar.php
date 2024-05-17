@@ -107,12 +107,6 @@ foreach($results as $row)
                   <li class="nav-item"> <a class="nav-link" href="contact-us.php"> Contact Us </a></li>
                 </ul>
               </div>
-            <li class="nav-item">
-              <a class="nav-link" href="search.php">
-                <span class="menu-title">Search</span>
-                <i class="icon-magnifier menu-icon"></i>
-              </a>
-            </li>
             </li>
           </ul>
         </nav>
