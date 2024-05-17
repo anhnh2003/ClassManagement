@@ -72,7 +72,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
 $eid=$_GET['editid'];
-$sql="SELECT tblclass.ID,tblclass.ClassName,tblclass.Section,tblnotice.NoticeTitle,tblnotice.CreationDate,tblnotice.ClassId,tblnotice.NoticeMsg,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId where tblnotice.ID=:eid";
+$sql="SELECT tblclass.ID,tblclass.ClassName,tblclass.Section,tblnotice.NoticeTitle,tblnotice.CreationTime,tblnotice.ClassId,tblnotice.NoticeMsg,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId where tblnotice.ID=:eid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
 $query->execute();

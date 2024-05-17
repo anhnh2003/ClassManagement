@@ -30,10 +30,10 @@ SET time_zone = "+00:00";
 CREATE TABLE `tbladmin` (
   `AdminName` varchar(120) DEFAULT NULL,
   `UserName` varchar(120) DEFAULT NULL,
-  `MobileNumber` bigint(10) DEFAULT NULL,
+  `ContactNumber` bigint(10) DEFAULT NULL,
   `Email` varchar(200) DEFAULT NULL,
   `Password` varchar(200) DEFAULT NULL,
-  `AdminRegdate` timestamp NULL DEFAULT current_timestamp(),
+  `CreationTime` timestamp NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL DEFAULT 1,
   `ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -42,7 +42,7 @@ CREATE TABLE `tbladmin` (
 -- Dumping data for table `tbladmin`
 --
 
-INSERT INTO `tbladmin` (`AdminName`, `UserName`, `MobileNumber`, `Email`, `Password`, `AdminRegdate`, `role_id`, `ID`) VALUES
+INSERT INTO `tbladmin` (`AdminName`, `UserName`, `ContactNumber`, `Email`, `Password`, `CreationTime`, `role_id`, `ID`) VALUES
 ('Admin', 'admin', 8979555558, 'minihoanganh@gmail.com', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJCjWGahynox6', '2019-10-11 04:36:52', 1, 10000);
 
 -- --------------------------------------------------------
@@ -54,24 +54,19 @@ INSERT INTO `tbladmin` (`AdminName`, `UserName`, `MobileNumber`, `Email`, `Passw
 CREATE TABLE `tblclass` (
   `ID` int(5) NOT NULL,
   `ClassName` varchar(50) DEFAULT NULL,
-  `CreationDate` timestamp NULL DEFAULT current_timestamp(),
-  `TeaID` varchar(20) DEFAULT NULL
+  `CreationTime` timestamp NULL DEFAULT current_timestamp(),
+  `Room` varchar(20) DEFAULT NULL,
+  `teacher_id` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblclass`
 --
 
-INSERT INTO `tblclass` (`ID`, `ClassName`, `CreationDate`, `TeaID`) VALUES
-(1, '10', '2022-01-13 10:42:14', NULL),
-(2, '10', '2022-01-13 10:42:35', NULL),
-(3, '10', '2022-01-13 10:42:41', NULL),
-(4, '11', '2022-01-13 10:42:47', NULL),
-(5, '11', '2022-01-13 10:42:52', NULL),
-(6, '11', '2022-01-13 10:42:57', NULL),
-(7, '11', '2022-01-13 10:43:04', NULL),
-(8, '12', '2022-01-13 10:43:10', NULL),
-(9, '12', '2022-01-13 10:43:15', NULL);
+INSERT INTO `tblclass` (`ID`, `ClassName`, `CreationTime`, `Room`, `teacher_id`) VALUES
+(1, 'Soft Skills', '2022-01-13 10:42:14', 'D8-108', NULL),
+(2, 'Introduction to Programming', '2022-01-13 10:42:35', 'B1-403', NULL),
+(3, 'Cryptography', '2022-01-13 10:42:41', 'B1-203', NULL),
 
 -- --------------------------------------------------------
 
@@ -84,18 +79,18 @@ CREATE TABLE `tblnotice` (
   `NoticeTitle` mediumtext DEFAULT NULL,
   `ClassId` int(10) DEFAULT NULL,
   `NoticeMsg` mediumtext DEFAULT NULL,
-  `CreationDate` timestamp NULL DEFAULT current_timestamp()
+  `CreationTime` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblnotice`
 --
 
-INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `ClassId`, `NoticeMsg`, `CreationDate`) VALUES
+INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `ClassId`, `NoticeMsg`, `CreationTime`) VALUES
 (2, 'Marks of Unit Test.', 3, 'Meet your class teacher for seeing copies of unit test', '2022-01-19 06:35:58'),
 (3, 'Marks of Unit Test.', 2, 'Meet your class teacher for seeing copies of unit test', '2022-01-19 06:35:58'),
 (4, 'Test', 3, 'This is for testing.', '2022-02-02 18:17:03'),
-(5, 'Test Notice', 8, 'This is for Testing.', '2022-02-02 19:03:43');
+(5, 'Test Notice', 3, 'This is for Testing.', '2022-02-02 19:03:43');
 
 -- --------------------------------------------------------
 
@@ -109,7 +104,7 @@ CREATE TABLE `tblpage` (
   `PageTitle` mediumtext DEFAULT NULL,
   `PageDescription` mediumtext DEFAULT NULL,
   `Email` varchar(200) DEFAULT NULL,
-  `MobileNumber` bigint(10) DEFAULT NULL,
+  `ContactNumber` bigint(10) DEFAULT NULL,
   `UpdationDate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -117,7 +112,7 @@ CREATE TABLE `tblpage` (
 -- Dumping data for table `tblpage`
 --
 
-INSERT INTO `tblpage` (`ID`, `PageType`, `PageTitle`, `PageDescription`, `Email`, `MobileNumber`, `UpdationDate`) VALUES
+INSERT INTO `tblpage` (`ID`, `PageType`, `PageTitle`, `PageDescription`, `Email`, `ContactNumber`, `UpdationDate`) VALUES
 (1, 'aboutus', 'About Us', '<div style=\"text-align: start;\"><font color=\"#7b8898\" face=\"Mercury SSm A, Mercury SSm B, Georgia, Times, Times New Roman, Microsoft YaHei New, Microsoft Yahei, ????, ??, SimSun, STXihei, ????, serif\"><span style=\"font-size: 26px;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span></font><br></div>', NULL, NULL, NULL),
 (2, 'contactus', 'Contact Us', '890,Sector 62, Gyan Sarovar, GAIL Noida(Delhi/NCR)', 'infodata@gmail.com', 7896541236, NULL);
 
@@ -131,14 +126,14 @@ CREATE TABLE `tblpublicnotice` (
   `ID` int(5) NOT NULL,
   `NoticeTitle` varchar(200) DEFAULT NULL,
   `NoticeMessage` mediumtext DEFAULT NULL,
-  `CreationDate` timestamp NULL DEFAULT current_timestamp()
+  `CreationTime` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblpublicnotice`
 --
 
-INSERT INTO `tblpublicnotice` (`ID`, `NoticeTitle`, `NoticeMessage`, `CreationDate`) VALUES
+INSERT INTO `tblpublicnotice` (`ID`, `NoticeTitle`, `NoticeMessage`, `CreationTime`) VALUES
 (1, 'School will re-open', 'Consult your class teacher.', '2022-01-20 09:11:57'),
 (2, 'Test Public Notice', 'This is for Testing\r\n', '2022-02-02 19:04:10');
 
@@ -148,11 +143,13 @@ INSERT INTO `tblpublicnotice` (`ID`, `NoticeTitle`, `NoticeMessage`, `CreationDa
 -- Table structure for table `tblresult`
 --
 
-CREATE TABLE `tblresult` (
-  `testid` int(11) NOT NULL,
-  `stuid` int(11) NOT NULL,
-  `results` int(11) NOT NULL,
-  `SubmitTime` datetime DEFAULT NULL
+CREATE TABLE `tblstudent_test` (
+  `student_id` int(11) NOT NULL,
+  `test_id` int(11) NOT NULL,
+  `TotalPoint` int(11) NOT NULL,
+  `StartTime` datetime DEFAULT NULL,
+  `SubmitTime` datetime DEFAULT NULL,
+  `IP` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -183,18 +180,12 @@ INSERT INTO `tblroles` (`role_id`, `role_name`) VALUES
 
 CREATE TABLE `tblstudent` (
   `StudentName` varchar(30) DEFAULT NULL,
-  `StudentEmail` varchar(30) DEFAULT NULL,
-  `StudentClass` varchar(30) DEFAULT NULL,
+  `Email` varchar(30) DEFAULT NULL,
   `Gender` varchar(7) DEFAULT NULL,
-  `DOB` date DEFAULT NULL,
-  `FatherName` mediumtext DEFAULT NULL,
-  `MotherName` mediumtext DEFAULT NULL,
   `ContactNumber` bigint(10) DEFAULT NULL,
-  `AltenateNumber` bigint(10) DEFAULT NULL,
-  `Address` mediumtext DEFAULT NULL,
   `UserName` varchar(20) DEFAULT NULL,
   `Password` varchar(100) DEFAULT NULL,
-  `DateofAdmission` timestamp NULL DEFAULT current_timestamp(),
+  `CreationTime` timestamp NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL DEFAULT 3,
   `ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -203,14 +194,13 @@ CREATE TABLE `tblstudent` (
 -- Dumping data for table `tblstudent`
 --
 
-INSERT INTO `tblstudent` (`StudentName`, `StudentEmail`, `StudentClass`, `Gender`, `DOB`, `FatherName`, `MotherName`, `ContactNumber`, `AltenateNumber`, `Address`, `UserName`, `Password`, `DateofAdmission`, `role_id`, `ID`) VALUES
-('jghj', 'jhghjg@gmail.com', '4', 'Male', '2022-01-13', 'bbmnb', 'mnbmb', 5465454645, 4646546565, 'J-908, Hariram Nagra New Delhi', 'kjhkjh', '202cb962ac59075b964b07152d234b70', '2022-01-13 14:09:04', 3, 30000),
-('Kishore Sharma', 'kishore@gmail.com', '3', 'Male', '2019-01-05', 'Janak Sharma', 'Indra Devi', 7879879879, 7987979879, 'kjhkhjkhdkshfiludzshfiu\r\nfjedh\r\nk;jk', 'kishore2019', '202cb962ac59075b964b07152d234b70', '2022-01-16 06:23:33', 3, 30001),
-('Anshul', 'anshul@gmali.com', '2', 'Female', '1986-01-05', 'Kailesg', 'jakinnm', 4646546546, 6546598798, 'jlkjkljoiujiouoil', 'anshul1986', '202cb962ac59075b964b07152d234b70', '2022-01-19 15:24:52', 3, 30002),
-('John Doe', 'john@gmail.com', '1', 'Female', '2002-02-10', 'Anuj Kumar', 'Garima Singh', 1234698741, 1234567890, 'New Delhi', 'john12', 'f925916e2754e5e03f75dd58a5733251', '2022-02-02 18:19:45', 3, 30003),
-('Anuj kumar Singh', 'akkr@gmail.com', '8', 'Male', '2001-05-30', 'Bijendra Singh', 'Kamlesh Devi', 1472589630, 1236987450, 'New Delhi', 'anujk3', 'f925916e2754e5e03f75dd58a5733251', '2022-02-02 18:57:22', 3, 30004),
-('anh', 'hi@gmail.com', '1', 'Male', '2024-05-15', 'anh', 'anh', 0, 1, 'A', 'anh', '$2y$10$raQ/eDk1.lW//hBaBmNILu2.05rw/LUhFarntAS4lkYCpk7rovWE2', '2024-05-15 04:14:35', 3, 30005);
-
+INSERT INTO `tblstudent` (`StudentName`, `Email`, `Gender`, `ContactNumber`, `UserName`, `Password`, `CreationTime`, `role_id`, `ID`) VALUES
+('Nguyen A', 'nguyena@gmail.com', 'Male', 0343868519, 'nguyena', '202cb962ac59075b964b07152d234b70', '2022-01-13 14:09:04', 3, 30000),
+('Tran B', 'tranb@gmail.com', 'Male', NULL, 'tranb', '202cb962ac59075b964b07152d234b70', '2022-01-16 06:23:33', 3, 30001),
+('Nguyen C', 'nguyenc@gmali.com', 'Female', NULL, 'nguyenc', '202cb962ac59075b964b07152d234b70', '2022-01-19 15:24:52', 3, 30002),
+('Dinh D', 'dinhd@gmail.com', 'Female', NULL, 'dinhd', 'f925916e2754e5e03f75dd58a5733251', '2022-02-02 18:19:45', 3, 30003),
+('Pham E', 'phame@gmail.com', 'Male', NULL, 'phame', 'f925916e2754e5e03f75dd58a5733251', '2022-02-02 18:57:22', 3, 30004),
+('anh', 'hi@gmail.com', 'Male', 0, 'anh', '$2y$10$raQ/eDk1.lW//hBaBmNILu2.05rw/LUhFarntAS4lkYCpk7rovWE2', '2024-05-15 04:14:35', 3, 30005);
 -- --------------------------------------------------------
 
 --
@@ -219,11 +209,12 @@ INSERT INTO `tblstudent` (`StudentName`, `StudentEmail`, `StudentClass`, `Gender
 
 CREATE TABLE `tblteacher` (
   `TeacherName` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
-  `TeacherEmail` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `Email` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Gender` varchar(7) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Username` varchar(20) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `Password` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
-  `DateofAdmission` timestamp NULL DEFAULT current_timestamp(),
+  `ContactNumber` bigint(10) DEFAULT NULL,
+  `CreationTime` timestamp NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL DEFAULT 2,
   `ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -232,9 +223,9 @@ CREATE TABLE `tblteacher` (
 -- Dumping data for table `tblteacher`
 --
 
-INSERT INTO `tblteacher` (`TeacherName`, `TeacherEmail`, `Gender`, `Username`, `Password`, `DateofAdmission`, `role_id`, `ID`) VALUES
-('Anh', 'hi@gmail.com', 'Male', 'anh', '$2y$10$/wv.E6hhNJQ/JeOlFBDeeei', '2024-05-15 03:18:58', 2, 20000),
-('huy', 'a@b.c', 'Female', 'huy', '$2y$10$6O10POMCSX/GUlNULt6WO.k', '2024-05-16 02:35:52', 0, 20001);
+INSERT INTO `tblteacher` (`TeacherName`, `Email`, `Gender`, `Username`, `Password`, `ContactNumber`, `CreationTime`, `role_id`, `ID`) VALUES
+('Anh', 'hi@gmail.com', 'Male', 'anh', '$2y$10$/wv.E6hhNJQ/JeOlFBDeeei', NULL, '2024-05-15 03:18:58', 2, 20000),
+('huy', 'a@gmail.com', 'Female', 'huy', '$2y$10$6O10POMCSX/GUlNULt6WO.k', NULL, '2024-05-16 02:35:52', 2, 20001);
 
 -- --------------------------------------------------------
 
@@ -244,12 +235,11 @@ INSERT INTO `tblteacher` (`TeacherName`, `TeacherEmail`, `Gender`, `Username`, `
 
 CREATE TABLE `tbltest` (
   `ID` int(11) DEFAULT NULL,
-  `classid` int(11) DEFAULT NULL,
-  `name` varchar(30) DEFAULT NULL,
+  `class_id` int(11) DEFAULT NULL,
+  `TestName` varchar(30) DEFAULT NULL,
   `CreateTime` datetime DEFAULT curtime(),
   `StartTime` datetime DEFAULT NULL,
-  `EndTime` datetime DEFAULT NULL,
-  `link` varchar(255) DEFAULT NULL
+  `EndTime` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

@@ -56,7 +56,7 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
                     <table border="1" class="table table-bordered mg-b-0">
                       <?php
 $stuclass=$_SESSION['stuclass'];
-$sql="SELECT tblclass.ID,tblclass.ClassName,tblclass.Section,tblnotice.NoticeTitle,tblnotice.CreationDate,tblnotice.ClassId,tblnotice.NoticeMsg,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId where tblnotice.ClassId=:stuclass";
+$sql="SELECT tblclass.ID,tblclass.ClassName,tblclass.Section,tblnotice.NoticeTitle,tblnotice.CreationTime,tblnotice.ClassId,tblnotice.NoticeMsg,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId where tblnotice.ClassId=:stuclass";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':stuclass',$stuclass,PDO::PARAM_STR);
 $query->execute();
@@ -71,7 +71,7 @@ foreach($results as $row)
  Notice</td></tr>
 <tr class="table-info">
     <th>Notice Announced Date</th>
-    <td><?php  echo $row->CreationDate;?></td>
+    <td><?php  echo $row->CreationTime;?></td>
   </tr>
     <tr class="table-info">
     <th>Noitice Title</th>

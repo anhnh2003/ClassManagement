@@ -56,7 +56,7 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
                     <table border="1" class="table table-bordered mg-b-0">
                       <?php
 $sid=$_SESSION['sturecmsstuid'];
-$sql="SELECT tblstudent.StudentName,tblstudent.StudentEmail,tblstudent.StudentClass,tblstudent.Gender,tblstudent.DOB,tblstudent.StuID,tblstudent.FatherName,tblstudent.MotherName,tblstudent.ContactNumber,tblstudent.AltenateNumber,tblstudent.Address,tblstudent.UserName,tblstudent.Password,tblstudent.DateofAdmission,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass where tblstudent.StuID=:sid";
+$sql="SELECT tblstudent.StudentName,tblstudent.Email,tblstudent.StudentClass,tblstudent.Gender,tblstudent.DOB,tblstudent.StuID,tblstudent.FatherName,tblstudent.MotherName,tblstudent.ContactNumber,tblstudent.AltenateNumber,tblstudent.Address,tblstudent.UserName,tblstudent.Password,tblstudent.CreationTime,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass where tblstudent.StuID=:sid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':sid',$sid,PDO::PARAM_STR);
 $query->execute();
@@ -74,7 +74,7 @@ foreach($results as $row)
     <th>Student Name</th>
     <td><?php  echo $row->StudentName;?></td>
      <th>Student Email</th>
-    <td><?php  echo $row->StudentEmail;?></td>
+    <td><?php  echo $row->Email;?></td>
   </tr>
   <tr class="table-warning">
      <th>Student Class</th>
@@ -108,7 +108,7 @@ foreach($results as $row)
   </tr>
    <tr class="table-info">
     <th>Date of Admission</th>
-    <td><?php  echo $row->DateofAdmission;?></td>
+    <td><?php  echo $row->CreationTime;?></td>
   </tr>
   <?php $cnt=$cnt+1;}} ?>
 </table>

@@ -56,7 +56,7 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
                     <table border="1" class="table table-bordered mg-b-0">
                       <?php
 $sid=$_SESSION['sturecmsstuid'];
-$sql="SELECT tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.Gender,tblteacher.UserName,tblteacher.Password,tblteacher.DateofAdmission,tblclass.Section from tblteacher join tblclass on tblclass.ID=tblteacher.teacherClass where tblteacher.StuID=:sid";
+$sql="SELECT tblteacher.TeacherName,tblteacher.Email,tblteacher.Gender,tblteacher.UserName,tblteacher.Password,tblteacher.CreationTime,tblclass.Section from tblteacher join tblclass on tblclass.ID=tblteacher.teacherClass where tblteacher.StuID=:sid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':sid',$sid,PDO::PARAM_STR);
 $query->execute();
@@ -74,7 +74,7 @@ foreach($results as $row)
     <th>teacher Name</th>
     <td><?php  echo $row->teacherName;?></td>
      <th>teacher Email</th>
-    <td><?php  echo $row->teacherEmail;?></td>
+    <td><?php  echo $row->Email;?></td>
   </tr>
   <tr class="table-warning">
      <th>teacher Class</th>
@@ -110,7 +110,7 @@ foreach($results as $row)
     <th>Profile Pics</th>
     <td><img src="../admin/images/<?php echo $row->Image;?>"></td>
     <th>Date of Admission</th>
-    <td><?php  echo $row->DateofAdmission;?></td>
+    <td><?php  echo $row->CreationTime;?></td>
   </tr>
   <?php $cnt=$cnt+1;}} ?>
 </table>

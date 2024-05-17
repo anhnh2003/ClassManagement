@@ -9,13 +9,13 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
   {
     $adminid=$_SESSION['sturecmsaid'];
     $AName=$_POST['adminname'];
-  $mobno=$_POST['mobilenumber'];
+  $mobno=$_POST['ContactNumber'];
   $email=$_POST['email'];
-  $sql="update tbladmin set AdminName=:adminname,MobileNumber=:mobilenumber,Email=:email where ID=:aid";
+  $sql="update tbladmin set AdminName=:adminname,ContactNumber=:ContactNumber,Email=:email where ID=:aid";
      $query = $dbh->prepare($sql);
      $query->bindParam(':adminname',$AName,PDO::PARAM_STR);
      $query->bindParam(':email',$email,PDO::PARAM_STR);
-     $query->bindParam(':mobilenumber',$mobno,PDO::PARAM_STR);
+     $query->bindParam(':ContactNumber',$mobno,PDO::PARAM_STR);
      $query->bindParam(':aid',$adminid,PDO::PARAM_STR);
 $query->execute();
 
@@ -93,7 +93,7 @@ foreach($results as $row)
                       </div>
                       <div class="form-group">
                         <label for="exampleInputPassword4">Contact Number</label>
-                        <input type="text" name="mobilenumber" value="<?php  echo $row->MobileNumber;?>"  class="form-control" maxlength='10' required='true' pattern="[0-9]+">
+                        <input type="text" name="ContactNumber" value="<?php  echo $row->ContactNumber;?>"  class="form-control" maxlength='10' required='true' pattern="[0-9]+">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputCity1">Email</label>
@@ -101,7 +101,7 @@ foreach($results as $row)
                       </div>
                       <div class="form-group">
                         <label for="exampleInputCity1">Admin Registration Date</label>
-                         <input type="text" name="" value="<?php  echo $row->AdminRegdate;?>" readonly="" class="form-control">
+                         <input type="text" name="" value="<?php  echo $row->CreationTime;?>" readonly="" class="form-control">
                       </div><?php $cnt=$cnt+1;}} ?> 
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
                      

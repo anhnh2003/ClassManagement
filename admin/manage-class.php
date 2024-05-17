@@ -111,7 +111,7 @@ foreach($results as $row)
                             <td><?php echo htmlentities($cnt);?></td>
                             <td><?php  echo htmlentities($row->ClassName);?></td>
                             <td><?php  echo htmlentities($row->Section);?></td>
-                            <td><?php  echo htmlentities($row->CreationDate);?></td>
+                            <td><?php  echo htmlentities($row->CreationTime);?></td>
                             <td>
                               <div><a href="edit-class-detail.php?editid=<?php echo htmlentities ($row->ID);?>"><i class="icon-eye"></i></a>
                                                 || <a href="manage-class.php?delid=<?php echo ($row->ID);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
