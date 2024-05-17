@@ -66,7 +66,7 @@ CREATE TABLE `tblclass` (
 INSERT INTO `tblclass` (`ID`, `ClassName`, `CreationTime`, `Room`, `teacher_id`) VALUES
 (1, 'Soft Skills', '2022-01-13 10:42:14', 'D8-108', NULL),
 (2, 'Introduction to Programming', '2022-01-13 10:42:35', 'B1-403', NULL),
-(3, 'Cryptography', '2022-01-13 10:42:41', 'B1-203', NULL),
+(3, 'Cryptography', '2022-01-13 10:42:41', 'B1-203', NULL)
 
 -- --------------------------------------------------------
 
