@@ -49,6 +49,7 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
                     <a href="view-notice.php" target="_blank" class="btn btn-warning purchase-button btn-sm my-1 my-sm-0 ml-auto">View Notice</a>
                   
                   </span>
+                  
                 </div>
               </div>
             </div>
@@ -62,6 +63,7 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
       </div>
       <!-- page-body-wrapper ends -->
     </div>
+    
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="vendors/js/vendor.bundle.base.js"></script>

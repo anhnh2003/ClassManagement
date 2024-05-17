@@ -32,8 +32,7 @@ if(isset($_POST['login']))
 {
   if(password_verify($password, $result->Password)){
 
-$_SESSION['sturecmsstuid']=$result->StuID;
-$_SESSION['sturecmsuid']=$result->ID;
+$_SESSION['sturecmsuid']=$result->StuID;
 $_SESSION['stuclass']=$result->StudentClass;
 
 
