@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(0);
+//error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid']==0)) {
   header('location:logout.php');
@@ -72,7 +72,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
 $eid=$_GET['editid'];
-$sql="SELECT tblclass.ID,tblclass.ClassName,tblclass.Section,tblnotice.NoticeTitle,tblnotice.CreationTime,tblnotice.ClassId,tblnotice.NoticeMsg,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId where tblnotice.ID=:eid";
+$sql="SELECT tblclass.ID,tblclass.ClassName,tblnotice.NoticeTitle,tblnotice.CreationTime,tblnotice.ClassId,tblnotice.NoticeMsg,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId where tblnotice.ID=:eid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
 $query->execute();
@@ -90,10 +90,10 @@ foreach($results as $row)
                       <div class="form-group">
                         <label for="exampleInputEmail3">Notice For</label>
                         <select  name="classid" class="form-control">
-                          <option value="<?php  echo htmlentities($row->ClassId);?>"><?php  echo htmlentities($row->ClassName);?><?php  echo htmlentities($row->Section);?></option>
+                          <option value="<?php  echo htmlentities($row->ClassId);?>"><?php  echo htmlentities($row->ClassName);?></option>
                          <?php 
 
-$sql2 = "SELECT * from    tblclass ";
+$sql2 = "SELECT * from tblclass where ID !=".$row->ClassId;
 $query2 = $dbh -> prepare($sql2);
 $query2->execute();
 $result2=$query2->fetchAll(PDO::FETCH_OBJ);
@@ -101,7 +101,7 @@ $result2=$query2->fetchAll(PDO::FETCH_OBJ);
 foreach($result2 as $row1)
 {          
     ?>  
-<option value="<?php echo htmlentities($row1->ID);?>"><?php echo htmlentities($row1->ClassName);?> <?php echo htmlentities($row1->Section);?></option>
+<option value="<?php echo htmlentities($row1->ID);?>"><?php echo htmlentities($row1->ClassName);?></option>
  <?php } ?> 
                         </select>
                       </div>

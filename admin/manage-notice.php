@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(0);
+//error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid']==0)) {
   header('location:logout.php');
@@ -72,11 +72,10 @@ $query->execute();
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="font-weight-bold">S.No</th>
-                            <th class="font-weight-bold">Notice Title</th>
+                            <th class="font-weight-bold">No.</th>
+                            <th class="font-weight-bold">Title</th>
                             <th class="font-weight-bold">Class</th>
-                            <th class="font-weight-bold">Section</th>
-                            <th class="font-weight-bold">Notice Date</th>
+                            <th class="font-weight-bold">Date</th>
                             <th class="font-weight-bold">Action</th>
                             
                           </tr>
@@ -97,7 +96,7 @@ $query1->execute();
 $results1=$query1->fetchAll(PDO::FETCH_OBJ);
 $total_rows=$query1->rowCount();
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT tblclass.ID,tblclass.ClassName,tblclass.Section,tblnotice.NoticeTitle,tblnotice.CreationTime,tblnotice.ClassId,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId LIMIT $offset, $no_of_records_per_page";
+$sql="SELECT tblclass.ID,tblclass.ClassName,tblnotice.NoticeTitle,tblnotice.CreationTime,tblnotice.ClassId,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId ORDER BY tblnotice.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -112,11 +111,10 @@ foreach($results as $row)
                             <td><?php echo htmlentities($cnt);?></td>
                             <td><?php  echo htmlentities($row->NoticeTitle);?></td>
                             <td><?php  echo htmlentities($row->ClassName);?></td>
-                            <td><?php  echo htmlentities($row->Section);?></td>
                             <td><?php  echo htmlentities($row->CreationTime);?></td>
                             <td>
-                              <div><a href="edit-notice-detail.php?editid=<?php echo htmlentities ($row->ID);?>"><i class="icon-eye"></i></a>
-                                                || <a href="manage-notice.php?delid=<?php echo ($row->ID);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
+                              <div><a href="edit-notice-detail.php?editid=<?php echo htmlentities ($row->nid);?>"><i class="icon-eye"></i></a>
+                                                || <a href="manage-notice.php?delid=<?php echo ($row->nid);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
                             </td> 
                           </tr><?php $cnt=$cnt+1;}} ?>
                         </tbody>
