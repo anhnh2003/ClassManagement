@@ -97,7 +97,7 @@ $query1->execute();
 $results1=$query1->fetchAll(PDO::FETCH_OBJ);
 $total_rows=$query1->rowCount();
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT tblclass.*, tblteacher.TeacherName from tblclass, tblteacher where teacher_id=tblteacher.ID LIMIT $offset, $no_of_records_per_page";
+$sql="SELECT tblclass.*, tblteacher.TeacherName from tblclass, tblteacher where teacher_id=tblteacher.ID ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
