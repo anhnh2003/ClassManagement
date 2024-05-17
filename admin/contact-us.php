@@ -13,7 +13,7 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
 $pagedes=$_POST['pagedes'];
 $mobnum=$_POST['mobnum'];
 $email=$_POST['email'];
-$sql="update tblpage set PageTitle=:pagetitle,PageDescription=:pagedes,Email=:email,MobileNumber=:mobnum where  PageType='contactus'";
+$sql="update tblpage set PageTitle=:pagetitle,PageDescription=:pagedes,Email=:email,ContactNumber=:mobnum where  PageType='contactus'";
 $query=$dbh->prepare($sql);
 $query->bindParam(':pagetitle',$pagetitle,PDO::PARAM_STR);
 $query->bindParam(':pagedes',$pagedes,PDO::PARAM_STR);
@@ -100,7 +100,7 @@ foreach($results as $row)
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Mobile Number:</label>
-                        <input type="text" name="mobnum" id="mobnum" required="true" value="<?php  echo $row->MobileNumber;?>" class="form-control" maxlength="10" pattern="[0-9]+">
+                        <input type="text" name="mobnum" id="mobnum" required="true" value="<?php  echo $row->ContactNumber;?>" class="form-control" maxlength="10" pattern="[0-9]+">
                       </div>
                       <?php $cnt=$cnt+1;}} ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
