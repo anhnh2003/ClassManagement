@@ -47,7 +47,7 @@ if(isset($_POST['login']))
         // notify('error', "Captcha verification failed! Please try again.");
       }
     }
-    $sql ="SELECT ID, Password FROM tblteacher WHERE UserName=:username";
+    $sql ="SELECT TeaID,ID, Password FROM tblteacher WHERE UserName=:username";
     $query=$dbh->prepare($sql);
     $query-> bindParam(':username', $username, PDO::PARAM_STR);
     $query-> execute();
@@ -55,6 +55,7 @@ if(isset($_POST['login']))
     if($query->rowCount()>0)
 {
 if(password_verify($password, $result->Password)){
+$_SESSION['sturecmsstuid']=$result->TeaID;
 $_SESSION['sturecmsuid']=$result->ID;
 
 

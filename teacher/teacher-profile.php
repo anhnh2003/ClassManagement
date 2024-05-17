@@ -56,7 +56,7 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
                     <table border="1" class="table table-bordered mg-b-0">
                       <?php
 $sid=$_SESSION['sturecmsstuid'];
-$sql="SELECT tblteacher.TeacherName,tblteacher.Email,tblteacher.Gender,tblteacher.UserName,tblteacher.Password,tblteacher.CreationTime,tblclass.Section from tblteacher join tblclass on tblclass.ID=tblteacher.teacherClass where tblteacher.StuID=:sid";
+$sql="SELECT tblteacher.TeacherName,tblteacher.Email,tblteacher.Gender,tblteacher.UserName,tblteacher.Password,tblteacher.CreationTime,tblteacher.TeaID where tblteacher.TeaID=:sid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':sid',$sid,PDO::PARAM_STR);
 $query->execute();
@@ -72,45 +72,21 @@ foreach($results as $row)
 
     <tr class="table-info">
     <th>teacher Name</th>
-    <td><?php  echo $row->teacherName;?></td>
+    <td><?php  echo $row->TeacherName;?></td>
      <th>teacher Email</th>
     <td><?php  echo $row->Email;?></td>
   </tr>
   <tr class="table-warning">
-     <th>teacher Class</th>
-    <td><?php  echo $row->ClassName;?> <?php  echo $row->Section;?></td>
      <th>Gender</th>
     <td><?php  echo $row->Gender;?></td>
   </tr>
   <tr class="table-danger">
-    <th>Date of Birth</th>
-    <td><?php  echo $row->DOB;?></td>
     <th>teacher ID</th>
     <td><?php  echo $row->StuID;?></td>
   </tr>
-  <tr class="table-success">
-    <th>Father Name</th>
-    <td><?php  echo $row->FatherName;?></td>
-    <th>Mother Name</th>
-    <td><?php  echo $row->MotherName;?></td>
-  </tr>
-  <tr class="table-primary">
-    <th>Contact Number</th>
-    <td><?php  echo $row->ContactNumber;?></td>
-    <th>Altenate Number</th>
-    <td><?php  echo $row->AltenateNumber;?></td>
-  </tr>
   <tr class="table-progress">
-    <th>Address</th>
-    <td><?php  echo $row->Address;?></td>
     <th>User Name</th>
     <td><?php  echo $row->UserName;?></td>
-  </tr>
-   <tr class="table-info">
-    <th>Profile Pics</th>
-    <td><img src="../admin/images/<?php echo $row->Image;?>"></td>
-    <th>Date of Admission</th>
-    <td><?php  echo $row->CreationTime;?></td>
   </tr>
   <?php $cnt=$cnt+1;}} ?>
 </table>
