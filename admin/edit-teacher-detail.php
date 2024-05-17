@@ -74,7 +74,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
 $eid=$_GET['editid'];
-$sql="SELECT tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.Gender,tblteacher.TeaID,tblteacher.UserName,tblteacher.Password,tblteacher.Image,tblteacher.DateofAdmission from tblteacher where tblteacher.ID=:eid";
+$sql="SELECT tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.Gender,tblteacher.TeaID,tblteacher.UserName,tblteacher.Password,tblteacher.Image,tblteacher.CreationTime from tblteacher where tblteacher.ID=:eid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
 $query->execute();

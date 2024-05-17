@@ -70,7 +70,7 @@ foreach($results as $row)
 					</div>
 					<div class="col-md-4 contact-grid-middle">
 						<h3>Phones :</h3>
-						<p><?php  echo htmlentities($row->MobileNumber);?>
+						<p><?php  echo htmlentities($row->ContactNumber);?>
 						</p>
 					</div>
 					<div class="col-md-4 contact-grid-right">

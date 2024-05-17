@@ -30,7 +30,7 @@ foreach($results as $row)
           </p>
         </div>
         <div class="phone">
-          <p><?php  echo htmlentities($row->MobileNumber);?></p>
+          <p><?php  echo htmlentities($row->ContactNumber);?></p>
         </div>
       <?php $cnt=$cnt+1;}} ?></div>
       <div class="col-md-3 footer-right">

@@ -97,7 +97,7 @@ $query1->execute();
 $results1=$query1->fetchAll(PDO::FETCH_OBJ);
 $total_rows=$query1->rowCount();
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT tblteacher.TeaID,tblteacher.ID as tid,tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.DateofAdmission from tblteacher limit $offset, $no_of_records_per_page";
+$sql="SELECT tblteacher.TeaID,tblteacher.ID as tid,tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.CreationTime from tblteacher limit $offset, $no_of_records_per_page";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -113,7 +113,7 @@ foreach($results as $row)
                             <td><?php  echo htmlentities($row->TeaID);?></td>
                             <td><?php  echo htmlentities($row->TeacherName);?></td>
                             <td><?php  echo htmlentities($row->TeacherEmail);?></td>
-                            <td><?php  echo htmlentities($row->DateofAdmission);?></td>
+                            <td><?php  echo htmlentities($row->CreationTime);?></td>
                             <td>
                               <div><a href="edit-teacher-detail.php?editid=<?php echo htmlentities ($row->tid);?>"><i class="icon-eye"></i></a>
                                                 || <a href="manage-teacher.php?delid=<?php echo ($row->tid);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>
