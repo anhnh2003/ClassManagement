@@ -110,7 +110,7 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                               <td><?php echo htmlentities($row->ClassName); ?></td>
                               <td><?php echo htmlentities($row->JoinCode); ?></td>
                               <td>
-                                <div><a href="edit-class-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
+                                <div><a href="class-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
                               </td>
                             </tr>
                         <?php $cnt = $cnt + 1;
