@@ -33,19 +33,29 @@ if(isset($_POST['login']))
   if(password_verify($password, $result->Password)){
 $_SESSION['sturecmsstuid']=$result->StuID;
 $_SESSION['sturecmsuid']=$result->ID;
+// Generate a random session token
+$token = bin2hex(random_bytes(32));
+// Store the token in the database
+$insertTokenSQL = "INSERT INTO tbltoken (UserToken, UserID, role_id) VALUES (:token, :userid, 3)";
+$tokenQuery = $dbh->prepare($insertTokenSQL);
+$tokenQuery->bindParam(':token', $token, PDO::PARAM_STR);
+$tokenQuery->bindParam(':userid', $result->ID, PDO::PARAM_INT);
+$tokenQuery->execute();
+
+// Send the token to the client to save it
+setcookie("session_token", $token, time() + 7200); // 7200 seconds = 2 hours
 
 
-  if(!empty($_POST["remember"])) {
+if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("student_login",$_POST["stuid"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("uid",$result->ID,time()+7200);
 } else {
-if(isset($_COOKIE["user_login"])) {
-setcookie ("user_login","");
-if(isset($_COOKIE["userpassword"])) {
-setcookie ("userpassword","");
-        }
-      }
+if(isset($_COOKIE["uid"])) {
+setcookie ("uid",$result->ID,time()+9999);
+
+  }
 }
+
 $_SESSION['login']=$_POST['stuid'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 } } else{

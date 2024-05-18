@@ -12,7 +12,6 @@ ini_set('session.cookie_httponly', '1');
 ini_set('session.use_strict_mode', '1');
 // start session
 session_start();
-date_default_timezone_set('SYSTEM');
 // Set the desired time zone, e.g., 'UTC'
 // Regenerate session ID upon login
 if (!isset($_SESSION['initialized'])) {
@@ -24,10 +23,6 @@ if (!isset($_SESSION['initialized'])) {
 ini_set('session.gc_maxlifetime', 3600); // 1 hour
 // Implement HTTPS enforcement in .htaccess or web server configuration
 
-// Validate session ID (example pattern)
-if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', session_id())) {
-    // Invalid session ID, handle accordingly
-}
 error_reporting(0);
 include('includes/dbconnection.php');
 
@@ -61,9 +56,7 @@ $_SESSION['sturecmsaid']=$result->ID;
 
     // Generate a random session token
     $token = bin2hex(random_bytes(32));
-    // Calculate token expiration time (current time + 2 hours)
-    $tokenExpire = date('Y-m-d H:i:s', strtotime('+2 hours'));
-
+ 
     // Store the token in the database
     $insertTokenSQL = "INSERT INTO tbltoken (UserToken, UserID, role_id) VALUES (:token, :userid, 1)";
     $tokenQuery = $dbh->prepare($insertTokenSQL);
