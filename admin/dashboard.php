@@ -1,11 +1,30 @@
 <?php
 session_start();
-//error_reporting(0);
-include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsaid']==0)) {
-  header('location:logout.php');
-  } else{
-   
+
+// Check if the user is logged in and the session variables are set
+if (strlen($_SESSION['sturecmsaid']) == 0) {
+    header('location:logout.php');
+    exit();
+} else {
+    // Retrieve the 'uid' and 'session_token' cookies
+    $uid = $_COOKIE['uid'] ?? '';
+    $sessionToken = $_COOKIE['session_token'] ?? '';
+    include('includes/dbconnection.php');
+    // Prepare the SQL statement to select the token from the database
+    $sql = "SELECT UserToken FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND TokenExpire > NOW()";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':uid', $uid, PDO::PARAM_INT);
+    $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+    $query->execute();
+
+    // Check if the token exists and is not expired
+    if ($query->rowCount() == 0) {
+        // Token is invalid or expired, redirect to logout
+        //header('location:logout.php');
+        // echo alert to display the current time
+        echo "<script>alert('Current date and time: " . date("Y-m-d H:i:s") . "');</script>"; 
+    } else {
+      echo "<script>alert('Current date and time: " . date("Y-m-d H:i:s") . "');</script>"; 
   ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -171,4 +190,4 @@ $totstu=$query5->rowCount();
     <script src="js/dashboard.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php } } ?>

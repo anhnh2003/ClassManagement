@@ -12,6 +12,8 @@ ini_set('session.cookie_httponly', '1');
 ini_set('session.use_strict_mode', '1');
 // start session
 session_start();
+date_default_timezone_set('SYSTEM');
+// Set the desired time zone, e.g., 'UTC'
 // Regenerate session ID upon login
 if (!isset($_SESSION['initialized'])) {
     session_regenerate_id();
@@ -57,13 +59,29 @@ if(isset($_POST['login']))
 if(password_verify($password, $result->Password)){
 $_SESSION['sturecmsaid']=$result->ID;
 
+    // Generate a random session token
+    $token = bin2hex(random_bytes(32));
+    // Calculate token expiration time (current time + 2 hours)
+    $tokenExpire = date('Y-m-d H:i:s', strtotime('+2 hours'));
+
+    // Store the token in the database
+    $insertTokenSQL = "INSERT INTO tbltoken (UserToken, UserID, TokenExpire, role_id) VALUES (:token, :userid, :tokenExpire, 1)";
+    $tokenQuery = $dbh->prepare($insertTokenSQL);
+    $tokenQuery->bindParam(':token', $token, PDO::PARAM_STR);
+    $tokenQuery->bindParam(':userid', $result->ID, PDO::PARAM_INT);
+    $tokenQuery->bindParam(':tokenExpire', $tokenExpire, PDO::PARAM_STR);
+    $tokenQuery->execute();
+
+    // Send the token to the client to save it
+    setcookie("session_token", $token, time() + 7200); // 7200 seconds = 2 hours
+
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("admin_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
+setcookie ("uid",$result->ID,time()+7200);
 } else {
-if(isset($_COOKIE["admin_login"])) {
-setcookie ("admin_login","");
+if(isset($_COOKIE["uid"])) {
+setcookie ("uid",$result->ID,time()+999999);
 
       }
 }
