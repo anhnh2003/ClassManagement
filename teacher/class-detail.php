@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(0);
+//error_reporting(0);
 include('includes/dbconnection.php');
 
 function getRandomStringShuffle($length = 16)
@@ -18,24 +18,18 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
 } else {
   if (isset($_POST['submit'])) {
     // $teaid = $_POST['teaid'];
-    $cname = $_POST['cname'];
     $room = $_POST['room'];
-    // $eid = $_GET['editid'];
-
-    // $sql = "UPDATE tblclass SET ClassName=:cname, Room=:room, teacher_id=:teaid WHERE ID=:eid";
-    // $query = $dbh->prepare($sql);
-    // $query->bindParam(':cname', $cname, PDO::PARAM_STR);
-    // $query->bindParam(':room', $room, PDO::PARAM_STR);
-    // $query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
-    // $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    // $query->execute();
-    // echo '<script>alert("Class has been updated")</script>';
+    $eid = $_GET['editid'];
 
     // Generate QR code
     include_once('../phpqrcode/qrlib.php');
     $tempDir = 'temp/';
+<<<<<<< Updated upstream
     // $qrContent = "QR Code for attendance in class: " . $cname . " in room: " . $room . " with join code: " . $joincode . " by teacher: " . $row->TeacherName . " at " . date('Y-m-d H:i:s');
     $qrContent = getRandomStringShuffle();
+=======
+    $qrContent = "hello";
+>>>>>>> Stashed changes
     $qrImgName = "qrImg.png";
     $pngAbsoluteFilePath = $tempDir.$qrImgName;
     QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 10, 10);
@@ -108,9 +102,7 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
           <div class="col-12 grid-margin stretch-card">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title" style="text-align: center;">Manage Class</h4>
-                <form class="forms-sample" method="post">
-                  <?php
+              <?php
                   $uid = $_SESSION['sturecmsuid'];
                   $eid = $_GET['editid'];
                   $sql = "SELECT * FROM tblclass, tblteacher WHERE teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=$eid";
@@ -122,35 +114,19 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                   if ($query->rowCount() > 0) {
                     foreach ($results as $row) {
                       ?>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Class Name</label>
-                        <input type="text" name="cname"
-                             value="<?php echo htmlentities($row->ClassName); ?>"
-                             class="form-control" required='true'>
-                      </div>
+                <h4 class="card-title" style="text-align: center;"> <?php echo htmlentities($row->ClassName); ?> </h4>
+                <form class="forms-sample" method="post">
                       <div class="form-group">
                         <label for="exampleInputName1">Room</label>
                         <input type="text" name="room"
                              value="<?php echo htmlentities($row->Room); ?>"
-                             class="form-control" required='true'>
+                             class="form-control" required='true', readonly>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputEmail3">Teacher</label>
-                        <select name="teaid" class="form-control" required='true'>
-                          <option
-                              value="<?php echo htmlentities($row->teacher_id); ?>"><?php echo htmlentities($row->TeacherName); ?></option>
-                          <?php
-                          $sql2 = "SELECT ID, TeacherName FROM tblteacher WHERE ID != " . $row->teacher_id;
-                          $query2 = $dbh->prepare($sql2);
-                          $query2->execute();
-                          $result2 = $query2->fetchAll(PDO::FETCH_OBJ);
-
-                          foreach ($result2 as $row1) {
-                            ?>
-                            <option
-                                value="<?php echo htmlentities($row1->ID); ?>"><?php echo htmlentities($row1->TeacherName); ?> </option>
-                          <?php } ?>
-                        </select>
+                        <label for="exampleInputName1">Teacher</label>
+                        <input type="text" name="teacher"
+                             value="<?php echo htmlentities($row->TeacherName); ?>"
+                             class="form-control" required='true', readonly>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Join Code</label>
