@@ -16,30 +16,22 @@ function getRandomStringShuffle($length = 43)
 if (strlen($_SESSION['sturecmsuid']) == 0) {
   header('location:logout.php');
 } else {
-  if (isset($_POST['submit'])) {
-    // $teaid = $_POST['teaid'];
-    $room = $_POST['room'];
-    $eid = $_GET['editid'];
-
-    // $sql = "UPDATE tblclass SET ClassName=:cname, Room=:room, teacher_id=:teaid WHERE ID=:eid";
-    // $query = $dbh->prepare($sql);
-    // $query->bindParam(':cname', $cname, PDO::PARAM_STR);
-    // $query->bindParam(':room', $room, PDO::PARAM_STR);
-    // $query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
-    // $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    // $query->execute();
-    // echo '<script>alert("Class has been updated")</script>';
+  if (isset($_POST['genqr'])) {
+    $aid = $_POST['attendance_id'];
 
     // Generate QR code
     include_once('../phpqrcode/qrlib.php');
     $tempDir = 'temp/';
-    // $qrContent = "QR Code for attendance in class: " . $cname . " in room: " . $room . " with join code: " . $joincode . " by teacher: " . $row->TeacherName . " at " . date('Y-m-d H:i:s');
+
     $qrContent = getRandomStringShuffle();
     $qrImgName = "qrImg.png";
-    $sql = "insert into tblattendance (class_id, secret) values (:eid, :qrContent)";
+    date_default_timezone_set('Asia/Ho_Chi_Minh');
+    $gentime = date('Y-m-d H:i:s');
+    $sql = "UPDATE tblattendance SET Secret=:qrContent, LastGeneratedTime=:gentime WHERE ID=:aid";
     $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->bindParam(':aid', $aid, PDO::PARAM_STR);
     $query->bindParam(':qrContent', $qrContent, PDO::PARAM_STR);
+    $query->bindParam(':gentime', $gentime, PDO::PARAM_STR);
     $query->execute();
     $pngAbsoluteFilePath = $tempDir.$qrImgName;
     QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 10, 10);
@@ -67,6 +59,24 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     $query->execute();
     echo '<script>alert("Join Code has been changed")</script>';
   }
+
+  if (isset($_POST['new_attendance'])) {
+    $eid = $_GET['editid'];
+    $sql = "insert into tblattendance (class_id) values (:eid)";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->execute();
+    echo '<script>alert("New attendance record has been created")</script>';
+}
+
+if (isset($_POST['delete_attendance'])) {
+  $aid = $_POST['attendance_id'];
+  $sql = "delete from tblattendance where ID=:aid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':aid', $aid, PDO::PARAM_STR);
+  $query->execute();
+  echo '<script>alert("Attendance record has been deleted")</script>';
+}
 }
 ?>
 
@@ -147,14 +157,129 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                       <?php $cnt = $cnt + 1;
                     }
                   } ?>
-                  <button type="submit" class="btn btn-primary mr-2" name="submit">Create QR Code</button>
+                  
                   <button type="submit" class="btn btn-primary mr-2" name="regencode">Change Code
                   </button>
                 </form>
               </div>
             </div>
+            
           </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-sm-flex align-items-center mb-4">
+                    <h4 class="card-title mb-sm-0">Attendances</h4>
+                    <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> </a>
+                  </div>
+                  <div class="table-responsive border rounded p-1">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="font-weight-bold">No.</th>
+                          <th class="font-weight-bold">Time</th>
+                          <th class="font-weight-bold">Student</th>
+                          <th class="font-weight-bold"></th>
+                          <th class="font-weight-bold">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        if (isset($_GET['pageno'])) {
+                          $pageno = $_GET['pageno'];
+                        } else {
+                          $pageno = 1;
+                        }
+                        // Formula for pagination
+                        $eid = $_GET['editid'];
+                        $no_of_records_per_page = 15;
+                        $offset = ($pageno - 1) * $no_of_records_per_page;
+                        $ret = "SELECT ID FROM tblclass";
+                        $query1 = $dbh->prepare($ret);
+                        $query1->execute();
+                        $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                        $total_rows = $query1->rowCount();
+                        $total_pages = ceil($total_rows / $no_of_records_per_page);
+                        $sql = "SELECT tblattendance.* from tblattendance where class_id=:eid ORDER BY CreationTime ASC LIMIT $offset, $no_of_records_per_page";
+                        $query = $dbh->prepare($sql);
+                        $query->bindParam(':eid',$eid,PDO::PARAM_STR);
+                        $query->execute();
+                        $results = $query->fetchAll(PDO::FETCH_OBJ);
+
+                        $cnt = 1;
+                        if ($query->rowCount() > 0) {
+                          foreach ($results as $row) {
+                        ?>
+                            <tr>
+                              <td><?php echo htmlentities($cnt); ?></td>
+                              <td><?php echo htmlentities($row->CreationTime); ?></td>
+                              <td>
+                                <?php
+                                $aid = $row->ID;
+                                $sql1 = "SELECT * from tblstudent_attendance where attendance_id=:aid";
+                                $query1 = $dbh->prepare($sql1);
+                                $query1->bindParam(':aid', $aid, PDO::PARAM_STR);
+                                $query1->execute();
+                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                                $totalstudent = $query1->rowCount();
+                                echo htmlentities($totalstudent);
+                                ?>
+                              </td>
+                              <td>
+                                <td >
+                                  <form class="forms-sample" method="post">
+                                    <input type="hidden" name="attendance_id" value="<?php echo htmlentities($aid); ?>">
+                                    <button type="submit" class="btn btn-sm btn-primary mr-2" style="background-color: gray; width: 100pt;" name="genqr">Gen QR</button>
+                                  </form>
+                                  <form class="forms-sample" method="post">
+                                    <input type="hidden" name="attendance_id" value="<?php echo htmlentities($aid); ?>">
+                                    <button type="submit" class="btn btn-sm btn-primary mr-2" name="delete_attendance" style="background-color: red; width: 100pt;">Delete</button>
+                                  </form>
+                                </td>
+                              </td>
+                            </tr>
+                        <?php $cnt = $cnt + 1;
+                          }
+                        } ?>
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <div align="left">
+                    <ul class="pagination">
+                      <li><a href="?pageno=1"><strong>First></strong></a></li>
+                      <li class="<?php if ($pageno <= 1) {
+                              echo 'disabled';
+                            } ?>">
+                        <a href="<?php if ($pageno <= 1) {
+                                echo '#';
+                              } else {
+                                echo "?pageno=" . ($pageno - 1);
+                              } ?>"><strong style="padding-left: 10px">Prev></strong></a>
+                      </li>
+                      <li class="<?php if ($pageno >= $total_pages) {
+                              echo 'disabled';
+                            } ?>">
+                        <a href="<?php if ($pageno >= $total_pages) {
+                                echo '#';
+                              } else {
+                                echo "?pageno=" . ($pageno + 1);
+                              } ?>"><strong style="padding-left: 10px">Next></strong></a>
+                      </li>
+                      <li><a href="?pageno=<?php echo $total_pages; ?>"><strong style="padding-left: 10px">Last</strong></a></li>
+                    </ul>
+                  </div>
+                  <form class="forms-sample" method="post">
+                  <button type="submit" class="btn btn-primary mr-2" name="new_attendance">New Attendance record</button>
+                  </form>
+
+                    
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
       <!-- content-wrapper ends -->
       <!-- partial:partials/_footer.html -->
