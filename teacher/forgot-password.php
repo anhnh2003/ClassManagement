@@ -1,5 +1,6 @@
 <?php
 session_start();
+error_reporting(0);
 include('includes/dbconnection.php');
 //require("../lib/SpeedSMSAPI_PHP/SpeedSMSAPI.php");
 
@@ -22,7 +23,7 @@ $valueConfirmPassword = "";
 
 if (isset($_POST['submit'])) {
     $email = $_POST['email'];
-    $sql = "SELECT ContactNumber, Email FROM tblteacher WHERE Email=:email";
+    $sql = "SELECT ContactNumber, Email, TeacherName FROM tblteacher WHERE Email=:email";
     $query = $dbh->prepare($sql);
     $query->bindParam(':email', $email, PDO::PARAM_STR);
     $query->execute();
@@ -70,15 +71,15 @@ if (isset($_POST['submit'])) {
                 $mail->SMTPSecure = 'tls';
                 $mail->Host = 'smtp.gmail.com';
                 $mail->Post = 587;
-                $mail->isHTML(false);
+                $mail->isHTML(true);
                 $mail->Username = 'nguyenquochuy712@gmail.com';
                 $mail->Password = 'cthcwberksoutoss';
                 
                 $mail->setFrom('nguyenquochuy712@gmail.com');
-                $mail->addAddress($email, 'Huy Nguyen'); 
+                $mail->addAddress($email, 'Teacher'); 
                 
-                $mail->Subject = 'Student Management System - Reset Password OTP';
-                $mail->Body = "Your OTP code to Reset Password is: " . $genotp;
+                $mail->Subject = 'Reset Password OTP - Student Management System';
+                $mail->Body = '<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2"> <div style="margin:50px auto;width:70%;padding:20px 0"> <div style="border-bottom:1px solid #eee"> <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Student Management System</a> </div> <p style="font-size:1.1em">Hi, '. $results[0]->TeacherName .'</p> <p>Use the following OTP to complete your Reset Password procedures.</p> <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">'. $genotp .'</h2> <hr style="border:none;border-top:1px solid #eee" /> <p style="font-size:0.9em;"><em>If this is not you, please do not share this OTP.</em></p> </div> </div>';
                 if (!$mail->send()) {
                     echo "<script>alert('" . $mail->ErrorInfo ."');</script>";
                 }
