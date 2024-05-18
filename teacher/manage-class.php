@@ -2,10 +2,29 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
+if (strlen($_SESSION['sturecmsstuid']) == 0) {
 
-if (strlen($_SESSION['sturecmsuid']) == 0) {
   header('location:logout.php');
+  exit();
 } else {
+  // Retrieve the 'uid' and 'session_token' cookies
+  $uid = $_COOKIE['uid'] ?? '';
+  $sessionToken = $_COOKIE['session_token'] ?? '';
+  // Prepare the SQL statement to select the token from the database
+  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
+  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+  $query->execute();
+  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
+  // Check if the token exists and is not expired
+  if (($query->rowCount() == 0) || ($role_id != 2)) {
+      // Token is invalid or expired, redirect to logout
+      header('location:logout.php');
+      exit();
+
+  } else {
+    // Token is valid, continue
   // Code for deletion
   if (isset($_GET['delid'])) {
     $rid = intval($_GET['delid']);
@@ -16,9 +35,8 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     echo "<script>alert('Data deleted');</script>";
     echo "<script>window.location.href = 'manage-class.php'</script>";
   }
-}
+  }}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -110,7 +128,24 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                               <td><?php echo htmlentities($row->ClassName); ?></td>
                               <td><?php echo htmlentities($row->JoinCode); ?></td>
                               <td>
-                                <div><a href="edit-class-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
+                              <div>
+    <button class="classdetail" onclick="displayClassDetails()">Display Class Details</button>
+</div>
+
+<script>
+    function displayClassDetails() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "get-class-detail.php", true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var classDetails = JSON.parse(xhr.responseText);
+                // Now you can use classDetails to display the class details
+                console.log(classDetails);
+            }
+        }
+        xhr.send();
+    }
+</script>
                               </td>
                             </tr>
                         <?php $cnt = $cnt + 1;
