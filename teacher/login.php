@@ -31,16 +31,18 @@ if(isset($_POST['login']))
     $password=$_POST['password'];
     $captcha = $_POST['g-recaptcha-response'];
     if (!$captcha){
-      // notify('error', "Please check the captcha form");
-      return;
+      $_SESSION['error'] = "Please check the captcha form.";
+      header('Location: login.php');
+      exit();
     }
     else {
       $secret = '6LctYtwpAAAAAEP0w5UdNiqxoKbvdQo8WfQI-QtG';
       $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha);
       $response_data = json_decode($verify_response);
       if (!$response_data->success) {
-        return;
-        // notify('error', "Captcha verification failed! Please try again.");
+        $_SESSION['error'] = "Invalid Captcha. Please try again.";
+        header('Location: login.php');
+        exit();
       }
     }
     $sql ="SELECT TeaID,ID, Password FROM tblteacher WHERE UserName=:username";
@@ -80,11 +82,13 @@ $_SESSION['login']=$_POST['username'];
 
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 } else { 
-  // echo $result->ID;
-  echo "<script>alert('Invalid Details');</script>";
-
+  $_SESSION['error'] = "Wrong username or password.";
+  header('Location: login.php');
+  exit();
 } }else{
-echo "<script>alert('Invalid Details');</script>";
+  $_SESSION['error'] = "Wrong username or password.";
+  header('Location: login.php');
+  exit();
 }
 }
 
@@ -128,6 +132,12 @@ echo "<script>alert('Invalid Details');</script>";
                     <input type="password" class="form-control form-control-lg" placeholder="enter your password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                   </div>
                   <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
+                  <?php
+              if (isset($_SESSION['error'])) {
+                  echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
+                  unset($_SESSION['error']);
+              }
+              ?>
                   <div class="mt-3">
                     <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
                   </div>
