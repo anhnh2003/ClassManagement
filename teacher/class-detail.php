@@ -3,6 +3,16 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
+function getRandomStringShuffle($length = 16)
+{
+    $stringSpace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $stringLength = strlen($stringSpace);
+    $string = str_repeat($stringSpace, ceil($length / $stringLength));
+    $shuffledString = str_shuffle($string);
+    $randomString = substr($shuffledString, 1, $length);
+    return $randomString;
+}
+
 if (strlen($_SESSION['sturecmsuid']) == 0) {
   header('location:logout.php');
 } else {
@@ -24,12 +34,16 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     // Generate QR code
     include_once('../phpqrcode/qrlib.php');
     $tempDir = 'temp/';
-    $qrContent = "QR Code for attendance in class: " . $cname . " in room: " . $room . " with join code: " . $joincode . " by teacher: " . $row->TeacherName . " at " . date('Y-m-d H:i:s');
+    // $qrContent = "QR Code for attendance in class: " . $cname . " in room: " . $room . " with join code: " . $joincode . " by teacher: " . $row->TeacherName . " at " . date('Y-m-d H:i:s');
+    $qrContent = getRandomStringShuffle();
     $qrImgName = "qrImg.png";
     $pngAbsoluteFilePath = $tempDir.$qrImgName;
     QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 10, 10);
     // echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>";
     // echo "<img src='".$pngAbsoluteFilePath."'>";
+    // echo "</div>";
+    // echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>";
+    // echo "<br>Using shuffle(): " . getRandomStringShuffle();
     // echo "</div>";
     echo "<script>window.open('".$pngAbsoluteFilePath."');</script>";
   }
