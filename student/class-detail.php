@@ -6,9 +6,19 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsuid']) == 0) {
   header('location:logout.php');
 } else {
+  $eid = $_GET['editid'];
+  $uid = $_SESSION['sturecmsuid'];
+  $sql = "SELECT * FROM tblstudent_class WHERE student_id=:uid AND class_id=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid',$eid,PDO::PARAM_STR);
+  $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+  $query->execute();
+  if ($query->rowCount() == 0) {
+    header('location:manage-class.php');
+    exit();
+  }
+  
   if (isset($_POST['leave'])) {
-    $eid = $_GET['editid'];
-    $uid = $_SESSION['sturecmsuid'];
     $sql = "DELETE FROM tblstudent_class WHERE student_id=:uid AND class_id=:eid";
     $query = $dbh->prepare($sql);
     $query->bindParam(':eid',$eid,PDO::PARAM_STR);

@@ -16,6 +16,19 @@ function getRandomStringShuffle($length = 43)
 if (strlen($_SESSION['sturecmsuid']) == 0) {
   header('location:logout.php');
 } else {
+  $uid = $_SESSION['sturecmsuid'];
+  $eid = $_GET['editid'];
+  $sql = "SELECT * FROM tblclass, tblteacher WHERE teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+  $query->bindParam(':eid',$eid,PDO::PARAM_STR);
+  $query->execute();
+  $results = $query->fetchAll(PDO::FETCH_OBJ);
+  if ($query->rowCount() == 0) {
+    header('location:manage-class.php');
+    exit();
+  }
+  
   if (isset($_POST['genqr'])) {
     $aid = $_POST['attendance_id'];
 
@@ -67,16 +80,16 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     $query->bindParam(':eid', $eid, PDO::PARAM_STR);
     $query->execute();
     echo '<script>alert("New attendance record has been created")</script>';
-}
+  }
 
-if (isset($_POST['delete_attendance'])) {
-  $aid = $_POST['attendance_id'];
-  $sql = "delete from tblattendance where ID=:aid";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':aid', $aid, PDO::PARAM_STR);
-  $query->execute();
-  echo '<script>alert("Attendance record has been deleted")</script>';
-}
+  if (isset($_POST['delete_attendance'])) {
+    $aid = $_POST['attendance_id'];
+    $sql = "delete from tblattendance where ID=:aid";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':aid', $aid, PDO::PARAM_STR);
+    $query->execute();
+    echo '<script>alert("Attendance record has been deleted")</script>';
+  }
 }
 ?>
 
