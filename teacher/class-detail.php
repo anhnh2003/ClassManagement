@@ -194,15 +194,7 @@ if (isset($_POST['delete_attendance'])) {
                         }
                         // Formula for pagination
                         $eid = $_GET['editid'];
-                        $no_of_records_per_page = 15;
-                        $offset = ($pageno - 1) * $no_of_records_per_page;
-                        $ret = "SELECT ID FROM tblclass";
-                        $query1 = $dbh->prepare($ret);
-                        $query1->execute();
-                        $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
-                        $total_rows = $query1->rowCount();
-                        $total_pages = ceil($total_rows / $no_of_records_per_page);
-                        $sql = "SELECT tblattendance.* from tblattendance where class_id=:eid ORDER BY CreationTime ASC LIMIT $offset, $no_of_records_per_page";
+                        $sql = "SELECT tblattendance.* from tblattendance where class_id=:eid ORDER BY CreationTime ASC";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':eid',$eid,PDO::PARAM_STR);
                         $query->execute();
@@ -247,33 +239,11 @@ if (isset($_POST['delete_attendance'])) {
                     </table>
                   </div>
                   
-                  <div align="left">
-                    <ul class="pagination">
-                      <li><a href="?pageno=1"><strong>First></strong></a></li>
-                      <li class="<?php if ($pageno <= 1) {
-                              echo 'disabled';
-                            } ?>">
-                        <a href="<?php if ($pageno <= 1) {
-                                echo '#';
-                              } else {
-                                echo "?pageno=" . ($pageno - 1);
-                              } ?>"><strong style="padding-left: 10px">Prev></strong></a>
-                      </li>
-                      <li class="<?php if ($pageno >= $total_pages) {
-                              echo 'disabled';
-                            } ?>">
-                        <a href="<?php if ($pageno >= $total_pages) {
-                                echo '#';
-                              } else {
-                                echo "?pageno=" . ($pageno + 1);
-                              } ?>"><strong style="padding-left: 10px">Next></strong></a>
-                      </li>
-                      <li><a href="?pageno=<?php echo $total_pages; ?>"><strong style="padding-left: 10px">Last</strong></a></li>
-                    </ul>
-                  </div>
-                  <form class="forms-sample" method="post">
+                    <div class="mt-4"></div>
+                    <form class="forms-sample" method="post">
                   <button type="submit" class="btn btn-primary mr-2" name="new_attendance">New Attendance record</button>
                   </form>
+                    
 
                     
                 </div>
@@ -281,9 +251,88 @@ if (isset($_POST['delete_attendance'])) {
             </div>
           </div>
       </div>
+        <div class="row" style="margin-left: 20px; ">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+          <div class="card-body">
+            <div class="d-sm-flex align-items-center mb-4">
+              <h4 class="card-title mb-sm-0">Tests</h4>
+              <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> </a>
+            </div>
+            <div class="table-responsive border rounded p-1">
+              <table class="table">
+                <thead>
+            <tr>
+              <th class="font-weight-bold">No.</th>
+              <th class="font-weight-bold">Title</th>
+              <th class="font-weight-bold">Start Time</th>
+              <th class="font-weight-bold">End Time</th>
+              <th class="font-weight-bold">Submitted</th>
+              <th class="font-weight-bold">Average Score</th>
+            </tr>
+                </thead>
+                <tbody>
+            <?php
+
+            $sql = "SELECT tbltest.* from tbltest where class_id=:eid ORDER BY StartTime DESC";
+            $query = $dbh->prepare($sql);
+            $query->bindParam(':eid',$eid,PDO::PARAM_STR);
+            $query->execute();
+            $results = $query->fetchAll(PDO::FETCH_OBJ);
+
+            $cnt = 1;
+            if ($query->rowCount() > 0) {
+              foreach ($results as $row) {
+            ?>
+                <tr>
+                  <td><?php echo htmlentities($cnt); ?></td>
+                  <td><?php echo htmlentities($row->TestName); ?></td>
+                  <td><?php echo htmlentities($row->StartTime); ?></td>
+                  <td><?php echo htmlentities($row->EndTime); ?></td>
+                  <td>
+              <?php
+              $tid = $row->ID;
+              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+              $query1 = $dbh->prepare($sql1);
+              $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
+              $query1->execute();
+              $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+              $totalstudent = $query1->rowCount();
+              echo htmlentities($totalstudent);
+              ?>
+                  </td>
+                  <td>
+                  <?php
+                  $tid = $row->ID;
+                  $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                  $query1 = $dbh->prepare($sql1);
+                  $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
+                  $query1->execute();
+                  $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                  if ($results1[0]->average != Null) {
+                    echo htmlentities($results1[0]->average);
+                  } else {
+                    echo "N/A";
+                  }
+              ?>
+                  </td>
+                </tr>
+            <?php $cnt = $cnt + 1;
+              }
+            } ?>
+                </tbody>
+              </table>
+            </div>
+
+              
+          </div>
+              </div>
+            </div>
+          </div>
+            </div>
       <!-- content-wrapper ends -->
       <!-- partial:partials/_footer.html -->
-      <?php include_once('includes/footer.php'); ?>
+
       <!-- partial -->
     </div>
     <!-- main-panel ends -->
