@@ -3,7 +3,7 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
-function getRandomStringShuffle($length = 16)
+function getRandomStringShuffle($length = 43)
 {
     $stringSpace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $stringLength = strlen($stringSpace);
@@ -20,7 +20,7 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     // $teaid = $_POST['teaid'];
     $cname = $_POST['cname'];
     $room = $_POST['room'];
-    // $eid = $_GET['editid'];
+    $eid = $_GET['editid'];
 
     // $sql = "UPDATE tblclass SET ClassName=:cname, Room=:room, teacher_id=:teaid WHERE ID=:eid";
     // $query = $dbh->prepare($sql);
@@ -37,6 +37,11 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     // $qrContent = "QR Code for attendance in class: " . $cname . " in room: " . $room . " with join code: " . $joincode . " by teacher: " . $row->TeacherName . " at " . date('Y-m-d H:i:s');
     $qrContent = getRandomStringShuffle();
     $qrImgName = "qrImg.png";
+    $sql = "insert into tblattendance (class_id, secret) values (:eid, :qrContent)";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->bindParam(':qrContent', $qrContent, PDO::PARAM_STR);
+    $query->execute();
     $pngAbsoluteFilePath = $tempDir.$qrImgName;
     QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 10, 10);
     // echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>";
