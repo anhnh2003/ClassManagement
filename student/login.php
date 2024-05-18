@@ -2,6 +2,8 @@
 session_start();
 include('includes/dbconnection.php');
 
+
+
 // function notify($status, $msg){
 //   return die('<script type="text/javascript">Swal.fire("Error", "'.$msg.'", "'.$status.'"); setTimeout(function(){location.href="/classmanagement/student/login.php";},2000);</script>');
 //   }
@@ -50,10 +52,10 @@ if(!empty($_POST["remember"])) {
 //COOKIES for username
 setcookie ("uid",$result->ID,time()+7200);
 } else {
-if(isset($_COOKIE["uid"])) {
+
 setcookie ("uid",$result->ID,time()+9999);
 
-  }
+  
 }
 
 $_SESSION['login']=$_POST['stuid'];

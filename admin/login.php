@@ -72,10 +72,10 @@ $_SESSION['sturecmsaid']=$result->ID;
 //COOKIES for username
 setcookie ("uid",$result->ID,time()+7200);
 } else {
-if(isset($_COOKIE["uid"])) {
+
 setcookie ("uid",$result->ID,time()+9999);
 
-      }
+     
 }
 $_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
