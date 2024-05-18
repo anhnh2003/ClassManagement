@@ -174,19 +174,18 @@ CREATE TABLE `tblstudent` (
   `Password` varchar(200) DEFAULT NULL,
   `CreationTime` timestamp NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL DEFAULT 3,
-  `StuID` varchar(10) DEFAULT NULL,
-  `SaltPassword` varchar(255) DEFAULT NULL
+  `StuID` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblstudent`
 --
 
-INSERT INTO `tblstudent` (`ID`, `StudentName`, `Email`, `Gender`, `ContactNumber`, `UserName`, `Password`, `CreationTime`, `role_id`, `StuID`, `SaltPassword`) VALUES
-(30000, 'Nguyen A', 'nguyena@gmail.com', 'Male', NULL, 'nguyena', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', '2022-01-13 14:09:04', 3, '20210001', NULL),
-(30001, 'Tran B', 'tranb@gmail.com', 'Male', NULL, 'tranb', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', '2022-01-16 06:23:33', 3, '20220001', NULL),
-(30002, 'Nguyen C', 'nguyenc@gmali.com', 'Female', NULL, 'nguyenc', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', '2022-01-19 15:24:52', 3, '20230001', NULL),
-(30003, 'Nguyen Quoc Huy', 'nguyenquochuy712@gmail.com', 'Male', 343868519, 'nguyenhuy', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', '2024-05-15 04:14:35', 3, '20210427', NULL);
+INSERT INTO `tblstudent` (`ID`, `StudentName`, `Email`, `Gender`, `ContactNumber`, `UserName`, `Password`, `CreationTime`, `role_id`, `StuID`) VALUES
+(30000, 'Nguyen A', 'nguyena@gmail.com', 'Male', NULL, 'nguyena', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', '2022-01-13 14:09:04', 3, '20210001'),
+(30001, 'Tran B', 'tranb@gmail.com', 'Male', NULL, 'tranb', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', '2022-01-16 06:23:33', 3, '20220001'),
+(30002, 'Nguyen C', 'nguyenc@gmali.com', 'Female', NULL, 'nguyenc', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', '2022-01-19 15:24:52', 3, '20230001'),
+(30003, 'Nguyen Quoc Huy', 'nguyenquochuy712@gmail.com', 'Male', 343868519, 'nguyenhuy', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', '2024-05-15 04:14:35', 3, '20210427');
 
 -- --------------------------------------------------------
 
@@ -238,9 +237,9 @@ CREATE TABLE `tblteacher` (
 --
 
 INSERT INTO `tblteacher` (`ID`, `TeacherName`, `Email`, `Gender`, `Username`, `Password`, `ContactNumber`, `CreationTime`, `role_id`, `TeaID`) VALUES
-(20000, 'Nguyen Anh', 'a@gmail.com', 'Male', 'anh', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', NULL, '2024-05-15 03:18:58', 2, '20000'),
-(20001, 'Nguyen Be', 'b@gmail.com', 'Male', 'be', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', NULL, '2024-05-16 02:35:52', 2, '20001'),
-(20002, 'Duong Nam', 'c@gmail.com', 'Male', 'nam', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', 113, '2024-05-18 01:05:42', 2, '20002');
+(20000, 'Nguyen Anh', 'a@gmail.com', 'Male', 'anh', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', NULL, '2024-05-15 03:18:58', 2, '20000'),
+(20001, 'Nguyen Be', 'b@gmail.com', 'Male', 'be', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', NULL, '2024-05-16 02:35:52', 2, '20001'),
+(20002, 'Duong Nam', 'c@gmail.com', 'Male', 'nam', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', 113, '2024-05-18 01:05:42', 2, '20002');
 
 -- --------------------------------------------------------
 
