@@ -2,31 +2,54 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
+error_reporting(0);
+if (strlen($_SESSION['sturecmsstuid']) == 0) {
 
-if (strlen($_SESSION['sturecmsuid']==0)) {
   header('location:logout.php');
-  } else{
+  exit();
+} else {
+  // Retrieve the 'uid' and 'session_token' cookies
+  $uid = $_COOKIE['uid'] ?? '';
+  $sessionToken = $_COOKIE['session_token'] ?? '';
+  // Prepare the SQL statement to select the token from the database
+  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
+  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+  $query->execute();
+  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
+  // Check if the token exists and is not expired
+  if (($query->rowCount() == 0) || ($role_id != 3)) {
+      // Token is invalid or expired, redirect to logout
+      header('location:logout.php');
+      exit();
+
+  } else {
+    // Token is valid, continue
 if(isset($_POST['submit']))
 {
-$sid=$_SESSION['sturecmsstuid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$sql ="SELECT StuID FROM tblstudent WHERE StuID=:sid and Password=:cpassword";
+$uid=$_COOKIE['uid'] ?? '';
+$cpassword=($_POST['currentpassword']);
+$newpassword=($_POST['newpassword']);
+$sql ="SELECT ID, Password FROM tblstudent WHERE ID=:uid";
 $query= $dbh -> prepare($sql);
-$query-> bindParam(':sid', $sid, PDO::PARAM_STR);
-$query-> bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
+$query-> bindParam(':uid', $uid, PDO::PARAM_STR);
 $query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
-
-if($query -> rowCount() > 0)
+$result = $query -> fetch(PDO::FETCH_OBJ);
+if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->Password)))
 {
-$con="update tblstudent set Password=:newpassword where StuID=:sid";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':sid', $sid, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
+//insert value in the Password col, the value is the hashed password of the Password col
+$password = password_hash($newpassword, PASSWORD_DEFAULT);
+$chngpwd2 = $dbh->prepare("UPDATE tblstudent SET Password=:password where ID=:uid");
+$chngpwd2-> bindParam(':uid', $uid, PDO::PARAM_STR);
+$chngpwd2-> bindParam(':password', $password, PDO::PARAM_STR);
+$chngpwd2->execute();
 
-echo '<script>alert("Your password successully changed")</script>';
+//echo the alert message that show the uid
+echo '<script>alert("Your password successfully changed.")</script>';
+
+
+//echo '<script>alert("Your password successully changed")</script>';
 } else {
 echo '<script>alert("Your current password is wrong")</script>';
 
@@ -100,7 +123,7 @@ return true;
                       </div>
                       <div class="form-group">
                         <label for="exampleInputEmail3">New Password</label>
-                        <input type="password" name="newpassword"  class="form-control" required="true">
+                        <input type="password" name="newpassword" id="newpassword" class="form-control" required="true">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputPassword4">Confirm Password</label>
@@ -141,4 +164,4 @@ return true;
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php }  ?>
+</html><?php }  }?>
