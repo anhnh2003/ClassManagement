@@ -22,10 +22,6 @@ if (!isset($_SESSION['initialized'])) {
 ini_set('session.gc_maxlifetime', 3600); // 1 hour
 // Implement HTTPS enforcement in .htaccess or web server configuration
 
-// Validate session ID (example pattern)
-if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', session_id())) {
-    // Invalid session ID, handle accordingly
-}
 error_reporting(0);
 include('includes/dbconnection.php');
 
