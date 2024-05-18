@@ -23,7 +23,7 @@ if(isset($_POST['login']))
         // notify('error', "Captcha verification failed! Please try again.");
       }
     }
-    $sql ="SELECT ID,StudentClass, Password FROM tblstudent WHERE UserName=:stuid";
+    $sql ="SELECT StuID,ID Password FROM tblstudent WHERE UserName=:stuid";
     $query=$dbh->prepare($sql);
     $query-> bindParam(':stuid', $stuid, PDO::PARAM_STR);
     $query-> execute();
@@ -31,9 +31,8 @@ if(isset($_POST['login']))
     if($query->rowCount() > 0)
 {
   if(password_verify($password, $result->Password)){
-
+$_SESSION['sturecmsstuid']=$result->StuID;
 $_SESSION['sturecmsuid']=$result->ID;
-$_SESSION['stuclass']=$result->StudentClass;
 
 
   if(!empty($_POST["remember"])) {
@@ -59,7 +58,7 @@ echo "<script>alert('Invalid Details');</script>";
 <html lang="en">
   <head>
   
-    <title>Student  Management System|| Student Login Page</title>
+    <title>Student Management System || Student Login Page</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -87,10 +86,10 @@ echo "<script>alert('Invalid Details');</script>";
                 <h6 class="font-weight-light">Sign in to continue.</h6>
                 <form class="pt-3" id="login" method="post" name="login">
                   <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="enter your student id or username" required="true" name="stuid" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Student id/Username" required="true" name="stuid" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
                   <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" placeholder="enter your password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
+                    <input type="password" class="form-control form-control-lg" placeholder="Enter Password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                   </div>
                   
                     <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>

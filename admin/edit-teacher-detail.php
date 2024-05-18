@@ -7,17 +7,17 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
   } else{
    if(isset($_POST['submit']))
   {
- $teaname=$_POST['teaname'];
- $teaemail=$_POST['teaemail'];
+ $name=$_POST['name'];
+ $email=$_POST['email'];
  $gender=$_POST['gender'];
- $teaid=$_POST['teaid'];
+ $connum=$_POST['connum'];
  $eid=$_GET['editid'];
-$sql="update tblteacher set TeacherName=:teaname,TeacherEmail=:teaemail,Gender=:gender,TeaID=:teaid where ID=:eid";
+$sql="update tblteacher set TeacherName=:name,Email=:email,Gender=:gender,ContactNumber=:connum where ID=:eid";
 $query=$dbh->prepare($sql);
-$query->bindParam(':teaname',$teaname,PDO::PARAM_STR);
-$query->bindParam(':teaemail',$teaemail,PDO::PARAM_STR);
+$query->bindParam(':name',$name,PDO::PARAM_STR);
+$query->bindParam(':email',$email,PDO::PARAM_STR);
 $query->bindParam(':gender',$gender,PDO::PARAM_STR);
-$query->bindParam(':teaid',$teaid,PDO::PARAM_STR);
+$query->bindParam(':connum',$connum,PDO::PARAM_STR);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
  $query->execute();
   echo '<script>alert("Teacher has been updated")</script>';
@@ -28,7 +28,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
 <html lang="en">
   <head>
    
-    <title>Student  Management System|| Update Teachers</title>
+    <title>Student Management System || Update Teacher</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -56,11 +56,11 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> Update Teachers </h3>
+              <h3 class="page-title"> Update Teacher </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Update Teachers</li>
+                  <li class="breadcrumb-item active" aria-current="page"> Update Teacher</li>
                 </ol>
               </nav>
             </div>
@@ -69,12 +69,12 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Update Teachers</h4>
+                    <h4 class="card-title" style="text-align: center;">Update Teacher</h4>
                    
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
 $eid=$_GET['editid'];
-$sql="SELECT tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.Gender,tblteacher.TeaID,tblteacher.UserName,tblteacher.Password,tblteacher.Image,tblteacher.DateofAdmission from tblteacher where tblteacher.ID=:eid";
+$sql="SELECT TeacherName,Email,Gender, ContactNumber from tblteacher where tblteacher.ID=:eid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
 $query->execute();
@@ -85,12 +85,12 @@ if($query->rowCount() > 0)
 foreach($results as $row)
 {               ?>
                       <div class="form-group">
-                        <label for="exampleInputName1">Teacher Name</label>
-                        <input type="text" name="teaname" value="<?php  echo htmlentities($row->TeacherName);?>" class="form-control" required='true'>
+                        <label for="exampleInputName1">Name</label>
+                        <input type="text" name="name" value="<?php  echo htmlentities($row->TeacherName);?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
-                        <label for="exampleInputName1">Teacher Email</label>
-                        <input type="text" name="teaemail" value="<?php  echo htmlentities($row->TeacherEmail);?>" class="form-control" required='true'>
+                        <label for="exampleInputName1">Email</label>
+                        <input type="text" name="email" value="<?php  echo htmlentities($row->Email);?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Gender</label>
@@ -98,29 +98,11 @@ foreach($results as $row)
                           <option value="<?php  echo htmlentities($row->Gender);?>"><?php  echo htmlentities($row->Gender);?></option>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
+                          <option value="Other">Other</option>
                         </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Date of Birth</label>
-                        <input type="date" name="dob" value="<?php  echo htmlentities($row->DOB);?>" class="form-control" required='true'>
-                      </div>
-                     
-                      <div class="form-group">
-                        <label for="exampleInputName1">Teacher ID</label>
-                        <input type="text" name="teaid" value="<?php  echo htmlentities($row->TeaID);?>" class="form-control" readonly='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Teacher Photo</label>
-                        <img src="images/<?php echo $row->Image;?>" width="100" height="100" value="<?php  echo $row->Image;?>"><a href="changeimage.php?editid=<?php echo $row->ID;?>"> &nbsp; Edit Image</a>
-                      </div>
-<h3>Login details</h3>
-<div class="form-group">
-                        <label for="exampleInputName1">User Name</label>
-                        <input type="text" name="uname" value="<?php  echo htmlentities($row->UserName);?>" class="form-control" readonly='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Password</label>
-                        <input type="Password" name="password" value="<?php  echo htmlentities($row->Password);?>" class="form-control" readonly='true'>
+                      </div><div class="form-group">
+                        <label for="exampleInputName1">Contact Number</label>
+                        <input type="text" name="connum" value="<?php  echo htmlentities($row->ContactNumber);?>" class="form-control" required='true' maxlength="15" pattern="[0-9]+">
                       </div><?php $cnt=$cnt+1;}} ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
                      

@@ -23,7 +23,7 @@ $query->execute();
 <html lang="en">
   <head>
    
-    <title>Student  Management System|||Manage Students</title>
+    <title>Student Management System || Manage Students</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -72,12 +72,12 @@ $query->execute();
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="font-weight-bold">S.No</th>
+                            <th class="font-weight-bold">No.</th>
                             <th class="font-weight-bold">Student ID</th>
-                            <th class="font-weight-bold">Student Class</th>
-                            <th class="font-weight-bold">Student Name</th>
-                            <th class="font-weight-bold">Student Email</th>
-                            <th class="font-weight-bold">Admissin Date</th>
+                            <th class="font-weight-bold">Name</th>
+                            <th class="font-weight-bold">Username</th>
+                            <th class="font-weight-bold">Email</th>
+                            <th class="font-weight-bold">Date</th>
                             <th class="font-weight-bold">Action</th>
                             
                           </tr>
@@ -98,7 +98,7 @@ $query1->execute();
 $results1=$query1->fetchAll(PDO::FETCH_OBJ);
 $total_rows=$query1->rowCount();
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT tblstudent.StuID,tblstudent.ID as sid,tblstudent.StudentName,tblstudent.StudentEmail,tblstudent.DateofAdmission,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass LIMIT $offset, $no_of_records_per_page";
+$sql="SELECT StuID, ID as sid,StudentName,Email,CreationTime, UserName from tblstudent ORDER BY CreationTime DESC LIMIT $offset, $no_of_records_per_page";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -112,10 +112,10 @@ foreach($results as $row)
                            
                             <td><?php echo htmlentities($cnt);?></td>
                             <td><?php  echo htmlentities($row->StuID);?></td>
-                            <td><?php  echo htmlentities($row->ClassName);?> <?php  echo htmlentities($row->Section);?></td>
                             <td><?php  echo htmlentities($row->StudentName);?></td>
-                            <td><?php  echo htmlentities($row->StudentEmail);?></td>
-                            <td><?php  echo htmlentities($row->DateofAdmission);?></td>
+                            <td><?php  echo htmlentities($row->UserName);?></td>
+                            <td><?php  echo htmlentities($row->Email);?></td>
+                            <td><?php  echo htmlentities($row->CreationTime);?></td>
                             <td>
                               <div><a href="edit-student-detail.php?editid=<?php echo htmlentities ($row->sid);?>"><i class="icon-eye"></i></a>
                                                 || <a href="manage-students.php?delid=<?php echo ($row->sid);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>

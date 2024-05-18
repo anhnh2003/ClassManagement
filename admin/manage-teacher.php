@@ -23,7 +23,7 @@ $query->execute();
 <html lang="en">
   <head>
    
-    <title>Student  Management System|||Manage Teacher</title>
+    <title>Student  Management System || Manage Teacher</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -52,11 +52,11 @@ $query->execute();
         <div class="main-panel">
           <div class="content-wrapper">
              <div class="page-header">
-              <h3 class="page-title"> Manage Teacher </h3>
+              <h3 class="page-title"> Manage Teachers </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Manage Teacher</li>
+                  <li class="breadcrumb-item active" aria-current="page"> Manage Teachers</li>
                 </ol>
               </nav>
             </div>
@@ -65,18 +65,19 @@ $query->execute();
                 <div class="card">
                   <div class="card-body">
                     <div class="d-sm-flex align-items-center mb-4">
-                      <h4 class="card-title mb-sm-0">Manage Teacher</h4>
-                      <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> View all Teacher</a>
+                      <h4 class="card-title mb-sm-0">Manage Teachers</h4>
+                      <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> View all Teachers</a>
                     </div>
                     <div class="table-responsive border rounded p-1">
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="font-weight-bold">S.No</th>
+                            <th class="font-weight-bold">No.</th>
                             <th class="font-weight-bold">Teacher ID</th>
-                            <th class="font-weight-bold">Teacher Name</th>
-                            <th class="font-weight-bold">Teacher Email</th>
-                            <th class="font-weight-bold">Admissin Date</th>
+                            <th class="font-weight-bold">Name</th>
+                            <th class="font-weight-bold">Username</th>
+                            <th class="font-weight-bold">Email</th>
+                            <th class="font-weight-bold">Date</th>
                             <th class="font-weight-bold">Action</th>
                             
                           </tr>
@@ -97,7 +98,7 @@ $query1->execute();
 $results1=$query1->fetchAll(PDO::FETCH_OBJ);
 $total_rows=$query1->rowCount();
 $total_pages = ceil($total_rows / $no_of_records_per_page);
-$sql="SELECT tblteacher.TeaID,tblteacher.ID as tid,tblteacher.TeacherName,tblteacher.TeacherEmail,tblteacher.DateofAdmission from tblteacher limit $offset, $no_of_records_per_page";
+$sql="SELECT TeaID,ID as tid,TeacherName,Email,CreationTime,UserName from tblteacher ORDER BY CreationTime DESC limit $offset, $no_of_records_per_page";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -112,8 +113,9 @@ foreach($results as $row)
                             <td><?php echo htmlentities($cnt);?></td>
                             <td><?php  echo htmlentities($row->TeaID);?></td>
                             <td><?php  echo htmlentities($row->TeacherName);?></td>
-                            <td><?php  echo htmlentities($row->TeacherEmail);?></td>
-                            <td><?php  echo htmlentities($row->DateofAdmission);?></td>
+                            <td><?php  echo htmlentities($row->UserName);?></td>
+                            <td><?php  echo htmlentities($row->Email);?></td>
+                            <td><?php  echo htmlentities($row->CreationTime);?></td>
                             <td>
                               <div><a href="edit-teacher-detail.php?editid=<?php echo htmlentities ($row->tid);?>"><i class="icon-eye"></i></a>
                                                 || <a href="manage-teacher.php?delid=<?php echo ($row->tid);?>" onclick="return confirm('Do you really want to Delete ?');"> <i class="icon-trash"></i></a></div>

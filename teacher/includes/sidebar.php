@@ -18,7 +18,7 @@ if($query->rowCount() > 0)
 foreach($results as $row)
 {               ?>
                   <p class="profile-name"><?php  echo htmlentities($row->TeacherName);?></p>
-                  <p class="designation"><?php  echo htmlentities($row->TeacherEmail);?></p><?php $cnt=$cnt+1;}} ?>
+                  <p class="designation"><?php  echo htmlentities($row->Email);?></p><?php $cnt=$cnt+1;}} ?>
                 </div>
              
               </a>

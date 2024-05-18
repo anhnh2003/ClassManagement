@@ -34,7 +34,7 @@ foreach($results as $row)
                   <img class="img-md rounded-circle" src="images/faces/face8.jpg" alt="Profile image">
 
                   <p class="mb-1 mt-3"><?php  echo htmlentities($row->TeacherName);?></p>
-                  <p class="font-weight-light text-muted mb-0"><?php  echo htmlentities($row->TeacherEmail);?></p><?php $cnt=$cnt+1;}} ?>
+                  <p class="font-weight-light text-muted mb-0"><?php  echo htmlentities($row->Email);?></p><?php $cnt=$cnt+1;}} ?>
                 </div>
                 <a class="dropdown-item" href="teacher-profile.php"><i class="dropdown-item-icon icon-user text-primary"></i> My Profile</a>
                 <a class="dropdown-item" href="change-password.php"><i class="dropdown-item-icon icon-energy text-primary"></i> Setting</a>
