@@ -1,17 +1,34 @@
 <?php
 session_start();
-//error_reporting(0);
+error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsuid']==0)) {
   header('location:logout.php');
   } else{
-   
+    if(isset($_POST['submit']))
+  {
+    $uid=$_SESSION['sturecmsuid'];
+    $UName=$_POST['name'];
+  $connum=$_POST['connum'];
+  $email=$_POST['email'];
+  $sql="update tblteacher set TeacherName=:name,ContactNumber=:connum,Email=:email where ID=:uid";
+     $query = $dbh->prepare($sql);
+     $query->bindParam(':name',$UName,PDO::PARAM_STR);
+     $query->bindParam(':email',$email,PDO::PARAM_STR);
+     $query->bindParam(':connum',$connum,PDO::PARAM_STR);
+     $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+$query->execute();
+
+    echo '<script>alert("Your profile has been updated")</script>';
+    echo "<script>window.location.href ='teacher-profile.php'</script>";
+
+  }
   ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
    
-    <title>teacher Management System|| View teachers Profile</title>
+    <title>Student Management System || Teacher Profile</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -39,11 +56,11 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> View Teachers Profile </h3>
+              <h3 class="page-title"> Teacher Profile </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> View Teachers Profile</li>
+                  <li class="breadcrumb-item active" aria-current="page">Teacher Profile</li>
                 </ol>
               </nav>
             </div>
@@ -52,44 +69,42 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    
-                    <table border="1" class="table table-bordered mg-b-0">
+                    <h4 class="card-title" style="text-align: center;">Teacher Profile</h4>
+                   
+                    <form class="forms-sample" method="post">
                       <?php
-$sid=$_SESSION['sturecmsstuid'];
-$sql="SELECT tblteacher.TeacherName,tblteacher.Email,tblteacher.Gender,tblteacher.UserName,tblteacher.Password,tblteacher.CreationTime,tblteacher.TeaID where tblteacher.TeaID=:sid";
+
+$sql="SELECT * from  tblteacher";
 $query = $dbh -> prepare($sql);
-$query->bindParam(':sid',$sid,PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 $cnt=1;
 if($query->rowCount() > 0)
 {
-foreach($results as $row)
-{               ?>
- <tr align="center" class="table-warning">
-<td colspan="4" style="font-size:20px;color:blue">
- teachers Details</td></tr>
-
-    <tr class="table-info">
-    <th>teacher Name</th>
-    <td><?php  echo $row->TeacherName;?></td>
-     <th>teacher Email</th>
-    <td><?php  echo $row->Email;?></td>
-  </tr>
-  <tr class="table-warning">
-     <th>Gender</th>
-    <td><?php  echo $row->Gender;?></td>
-  </tr>
-  <tr class="table-danger">
-    <th>teacher ID</th>
-    <td><?php  echo $row->StuID;?></td>
-  </tr>
-  <tr class="table-progress">
-    <th>User Name</th>
-    <td><?php  echo $row->UserName;?></td>
-  </tr>
-  <?php $cnt=$cnt+1;}} ?>
-</table>
+             ?>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Teacher Name</label>
+                        <input type="text" name="name" value="<?php  echo $row->TeacherName;?>" class="form-control" required='true'>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail3">User Name</label>
+                        <input type="text" name="username" value="<?php  echo $row->UserName;?>" class="form-control" readonly="">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword4">Contact Number</label>
+                        <input type="text" name="connum" value="<?php  echo $row->ContactNumber;?>"  class="form-control" maxlength='15' required='true' pattern="[0-9]+">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputCity1">Email</label>
+                         <input type="email" name="email" value="<?php  echo $row->Email;?>" class="form-control" required='true'>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputCity1">Creation Date</label>
+                         <input type="text" name="" value="<?php  echo $row->CreationTime;?>" readonly="" class="form-control">
+                      </div><?php $cnt=$cnt+1;} ?> 
+                      <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
+                     
+                    </form>
                   </div>
                 </div>
               </div>
