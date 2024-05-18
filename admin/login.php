@@ -32,16 +32,18 @@ if(isset($_POST['login']))
     $password=$_POST['password'];
     $captcha = $_POST['g-recaptcha-response'];
     if (!$captcha){
-      return;
-      // notify('error', "Please check the captcha form");
+      $_SESSION['error'] = "Please check the captcha form.";
+      header('Location: login.php');
+      exit();
     }
     else {
       $secret = '6LctYtwpAAAAAEP0w5UdNiqxoKbvdQo8WfQI-QtG';
       $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha);
       $response_data = json_decode($verify_response);
       if (!$response_data->success) {
-        return;
-        // notify('error', "Captcha verification failed! Please try again.");
+        $_SESSION['error'] = "Invalid Captcha. Please try again.";
+        header('Location: login.php');
+        exit();
       }
     }
     $sql ="SELECT ID, Password FROM tbladmin WHERE UserName=:username";
@@ -80,11 +82,13 @@ setcookie ("uid",$result->ID,time()+9999);
 $_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 } else { 
-  echo "<script>alert('Invalid information');</script>";
-
-
+  $_SESSION['error'] = "Wrong username or password.";
+  header('Location: login.php');
+  exit();
 } }else{
-echo "<script>alert('Invalid information');</script>";
+  $_SESSION['error'] = "Wrong username or password.";
+  header('Location: login.php');
+  exit();
 }
 }
 
@@ -119,15 +123,21 @@ echo "<script>alert('Invalid information');</script>";
                 </div>
                 <h4>Hello! let's get started</h4>
                 <h6 class="font-weight-light">Sign in to continue.</h6>
+                
                 <form class="pt-3" id="login" method="post" name="login">
                   <div class="form-group">
                     <input type="text" class="form-control form-control-lg" placeholder="enter your username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
                   <div class="form-group">
-                    
                     <input type="password" class="form-control form-control-lg" placeholder="enter your password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                   </div>
                   <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
+                  <?php
+              if (isset($_SESSION['error'])) {
+                  echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
+                  unset($_SESSION['error']);
+              }
+              ?>
                   <div class="mt-3">
                     <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
                   </div>
