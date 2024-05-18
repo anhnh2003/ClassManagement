@@ -1,20 +1,42 @@
 <?php
+// Set the error display level
+ini_set('display_errors', '0');
+// report all errors
+error_reporting(E_ALL);
+
+// Set secure session cookie flags
+ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_httponly', '1');
+
+// Use strict mode
+ini_set('session.use_strict_mode', '1');
+// start session
 session_start();
+// Regenerate session ID upon login
+if (!isset($_SESSION['initialized'])) {
+    session_regenerate_id();
+    $_SESSION['initialized'] = true;
+}
+
+// Set session expiration time
+ini_set('session.gc_maxlifetime', 3600); // 1 hour
+// Implement HTTPS enforcement in .htaccess or web server configuration
+
+// Validate session ID (example pattern)
+if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', session_id())) {
+    // Invalid session ID, handle accordingly
+}
+error_reporting(0);
 include('includes/dbconnection.php');
 
-
-
-// function notify($status, $msg){
-//   return die('<script type="text/javascript">Swal.fire("Error", "'.$msg.'", "'.$status.'"); setTimeout(function(){location.href="/classmanagement/student/login.php";},2000);</script>');
-//   }
 if(isset($_POST['login'])) 
   {
-    $stuid=$_POST['stuid'];
-    $password=($_POST['password']);
+    $username=$_POST['username'];
+    $password=$_POST['password'];
     $captcha = $_POST['g-recaptcha-response'];
     if (!$captcha){
-      return;
       // notify('error', "Please check the captcha form");
+      return;
     }
     else {
       $secret = '6LctYtwpAAAAAEP0w5UdNiqxoKbvdQo8WfQI-QtG';
@@ -25,14 +47,14 @@ if(isset($_POST['login']))
         // notify('error', "Captcha verification failed! Please try again.");
       }
     }
-    $sql ="SELECT StuID,ID Password FROM tblstudent WHERE UserName=:stuid";
+    $sql ="SELECT StuID,ID, Password FROM tblstudent WHERE UserName=:username";
     $query=$dbh->prepare($sql);
-    $query-> bindParam(':stuid', $stuid, PDO::PARAM_STR);
+    $query-> bindParam(':username', $username, PDO::PARAM_STR);
     $query-> execute();
     $result=$query->fetch(PDO::FETCH_OBJ);
-    if($query->rowCount() > 0)
+    if($query->rowCount()>0)
 {
-  if(password_verify($password, $result->Password)){
+if(password_verify($password, $result->Password)){
 $_SESSION['sturecmsstuid']=$result->StuID;
 $_SESSION['sturecmsuid']=$result->ID;
 // Generate a random session token
@@ -58,9 +80,14 @@ setcookie ("uid",$result->ID,time()+9999);
   
 }
 
-$_SESSION['login']=$_POST['stuid'];
+$_SESSION['login']=$_POST['username'];
+
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} } else{
+} else { 
+  // echo $result->ID;
+  echo "<script>alert('Invalid Details');</script>";
+
+} }else{
 echo "<script>alert('Invalid Details');</script>";
 }
 }
@@ -70,7 +97,7 @@ echo "<script>alert('Invalid Details');</script>";
 <html lang="en">
   <head>
   
-    <title>Student Management System || Student Login Page</title>
+    <title>Student  Management System|| Student Login Page</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -82,7 +109,7 @@ echo "<script>alert('Invalid Details');</script>";
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css">
-   <script src="https://www.google.com/recaptcha/api.js" ></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
   </head>
   <body>
     <div class="container-scroller">
@@ -96,16 +123,15 @@ echo "<script>alert('Invalid Details');</script>";
                 </div>
                 <h4>Hello! let's get started</h4>
                 <h6 class="font-weight-light">Sign in to continue.</h6>
-                <form class="pt-3" id="login" method="post" name="login">
+                <form class="pt-3" id="user_login" method="post" name="user_login">
                   <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Student id/Username" required="true" name="stuid" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
+                    <input type="text" class="form-control form-control-lg" placeholder="enter your username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
                   <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" placeholder="Enter Password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
+                    
+                    <input type="password" class="form-control form-control-lg" placeholder="enter your password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                   </div>
-                  
-                    <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
-                  
+                  <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
                   <div class="mt-3">
                     <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
                   </div>

@@ -2,7 +2,7 @@
 session_start();
 include('includes/dbconnection.php');
 // Check if the user is logged in and the session variables are set
-if (strlen($_SESSION['sturecmsuid']) == 0) {
+if (strlen($_SESSION['sturecmsstuid']) == 0) {
   header('location:logout.php');
   exit();
 } else {
