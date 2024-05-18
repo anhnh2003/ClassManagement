@@ -128,24 +128,7 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
                               <td><?php echo htmlentities($row->ClassName); ?></td>
                               <td><?php echo htmlentities($row->JoinCode); ?></td>
                               <td>
-                              <div>
-    <button class="classdetail" onclick="displayClassDetails()">Display Class Details</button>
-</div>
-
-<script>
-    function displayClassDetails() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "get-class-detail.php", true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                var classDetails = JSON.parse(xhr.responseText);
-                // Now you can use classDetails to display the class details
-                console.log(classDetails);
-            }
-        }
-        xhr.send();
-    }
-</script>
+                                <div><a href="class-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
                               </td>
                             </tr>
                         <?php $cnt = $cnt + 1;

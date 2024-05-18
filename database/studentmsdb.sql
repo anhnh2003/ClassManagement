@@ -65,9 +65,10 @@ CREATE TABLE `tblclass` (
 --
 
 INSERT INTO `tblclass` (`ID`, `ClassName`, `CreationTime`, `Room`, `JoinCode`, `teacher_id`) VALUES
-(40000, 'Soft Skills', '2022-01-13 10:42:14', 'D8-108', '72nci1', 20000),
-(40001, 'Introduction to Programming', '2022-01-13 10:42:35', 'B1-403', '9dn2dc', 20000),
-(40002, 'Cryptography', '2022-01-13 10:42:41', 'B1-203', 'abc81h', 20001);
+(40000, 'Soft Skills', '2024-01-10 10:42:14', 'TC-204', '72nci1', 20000),
+(40001, 'Introduction to Programming', '2024-01-10 10:45:35', 'B1-403', '9dn2dc', 20000),
+(40002, 'Cryptography', '2024-01-12 10:42:41', 'B1-203', 'abc81h', 20001),
+(40003, 'Web Programming', '2024-01-15 10:42:47', 'D8-108', '8d2n1d', 20002);
 
 -- --------------------------------------------------------
 
@@ -89,7 +90,8 @@ CREATE TABLE `tblnotice` (
 
 INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `ClassId`, `NoticeMsg`, `CreationTime`) VALUES
 (1, 'Marks of Unit Test.', 40000, 'Meet your class teacher for seeing copies of unit test', '2022-01-19 06:35:58'),
-(2, 'Test', 40001, 'This is for testing.', '2022-02-02 18:17:03');
+(2, 'Schedule for Midterm Test', 40002, 'The Midterm test is currently being delayed. We will discuss further and inform you all soon.', '2024-04-30 18:17:03'),
+(3, 'Schedule for Midterm Test', 40001, 'Our class will be testing on May 20th, on the same classroom.', '2024-05-02 18:17:03');
 
 -- --------------------------------------------------------
 
@@ -133,8 +135,8 @@ CREATE TABLE `tblpublicnotice` (
 --
 
 INSERT INTO `tblpublicnotice` (`ID`, `NoticeTitle`, `NoticeMessage`, `CreationTime`) VALUES
-(1, 'School will re-open', 'Consult your class teacher.', '2022-01-20 09:11:57'),
-(2, 'Test Public Notice', 'This is for Testing\r\n', '2022-02-02 19:04:10');
+(1, 'School will re-open', 'Please prepare your learning resource.', '2024-01-20 09:11:57'),
+(2, 'Scholarship Year 2024', "Results for this year's Scholarship is being sent through student's email! Due date for any inquiry is May 20th.", '2024-04-02 19:04:10');
 
 -- --------------------------------------------------------
 
@@ -238,7 +240,7 @@ CREATE TABLE `tblteacher` (
 INSERT INTO `tblteacher` (`ID`, `TeacherName`, `Email`, `Gender`, `Username`, `Password`, `ContactNumber`, `CreationTime`, `role_id`, `TeaID`) VALUES
 (20000, 'Nguyen Anh', 'a@gmail.com', 'Male', 'anh', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', NULL, '2024-05-15 03:18:58', 2, '20000'),
 (20001, 'Nguyen Be', 'b@gmail.com', 'Male', 'be', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', NULL, '2024-05-16 02:35:52', 2, '20001'),
-(20002, 'huy', 'a@b', 'Male', 'huy', '$2y$10$zC7UDING9MwDcuRT17QvkO7mxfqn1D68cyM0Bd6OyTR', 1, '2024-05-18 01:05:42', 2, '20002');
+(20002, 'Duong Nam', 'c@gmail.com', 'Male', 'nam', '$2y$10$4RX8MWSz8CIpzGlnzkImyO5lMdQXsAc4v4ltMvcPXJC', 113, '2024-05-18 01:05:42', 2, '20002');
 
 -- --------------------------------------------------------
 
@@ -255,6 +257,30 @@ CREATE TABLE `tbltest` (
   `EndTime` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblattendance`
+--
+
+CREATE TABLE `tblattendance` (
+  `ID` int(11) NOT NULL PRIMARY KEY,
+  `class_id` int(11) NOT NULL,
+  `Secret` varchar(100) DEFAULT NULL,
+  `CreationTime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `LastGeneratedTime` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblstudent_attendance`
+--
+
+CREATE TABLE `tblstudent_attendance` (
+  `student_id` int(11) NOT NULL,
+  `attendance_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 -- --------------------------------------------------------
 
 --
@@ -406,6 +432,8 @@ ALTER TABLE `tblteacher`
 ALTER TABLE `tbltest`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60000;
 
+ALTER TABLE `tblattendance`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70000;
 --
 -- Constraints for dumped tables
 --

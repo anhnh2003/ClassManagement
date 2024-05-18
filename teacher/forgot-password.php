@@ -2,6 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
+//require("../lib/SpeedSMSAPI_PHP/SpeedSMSAPI.php");
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -22,7 +23,7 @@ $valueConfirmPassword = "";
 
 if (isset($_POST['submit'])) {
     $email = $_POST['email'];
-    $sql = "SELECT ContactNumber, Email, AdminName FROM tbladmin WHERE Email=:email";
+    $sql = "SELECT ContactNumber, Email, TeacherName FROM tblteacher WHERE Email=:email";
     $query = $dbh->prepare($sql);
     $query->bindParam(':email', $email, PDO::PARAM_STR);
     $query->execute();
@@ -75,10 +76,10 @@ if (isset($_POST['submit'])) {
                 $mail->Password = 'cthcwberksoutoss';
                 
                 $mail->setFrom('nguyenquochuy712@gmail.com');
-                $mail->addAddress($email, 'Admin'); 
+                $mail->addAddress($email, 'Teacher'); 
                 
                 $mail->Subject = 'Reset Password OTP - Student Management System';
-                $mail->Body = '<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2"> <div style="margin:50px auto;width:70%;padding:20px 0"> <div style="border-bottom:1px solid #eee"> <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Student Management System</a> </div> <p style="font-size:1.1em">Hi, '. $results[0]->AdminName .'</p> <p>Use the following OTP to complete your Reset Password procedures.</p> <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">'. $genotp .'</h2> <hr style="border:none;border-top:1px solid #eee" /> <p style="font-size:0.9em;"><em>If this is not you, please do not share this OTP.</em></p> </div> </div>';
+                $mail->Body = '<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2"> <div style="margin:50px auto;width:70%;padding:20px 0"> <div style="border-bottom:1px solid #eee"> <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Student Management System</a> </div> <p style="font-size:1.1em">Hi, '. $results[0]->TeacherName .'</p> <p>Use the following OTP to complete your Reset Password procedures.</p> <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">'. $genotp .'</h2> <hr style="border:none;border-top:1px solid #eee" /> <p style="font-size:0.9em;"><em>If this is not you, please do not share this OTP.</em></p> </div> </div>';
                 if (!$mail->send()) {
                     echo "<script>alert('" . $mail->ErrorInfo ."');</script>";
                 }
@@ -96,7 +97,7 @@ if (isset($_POST['confirm'])) {
     if ($otp == $_SESSION['otp'] && $otp != null) {
         $_SESSION['otp'] = null;
         $newpassword = password_hash($_SESSION['newpassword'], PASSWORD_DEFAULT);
-        $con = "update tbladmin set Password=:newpassword where Email=:email";
+        $con = "update tblteacher set Password=:newpassword where Email=:email";
         $chngpwd1 = $dbh->prepare($con);
         $chngpwd1->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
         $chngpwd1->bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
