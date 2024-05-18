@@ -1,17 +1,34 @@
 <?php
 session_start();
-//error_reporting(0);
+error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsuid']==0)) {
   header('location:logout.php');
   } else{
-   
+    if(isset($_POST['submit']))
+  {
+    $uid=$_SESSION['sturecmsuid'];
+    $UName=$_POST['name'];
+  $connum=$_POST['connum'];
+  $email=$_POST['email'];
+  $sql="update tblstudent set StudentName=:name,ContactNumber=:connum,Email=:email where ID=:uid";
+     $query = $dbh->prepare($sql);
+     $query->bindParam(':name',$UName,PDO::PARAM_STR);
+     $query->bindParam(':email',$email,PDO::PARAM_STR);
+     $query->bindParam(':connum',$connum,PDO::PARAM_STR);
+     $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+$query->execute();
+
+    echo '<script>alert("Your profile has been updated")</script>';
+    echo "<script>window.location.href ='student-profile.php'</script>";
+
+  }
   ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
    
-    <title>Student Management System|| View Students Profile</title>
+    <title>Student Management System || Student Profile</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -39,11 +56,11 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> View Students Profile </h3>
+              <h3 class="page-title"> Student Profile </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> View Students Profile</li>
+                  <li class="breadcrumb-item active" aria-current="page">Student Profile</li>
                 </ol>
               </nav>
             </div>
@@ -52,66 +69,42 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    
-                    <table border="1" class="table table-bordered mg-b-0">
+                    <h4 class="card-title" style="text-align: center;">Student Profile</h4>
+                   
+                    <form class="forms-sample" method="post">
                       <?php
-$sid=$_SESSION['sturecmsstuid'];
-$sql="SELECT tblstudent.StudentName,tblstudent.Email,tblstudent.StudentClass,tblstudent.Gender,tblstudent.DOB,tblstudent.StuID,tblstudent.FatherName,tblstudent.MotherName,tblstudent.ContactNumber,tblstudent.AltenateNumber,tblstudent.Address,tblstudent.UserName,tblstudent.Password,tblstudent.CreationTime,tblclass.ClassName,tblclass.Section from tblstudent join tblclass on tblclass.ID=tblstudent.StudentClass where tblstudent.StuID=:sid";
+
+$sql="SELECT * from  tblstudent";
 $query = $dbh -> prepare($sql);
-$query->bindParam(':sid',$sid,PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 $cnt=1;
 if($query->rowCount() > 0)
 {
-foreach($results as $row)
-{               ?>
- <tr align="center" class="table-warning">
-<td colspan="4" style="font-size:20px;color:blue">
- Students Details</td></tr>
-
-    <tr class="table-info">
-    <th>Student Name</th>
-    <td><?php  echo $row->StudentName;?></td>
-     <th>Student Email</th>
-    <td><?php  echo $row->Email;?></td>
-  </tr>
-  <tr class="table-warning">
-     <th>Student Class</th>
-    <td><?php  echo $row->ClassName;?> <?php  echo $row->Section;?></td>
-     <th>Gender</th>
-    <td><?php  echo $row->Gender;?></td>
-  </tr>
-  <tr class="table-danger">
-    <th>Date of Birth</th>
-    <td><?php  echo $row->DOB;?></td>
-    <th>Student ID</th>
-    <td><?php  echo $row->StuID;?></td>
-  </tr>
-  <tr class="table-success">
-    <th>Father Name</th>
-    <td><?php  echo $row->FatherName;?></td>
-    <th>Mother Name</th>
-    <td><?php  echo $row->MotherName;?></td>
-  </tr>
-  <tr class="table-primary">
-    <th>Contact Number</th>
-    <td><?php  echo $row->ContactNumber;?></td>
-    <th>Altenate Number</th>
-    <td><?php  echo $row->AltenateNumber;?></td>
-  </tr>
-  <tr class="table-progress">
-    <th>Address</th>
-    <td><?php  echo $row->Address;?></td>
-    <th>User Name</th>
-    <td><?php  echo $row->UserName;?></td>
-  </tr>
-   <tr class="table-info">
-    <th>Date of Admission</th>
-    <td><?php  echo $row->CreationTime;?></td>
-  </tr>
-  <?php $cnt=$cnt+1;}} ?>
-</table>
+             ?>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Student Name</label>
+                        <input type="text" name="name" value="<?php  echo $row->StudentName;?>" class="form-control" required='true'>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail3">User Name</label>
+                        <input type="text" name="username" value="<?php  echo $row->UserName;?>" class="form-control" readonly="">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword4">Contact Number</label>
+                        <input type="text" name="connum" value="<?php  echo $row->ContactNumber;?>"  class="form-control" maxlength='15' required='true' pattern="[0-9]+">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputCity1">Email</label>
+                         <input type="email" name="email" value="<?php  echo $row->Email;?>" class="form-control" required='true'>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputCity1">Creation Date</label>
+                         <input type="text" name="" value="<?php  echo $row->CreationTime;?>" readonly="" class="form-control">
+                      </div><?php $cnt=$cnt+1;} ?> 
+                      <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
+                     
+                    </form>
                   </div>
                 </div>
               </div>
