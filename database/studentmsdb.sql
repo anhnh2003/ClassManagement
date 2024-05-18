@@ -268,7 +268,7 @@ CREATE TABLE `tblattendance` (
   `class_id` int(11) NOT NULL,
   `Secret` varchar(100) DEFAULT NULL,
   `CreationTime` timestamp NOT NULL DEFAULT current_timestamp(),
-  `LastGeneratedTime` timestamp DEFAULT NULL
+  `LastGeneratedTime` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
