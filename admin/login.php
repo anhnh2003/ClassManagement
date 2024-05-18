@@ -65,11 +65,10 @@ $_SESSION['sturecmsaid']=$result->ID;
     $tokenExpire = date('Y-m-d H:i:s', strtotime('+2 hours'));
 
     // Store the token in the database
-    $insertTokenSQL = "INSERT INTO tbltoken (UserToken, UserID, TokenExpire, role_id) VALUES (:token, :userid, :tokenExpire, 1)";
+    $insertTokenSQL = "INSERT INTO tbltoken (UserToken, UserID, role_id) VALUES (:token, :userid, 1)";
     $tokenQuery = $dbh->prepare($insertTokenSQL);
     $tokenQuery->bindParam(':token', $token, PDO::PARAM_STR);
     $tokenQuery->bindParam(':userid', $result->ID, PDO::PARAM_INT);
-    $tokenQuery->bindParam(':tokenExpire', $tokenExpire, PDO::PARAM_STR);
     $tokenQuery->execute();
 
     // Send the token to the client to save it
@@ -81,18 +80,18 @@ $_SESSION['sturecmsaid']=$result->ID;
 setcookie ("uid",$result->ID,time()+7200);
 } else {
 if(isset($_COOKIE["uid"])) {
-setcookie ("uid",$result->ID,time()+999999);
+setcookie ("uid",$result->ID,time()+9999);
 
       }
 }
 $_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 } else { 
-  // echo $result->ID;
-  echo "<script>alert('Invalid Details');</script>";
+  echo "<script>alert('Invalid information');</script>";
+
 
 } }else{
-echo "<script>alert('Invalid Details');</script>";
+echo "<script>alert('Invalid information');</script>";
 }
 }
 
