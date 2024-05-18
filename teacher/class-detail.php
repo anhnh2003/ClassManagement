@@ -24,12 +24,8 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     // Generate QR code
     include_once('../phpqrcode/qrlib.php');
     $tempDir = 'temp/';
-<<<<<<< Updated upstream
     // $qrContent = "QR Code for attendance in class: " . $cname . " in room: " . $room . " with join code: " . $joincode . " by teacher: " . $row->TeacherName . " at " . date('Y-m-d H:i:s');
     $qrContent = getRandomStringShuffle();
-=======
-    $qrContent = "hello";
->>>>>>> Stashed changes
     $qrImgName = "qrImg.png";
     $pngAbsoluteFilePath = $tempDir.$qrImgName;
     QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 10, 10);
