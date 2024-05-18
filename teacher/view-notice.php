@@ -11,7 +11,7 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
 <html lang="en">
   <head>
    
-    <title>Student  Management System|| View Notice</title>
+    <title>Student  Management System || View Notice</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -55,10 +55,8 @@ if (strlen($_SESSION['sturecmsuid']==0)) {
                     
                     <table border="1" class="table table-bordered mg-b-0">
                       <?php
-$stuclass=$_SESSION['stuclass'];
-$sql="SELECT tblclass.ID,tblclass.ClassName,tblclass.Section,tblnotice.NoticeTitle,tblnotice.CreationTime,tblnotice.ClassId,tblnotice.NoticeMsg,tblnotice.ID as nid from tblnotice join tblclass on tblclass.ID=tblnotice.ClassId where tblnotice.ClassId=:stuclass";
+$sql="SELECT n.NoticeTitle,n.CreationTime,n.ClassId,n.NoticeMsg,n.ID as nid,c.ID,c.ClassName,c.teacher_id from tblnotice n join tblclass c on n.ClassId=c.ID where teacher_id=".$_SESSION['sturecmsuid']." order by n.ID desc";
 $query = $dbh -> prepare($sql);
-$query->bindParam(':stuclass',$stuclass,PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 $cnt=1;
@@ -70,11 +68,11 @@ foreach($results as $row)
 <td colspan="4" style="font-size:20px;color:blue">
  Notice</td></tr>
 <tr class="table-info">
-    <th>Notice Announced Date</th>
+    <th>Noticed Date</th>
     <td><?php  echo $row->CreationTime;?></td>
   </tr>
     <tr class="table-info">
-    <th>Noitice Title</th>
+    <th>Title</th>
     <td><?php  echo $row->NoticeTitle;?></td>
   </tr>
   <tr class="table-info">
