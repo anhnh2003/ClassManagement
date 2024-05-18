@@ -121,15 +121,15 @@ echo "<script type='text/javascript'> document.location ='dashboard.php'; </scri
                 <div class="brand-logo">
                   <img src="images/logo.svg">
                 </div>
-                <h4>Hello! let's get started</h4>
+                <h4>Hello! Let's get started</h4>
                 <h6 class="font-weight-light">Sign in to continue.</h6>
                 
                 <form class="pt-3" id="login" method="post" name="login">
                   <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="enter your username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
                   <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" placeholder="enter your password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
+                    <input type="password" class="form-control form-control-lg" placeholder="Enter password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                   </div>
                   <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
                   <?php
