@@ -249,12 +249,17 @@ INSERT INTO `tblteacher` (`ID`, `TeacherName`, `Email`, `Gender`, `Username`, `P
 
 CREATE TABLE `tbltest` (
   `ID` int(11) NOT NULL,
-  `class_id` int(11) DEFAULT NULL,
-  `TestName` varchar(100) DEFAULT NULL,
+  `class_id` int(11) NOT NULL,
+  `TestName` varchar(100) NOT NULL,
   `CreationTime` timestamp NULL DEFAULT current_timestamp(),
-  `StartTime` timestamp NULL DEFAULT NULL,
+  `StartTime` timestamp NOT NULL,
   `EndTime` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbltest` (`ID`, `class_id`, `TestName`, `CreationTime`, `StartTime`, `EndTime`) VALUES
+(60000, 40000, 'Chap 1 Revision - Speaking Skills', '2024-05-12 00:00:00', '2024-03-14 14:00:00', '2024-03-14 14:30:00'),
+(60001, 40001, 'Midterm Test - Python', '2024-05-13 00:00:00', '2024-05-20 09:00:00', '2024-05-20 10:30:00'),
+(60002, 40001, 'Final Test - Secure Coding', '2024-05-14 00:00:00', '2024-06-20 09:00:00', '2024-06-20 11:00:00');
 
 -- --------------------------------------------------------
 
@@ -291,6 +296,24 @@ CREATE TABLE `tbltoken` (
   `UserID` int(11) NOT NULL,
   `CreationTime` datetime NOT NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `tbltest_question` (
+  `ID` int(11) NOT NULL PRIMARY KEY,
+  `test_id` int(11) NOT NULL,
+  `Question` mediumtext NOT NULL,
+  `AnsA` mediumtext NOT NULL,
+  `AnsB` mediumtext DEFAULT NULL,
+  `AnsC` mediumtext DEFAULT NULL,
+  `AnsD` mediumtext DEFAULT NULL,
+  `CorrectAns` varchar(1) NOT NULL,
+  `Point` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `tblstudent_question` (
+  `student_id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `ChooseAns` varchar(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -429,10 +452,13 @@ ALTER TABLE `tblteacher`
 -- AUTO_INCREMENT for table `tbltest`
 --
 ALTER TABLE `tbltest`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60000;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60003;
 
 ALTER TABLE `tblattendance`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70000;
+
+ALTER TABLE `tbltest_question`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80000;
 --
 -- Constraints for dumped tables
 --
@@ -464,6 +490,19 @@ ALTER TABLE `tbltest`
   ADD CONSTRAINT `tbltest_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `tblclass` (`ID`);
 COMMIT;
 
+ALTER TABLE `tblattendance`
+  ADD CONSTRAINT `tblattendance_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `tblclass` (`ID`);
+
+ALTER TABLE `tblstudent_attendance`
+  ADD CONSTRAINT `tblstudent_attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),
+  ADD CONSTRAINT `tblstudent_attendance_ibfk_2` FOREIGN KEY (`attendance_id`) REFERENCES `tblattendance` (`ID`);
+
+ALTER TABLE `tbltest_question`
+  ADD CONSTRAINT `tbltest_question_ibfk_1` FOREIGN KEY (`test_id`) REFERENCES `tbltest` (`ID`);
+
+ALTER TABLE `tblstudent_question`
+  ADD CONSTRAINT `tblstudent_question_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),
+  ADD CONSTRAINT `tblstudent_question_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `tbltest_question` (`ID`);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
