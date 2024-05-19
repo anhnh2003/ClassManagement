@@ -32,6 +32,27 @@ if(isset($_POST['submit']))
 $adminid=$_SESSION['sturecmsaid'];
 $cpassword=($_POST['currentpassword']);
 $newpassword=($_POST['newpassword']);
+// Password policy enforcement
+if(strlen($newpassword) < 8) {
+  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
+  header('Location: change-password.php');
+  exit();
+}
+if(!preg_match('/[A-Z]/', $newpassword)) {
+  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
+  header('Location: change-password.php');
+  exit();
+}
+if(!preg_match('/[0-9]/', $newpassword)) {
+  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
+  header('Location: change-password.php');
+  exit();
+}
+if(!preg_match('/[\W]/', $newpassword)) {
+  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
+  header('Location: change-password.php');
+  exit();
+}
 $sql ="SELECT ID, Password FROM tbladmin WHERE ID=:adminid";
 $query= $dbh -> prepare($sql);
 $query-> bindParam(':adminid', $adminid, PDO::PARAM_STR);
@@ -127,7 +148,11 @@ return true;
                         <label for="exampleInputPassword4">Confirm Password</label>
                         <input type="password" name="confirmpassword" id="confirmpassword" value=""  class="form-control" required="true">
                       </div>
-                      
+                      <?php
+                      if (isset($_SESSION['error'])) {
+                      echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
+                      unset($_SESSION['error']);}
+                      ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Change</button>
                      
                     </form>
