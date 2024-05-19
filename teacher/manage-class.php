@@ -30,7 +30,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
 <html lang="en">
 
 <head>
-  <title>Student Management System || Manage Class</title>
   <title>Student Management System || My Class</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
@@ -59,12 +58,10 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="page-header">
-            <h3 class="page-title"> Manage Class </h3>
             <h3 class="page-title"> My Class </h3>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page"> Manage Class</li>
                 <li class="breadcrumb-item active" aria-current="page"> Manage My Class</li>
               </ol>
             </nav>
@@ -74,7 +71,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
               <div class="card">
                 <div class="card-body">
                   <div class="d-sm-flex align-items-center mb-4">
-                    <h4 class="card-title mb-sm-0">Manage Class</h4>
                     <h4 class="card-title mb-sm-0">My Class</h4>
                     <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> View all Classes</a>
                   </div>
