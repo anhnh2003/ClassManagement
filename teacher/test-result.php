@@ -43,37 +43,13 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
       exit();
     }
   }
-
-  if (isset($_POST['edit'])) {
-    $eid = $_GET['editid'];
-    $tname = $_POST['tname'];
-    $stime = $_POST['stime'];
-    $etime = $_POST['etime'];
-
-    $sql = "update tbltest set TestName=:tname, StartTime=:stime, EndTime=:etime where ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':tname', $tname, PDO::PARAM_STR);
-    $query->bindParam(':stime', $stime, PDO::PARAM_STR);
-    $query->bindParam(':etime', $etime, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    echo '<script>alert("Test details have been updated")</script>';
-  }
-
-  if (isset($_POST['new_ques'])) {
-    $eid = $_GET['editid'];
-    $sql = "INSERT INTO tbltest_question(test_id, Question, AnsA, CorrectAns, Point) VALUES(:eid, 'Untitled Question', 'Untitled', 'A', 0)";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-  }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Student Management System || Manage Test</title>
+  <title>Student Management System || Test Result</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -103,8 +79,8 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
           <h3 class="page-title"> Manage Test </h3>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="manage-test.php">Manage Tests</a></li>
-              <li class="breadcrumb-item active" aria-current="page"> Test Details</li>
+              <li class="breadcrumb-item"><a href="test-detail.php?editid=<?php echo htmlentities($eid); ?>">Test Details</a></li>
+              <li class="breadcrumb-item active" aria-current="page"> Test Result</li>
             </ol>
           </nav>
         </div>
@@ -112,7 +88,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
           <div class="col-12 grid-margin stretch-card">
             <div class="card">
               <div class="card-body">
-                <?php
+              <?php
                 $uid = $_SESSION['sturecmsuid'];
                 $eid = $_GET['editid'];
                 $sql = "SELECT tbltest.*, ClassName, Room FROM tblclass, tbltest WHERE class_id=tblclass.ID AND tbltest.ID=:eid";
@@ -124,48 +100,91 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                 if ($query->rowCount() > 0) {
                   foreach ($results as $row) {
                     ?>
-                    <h4 class="card-title" style="text-align: center;"> <?php echo htmlentities($row->TestName); ?> </h4>
-                    <form class="forms-sample" method="post">
-                      <div class="form-group">
-                        <label for="exampleInputName1">Title</label>
-                        <input type="text" name="tname"
-                             value="<?php echo htmlentities($row->TestName); ?>"
-                             class="form-control" required='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Class</label>
-                        <input type="text" name="cname"
-                             value="<?php echo htmlentities($row->ClassName); ?>"
-                             class="form-control" required='true' readonly>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Room</label>
-                        <input type="text" name="room"
-                             value="<?php echo htmlentities($row->Room); ?>"
-                             class="form-control" required='true' readonly>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Start Time</label>
-                        <input type="datetime-local" name="stime"
-                             value="<?php echo htmlentities($row->StartTime); ?>"
-                             class="form-control" required='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">End Time</label>
-                        <input type="datetime-local" name="etime"
-                             value="<?php echo htmlentities($row->EndTime); ?>"
-                             class="form-control" required='true'>
-                      </div>
+                    <h4 class="card-title" style="text-align: center;"> <?php echo htmlentities($row->TestName); ?> | Result </h4>
                       <?php $cnt = $cnt + 1;
                   }
                 } ?>
-
-                <button type="submit" class="btn btn-primary mr-2" name="edit">Edit Details
-                </button>
-                <a href="test-result.php?editid=<?php echo $eid; ?>" class="btn btn-primary">View Results</a>
+                <?php
+                $eid = $_GET['editid'];
+                $sql = "SELECT TotalPoint, StartTime, SubmitTime, s.StudentName, s.StuID FROM tblstudent_test st, tblstudent s WHERE student_id=s.ID AND test_id=:eid";
+                $query = $dbh->prepare($sql);
+                $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+                $query->execute();
+                $results = $query->fetchAll(PDO::FETCH_OBJ);
+                ?>
+                <div class="form-group"><label for="text">Total Submitted: <b><?php
+                    $sql1 = "SELECT COUNT(*) as total FROM tblstudent_test WHERE test_id=:eid and SubmitTime is not null";
+                    $query1 = $dbh->prepare($sql1);
+                    $query1->bindParam(':eid', $eid, PDO::PARAM_STR);
+                    $query1->execute();
+                    $results = $query1->fetchAll(PDO::FETCH_OBJ);
+                    echo htmlentities($results[0]->total);
+                    ?></b></label></div>
+                <div class="form-group"><label for="text2">Average Score: <b><?php
+                    $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as avg FROM tblstudent_test WHERE test_id=:eid and SubmitTime is not null";
+                    $query1 = $dbh->prepare($sql1);
+                    $query1->bindParam(':eid', $eid, PDO::PARAM_STR);
+                    $query1->execute();
+                    $results = $query1->fetchAll(PDO::FETCH_OBJ);
+                    $avg = $results[0]->avg;
+                    if ($avg == Null) {
+                      echo htmlentities('N/A');
+                    } else {
+                      echo htmlentities($avg);
+                    }
+                    ?></b></label></div>
+                <div class="table-responsive border rounded p-1">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th class="font-weight-bold">No.</th>
+                    <th class="font-weight-bold">Name</th>
+                    <th class="font-weight-bold">ID</th>
+                    <th class="font-weight-bold">Score</th>
+                    <th class="font-weight-bold">Start Time</th>
+                    <th class="font-weight-bold">Submit Time</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <?php
+                  $eid = $_GET['editid'];
+                  $sql = "SELECT TotalPoint, StartTime, SubmitTime, s.StudentName, s.StuID FROM tblstudent_test st, tblstudent s WHERE student_id=s.ID AND test_id=:eid ORDER BY StartTime ASC";
+                  $query = $dbh->prepare($sql);
+                  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+                  $query->execute();
+                  $results = $query->fetchAll(PDO::FETCH_OBJ);
+                  $cnt = 1;
+                  if ($query->rowCount() > 0) {
+                    foreach ($results as $row) {
+                      ?>
+                      <tr>
+                        <td><?php echo htmlentities($cnt); ?></td>
+                        <td><?php echo htmlentities($row->StudentName); ?></td>
+                        <td><?php echo htmlentities($row->StuID); ?></td>
+                        <td><?php
+                        if ($row->SubmitTime!=Null) {
+                          echo htmlentities($row->TotalPoint);
+                        } else {
+                          echo htmlentities('N/A');
+                        } ?></td>
+                        <td><?php echo htmlentities($row->StartTime); ?></td>
+                        <td><?php
+                        if ($row->SubmitTime!=Null) {
+                          echo htmlentities($row->SubmitTime);
+                        } else {
+                          echo htmlentities('On Going');
+                        } ?></td>
+                      </tr>
+                      <?php $cnt = $cnt + 1;
+                    }
+                  } ?>
+                  </tbody>
+                </table>
+              </div>
               </form>
             </div>
           </div>
+          
 
         </div>
       </div>
@@ -182,6 +201,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                   <tr>
                     <th class="font-weight-bold">No.</th>
                     <th class="font-weight-bold">Point</th>
+                    <th class="font-weight-bold">Correct %</th>
                     <th class="font-weight-bold">Question</th>
                   </tr>
                   </thead>
@@ -200,11 +220,28 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         <td><?php echo htmlentities($cnt); ?></td>
                         <td><?php echo htmlentities($row->Point); ?></td>
                         <td>
-                          <a href="question-detail.php?editid=<?php echo htmlentities($row->ID); ?>">
-                            <i class="icon-pencil"></i>
-                            <?php echo htmlentities($row->Question); ?>
-                          </a>
-                        </td>
+                          <?php
+                          $sql = "SELECT sq.student_id, sq.ChooseAns, q.CorrectAns FROM tblstudent_question sq, tbltest_question q WHERE q.ID=sq.question_id";
+                          $query = $dbh->prepare($sql);
+                          $query->execute();
+                          $results = $query->fetchAll(PDO::FETCH_OBJ);
+                          $correct = 0;
+                          $total = 0;
+                          if ($query->rowCount() > 0) {
+                            foreach ($results as $row) {
+                              if ($row->ChooseAns == $row->CorrectAns) {
+                                $correct = $correct + 1;
+                              }
+                              $total = $total + 1;
+                            }
+                          }
+                          if ($total == 0) {
+                            echo htmlentities('N/A');
+                          } else {
+                            echo htmlentities(round($correct / $total * 100, 2));
+                          }
+                          ?></td>
+                        <td><?php echo htmlentities($row->Question); ?></td>
                       </tr>
                       <?php $cnt = $cnt + 1;
                     }
@@ -212,13 +249,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                   </tbody>
                 </table>
               </div>
-
-              <div class="mt-4"></div>
-              <form class="forms-sample" method="post">
-                <button type="submit" class="btn btn-primary mr-2" name="new_ques">Add Question</button>
-              </form>
-
-            </div>
           </div>
         </div>
       </div>

@@ -5,9 +5,11 @@ session_destroy();
 // clear the row in the db 
 include('includes/dbconnection.php');
 $uid=$_COOKIE['uid'];
-$sql = "DELETE FROM tbltoken WHERE UserID = :uid";
+$sessToken=$_COOKIE['session_token'];
+$sql = "DELETE FROM tbltoken WHERE UserID = :uid and UserToken= :sessToken";
 $query = $dbh->prepare($sql);
 $query->bindParam(':uid', $uid, PDO::PARAM_INT);
+$query->bindParam(':sessToken', $sessToken, PDO::PARAM_STR);
 $query->execute();
 // Check if there are any cookies set
 if (isset($_COOKIE)) {

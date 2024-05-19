@@ -104,8 +104,9 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                             $sessionToken = $_COOKIE['session_token'] ?? '';
                         $no_of_records_per_page = 15;
                         $offset = ($pageno - 1) * $no_of_records_per_page;
-                        $ret = "SELECT ID FROM tblclass";
+                        $ret = "SELECT * from tbltest, tblclass where tbltest.class_id=tblclass.ID and tblclass.teacher_id=:uid";
                         $query1 = $dbh->prepare($ret);
+                        $query1->bindParam(':uid',$uid,PDO::PARAM_STR);
                         $query1->execute();
                         $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
                         $total_rows = $query1->rowCount();
@@ -130,7 +131,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                               <td>
                               <?php
                               $tid = $row->ID;
-                              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime is not Null";
                               $query1 = $dbh->prepare($sql1);
                               $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
                               $query1->execute();
@@ -142,7 +143,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                               <td>
                                 <?php
                                 $tid = $row->ID;
-                                $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                                $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime is not Null";
                                 $query1 = $dbh->prepare($sql1);
                                 $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
                                 $query1->execute();
@@ -160,9 +161,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                             </tr>
                         <?php $cnt = $cnt + 1;
                           } 
-                        } else {
-                            echo "<b>No Class Found</b>";
-                            
                         }} ?>
                       </tbody>
                     </table>

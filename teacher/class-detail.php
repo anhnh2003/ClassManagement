@@ -152,8 +152,8 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
           <h3 class="page-title"> Manage Class </h3>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-              <li class="breadcrumb-item active" aria-current="page"> Manage Class</li>
+              <li class="breadcrumb-item"><a href="dashboard.php">Manage Class</a></li>
+              <li class="breadcrumb-item active" aria-current="page"> Class Details</li>
             </ol>
           </nav>
         </div>
@@ -319,13 +319,13 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
             ?>
                 <tr>
                   <td><?php echo htmlentities($cnt); ?></td>
-                  <td><?php echo htmlentities($row->TestName); ?></td>
+                  <td><a href="test-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><?php echo htmlentities($row->TestName); ?></a></td>
                   <td><?php echo htmlentities($row->StartTime); ?></td>
                   <td><?php echo htmlentities($row->EndTime); ?></td>
                   <td>
               <?php
               $tid = $row->ID;
-              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime is not Null";
               $query1 = $dbh->prepare($sql1);
               $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
               $query1->execute();
@@ -337,7 +337,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                   <td>
                   <?php
                   $tid = $row->ID;
-                  $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                  $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime is not Null";
                   $query1 = $dbh->prepare($sql1);
                   $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
                   $query1->execute();
