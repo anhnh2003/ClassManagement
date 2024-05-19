@@ -28,7 +28,7 @@ foreach($results as $row)
               </a>
             </li>
             <li class="nav-item nav-category">
-              <span class="nav-link">Dashboard</span>
+              <span class="nav-link">Student</span>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="dashboard.php">

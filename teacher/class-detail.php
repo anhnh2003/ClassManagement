@@ -260,7 +260,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                                   </form>
                                   <form class="forms-sample" method="post">
                                     <input type="hidden" name="attendance_id" value="<?php echo htmlentities($aid); ?>">
-                                    <button type="submit" class="btn btn-sm btn-primary mr-2" name="delete_attendance" style="background-color: red; width: 100pt;">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-primary mr-2" name="delete_attendance" style="background-color: red; border-color: red; width: 100pt;">Delete</button>
                                   </form>
                                 </td>
                               </td>

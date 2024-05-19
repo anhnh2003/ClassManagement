@@ -20,7 +20,6 @@ if($query->rowCount() > 0)
 foreach($results as $row)
 {               ?>
         <div class="navbar-menu-wrapper d-flex align-items-center flex-grow-1">
-          <h5 class="mb-0 font-weight-medium d-none d-lg-flex"><?php  echo htmlentities($row->StudentName);?> Welcome to dashboard!</h5>
           <ul class="navbar-nav navbar-nav-right ml-auto">
            
         
