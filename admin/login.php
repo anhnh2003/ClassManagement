@@ -21,8 +21,8 @@ if (!isset($_SESSION['initialized'])) {
 
 // Set session expiration time
 ini_set('session.gc_maxlifetime', 3600); // 1 hour
-// Implement HTTPS enforcement in .htaccess or web server configuration
-
+// Set session cookie lifetime
+ini_set('session.cookie_lifetime', 9999); 
 error_reporting(0);
 include('includes/dbconnection.php');
 
