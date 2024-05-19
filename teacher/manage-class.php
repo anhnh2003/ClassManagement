@@ -24,19 +24,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
       header('location:logout.php');
       exit();
 
-  } else {
-    // Token is valid, continue to the dashboard  
-  // Code for deletion
-  if (isset($_GET['delid'])) {
-    $rid = intval($_GET['delid']);
-    $sql = "delete from tblclass where ID=:rid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':rid', $rid, PDO::PARAM_STR);
-    $query->execute();
-    echo "<script>alert('Data deleted');</script>";
-    echo "<script>window.location.href = 'manage-class.php'</script>";
-  }
-}}
+  } }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -111,7 +99,12 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                           $pageno = 1;
                         }
                         // Formula for pagination
-                        $uid= $_SESSION['sturecmsuid'];
+                        if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)){
+                            header('location:logout.php');
+                            exit();
+                          } else {
+                            $uid = $_COOKIE['uid'] ?? '';
+                            $sessionToken = $_COOKIE['session_token'] ?? '';
                         $no_of_records_per_page = 15;
                         $offset = ($pageno - 1) * $no_of_records_per_page;
                         $ret = "SELECT ID FROM tblclass";
@@ -120,9 +113,12 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
                         $total_rows = $query1->rowCount();
                         $total_pages = ceil($total_rows / $no_of_records_per_page);
-                        $sql = "SELECT tblclass.* from tblclass where teacher_id=:uid ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
+                        #$sql = "SELECT tblclass.* from tblclass where teacher_id=:uid ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
+                        #query all classes belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
+                        $sql = "SELECT tblclass.* from tblclass, tbltoken where tblclass.teacher_id=:uid AND tbltoken.UserID = tblclass.teacher_id AND tbltoken.UserToken = :sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+                        $query->bindParam(':sessionToken',$sessionToken,PDO::PARAM_STR);
                         $query->execute();
                         $results = $query->fetchAll(PDO::FETCH_OBJ);
                         $cnt = 1;
@@ -171,8 +167,11 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                               </td>
                             </tr>
                         <?php $cnt = $cnt + 1;
-                          }
-                        } ?>
+                          } 
+                        } else {
+                            echo "<b>No Class Found</b>";
+                            
+                        }} ?>
                       </tbody>
                     </table>
                   </div>
