@@ -41,7 +41,7 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
 <html lang="en">
 
 <head>
-  <title>Student Management System || Manage Class</title>
+  <title>Student Management System || My Class</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -70,11 +70,11 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="page-header">
-            <h3 class="page-title"> Manage Class </h3>
+            <h3 class="page-title"> My Class </h3>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page"> Manage Class</li>
+                <li class="breadcrumb-item active" aria-current="page"> Manage My Class</li>
               </ol>
             </nav>
           </div>
@@ -83,7 +83,7 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
               <div class="card">
                 <div class="card-body">
                   <div class="d-sm-flex align-items-center mb-4">
-                    <h4 class="card-title mb-sm-0">Manage Class</h4>
+                    <h4 class="card-title mb-sm-0">My Class</h4>
                     <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> View all Classes</a>
                   </div>
                   <div class="table-responsive border rounded p-1">
@@ -93,6 +93,9 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
                           <th class="font-weight-bold">No.</th>
                           <th class="font-weight-bold">Name</th>
                           <th class="font-weight-bold">Code</th>
+                          <th class="font-weight-bold">Student</th>
+                          <th class="font-weight-bold">Test</th>
+                          <th class="font-weight-bold">Attendance</th>
                           <th class="font-weight-bold">Action</th>
                         </tr>
                       </thead>
@@ -127,6 +130,39 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
                               <td><?php echo htmlentities($cnt); ?></td>
                               <td><?php echo htmlentities($row->ClassName); ?></td>
                               <td><?php echo htmlentities($row->JoinCode); ?></td>
+                              <td>
+                                <?php
+                                $cid = $row->ID;
+                                $sql1 = "SELECT * from tblstudent_class where class_id=:cid";
+                                $query1 = $dbh->prepare($sql1);
+                                $query1->bindParam(':cid', $cid, PDO::PARAM_STR);
+                                $query1->execute();
+                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                                $totalstudent = $query1->rowCount();
+                                echo htmlentities($totalstudent);
+                                ?>
+                              </td>
+                              <td>
+                                <?php
+                                $sql1 = "SELECT * from tbltest where class_id=:cid";
+                                $query1 = $dbh->prepare($sql1);
+                                $query1->bindParam(':cid', $cid, PDO::PARAM_STR);
+                                $query1->execute();
+                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                                $totaltest = $query1->rowCount();
+                                echo htmlentities($totaltest);
+                                ?>
+                              </td>
+                              <td>
+                                <?php
+                                $sql1 = "SELECT * from tblattendance where class_id=:cid";
+                                $query1 = $dbh->prepare($sql1);
+                                $query1->bindParam(':cid', $cid, PDO::PARAM_STR);
+                                $query1->execute();
+                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                                $totalattendance = $query1->rowCount();
+                                echo htmlentities($totalattendance);
+                                ?>
                               <td>
                                 <div><a href="class-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
                               </td>
