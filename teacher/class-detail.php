@@ -1,23 +1,12 @@
 <?php
 session_start();
-//error_reporting(0);
 include('includes/dbconnection.php');
+// Check if the user is logged in and the session variables are set
+if (strlen($_SESSION['sturecmsstuid']) == 0) {
 
-function getRandomStringShuffle($length = 43)
-{
-    $stringSpace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $stringLength = strlen($stringSpace);
-    $string = str_repeat($stringSpace, ceil($length / $stringLength));
-    $shuffledString = str_shuffle($string);
-    $randomString = substr($shuffledString, 1, $length);
-    return $randomString;
-}
-
-if (strlen($_SESSION['sturecmsuid']) == 0) {
   header('location:logout.php');
   exit();
 } else {
-<<<<<<< HEAD
   // Retrieve the 'uid' and 'session_token' cookies
   $uid = $_COOKIE['uid'] ?? '';
   $sessionToken = $_COOKIE['session_token'] ?? '';
@@ -34,23 +23,22 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
       header('location:logout.php');
       exit();
 
-  } else {
-    // Token is valid, continue
-  if (isset($_POST['submit'])) {
-    // $teaid = $_POST['teaid'];
-    $cname = $_POST['cname'];
-    $room = $_POST['room'];
-    // $eid = $_GET['editid'];
+  }}
+    // Token is valid, continue to the dashboard  
 
-    // $sql = "UPDATE tblclass SET ClassName=:cname, Room=:room, teacher_id=:teaid WHERE ID=:eid";
-    // $query = $dbh->prepare($sql);
-    // $query->bindParam(':cname', $cname, PDO::PARAM_STR);
-    // $query->bindParam(':room', $room, PDO::PARAM_STR);
-    // $query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
-    // $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    // $query->execute();
-    // echo '<script>alert("Class has been updated")</script>';
-=======
+function getRandomStringShuffle($length = 43)
+{
+    $stringSpace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $stringLength = strlen($stringSpace);
+    $string = str_repeat($stringSpace, ceil($length / $stringLength));
+    $shuffledString = str_shuffle($string);
+    $randomString = substr($shuffledString, 1, $length);
+    return $randomString;
+}
+
+if (strlen($_SESSION['sturecmsuid']) == 0) {
+  header('location:logout.php');
+} else {
   $uid = $_SESSION['sturecmsuid'];
   $eid = $_GET['editid'];
   $sql = "SELECT * FROM tblclass, tblteacher WHERE teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=:eid";
@@ -66,7 +54,6 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
   
   if (isset($_POST['genqr'])) {
     $aid = $_POST['attendance_id'];
->>>>>>> cea2e32922eb0dfbb7b38eed7bdae6952b6332a6
 
     // Generate QR code
     include_once('../phpqrcode/qrlib.php');
@@ -108,9 +95,6 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     $query->execute();
     echo '<script>alert("Join Code has been changed")</script>';
   }
-<<<<<<< HEAD
-}}
-=======
 
   if (isset($_POST['new_attendance'])) {
     $eid = $_GET['editid'];
@@ -130,7 +114,6 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     echo '<script>alert("Attendance record has been deleted")</script>';
   }
 }
->>>>>>> cea2e32922eb0dfbb7b38eed7bdae6952b6332a6
 ?>
 
 <!DOCTYPE html>

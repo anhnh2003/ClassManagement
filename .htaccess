@@ -4,8 +4,20 @@ RewriteEngine On
 ServerSignature Off
 
 ErrorDocument 403 /studentms/error.html
+# Disable directory listing
+Options -Indexes
 
+# Prevent access to any file starting with a dot, such as .htaccess
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 
+# Prevent access to any file starting with a $, such as .htaccess
+<FilesMatch "^\$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 # Deny access to the 'temp' directory
 RewriteRule ^student/temp/ - [F,L]
 #Deny access to the 'includes' directory
