@@ -174,7 +174,8 @@ CREATE TABLE `tblstudent` (
   `Password` varchar(200) DEFAULT NULL,
   `CreationTime` timestamp NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL DEFAULT 3,
-  `StuID` varchar(10) DEFAULT NULL
+  `StuID` varchar(10) DEFAULT NULL,
+  `is2FA` boolean DEFAULT false
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
@@ -198,6 +199,9 @@ CREATE TABLE `tblstudent_class` (
   `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `tblstudent_class` (`student_id`, `class_id`) VALUES
+(30003, 40001);
+
 -- --------------------------------------------------------
 
 --
@@ -205,13 +209,19 @@ CREATE TABLE `tblstudent_class` (
 --
 
 CREATE TABLE `tblstudent_test` (
+  `TID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `student_id` int(11) NOT NULL,
   `test_id` int(11) NOT NULL,
   `TotalPoint` int(11) DEFAULT NULL,
-  `StartTime` timestamp NULL DEFAULT NULL,
+  `StartTime` timestamp NOT NULL DEFAULT current_timestamp(),
   `SubmitTime` timestamp NULL DEFAULT NULL,
   `IP` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tblstudent_test` (`student_id`, `test_id`, `TotalPoint`, `StartTime`, `SubmitTime`) VALUES
+(30003, 60001, 10, '2024-04-15 09:05:00', '2024-04-15 09:55:59'),
+(30002, 60003, NULL, '2024-05-20 09:40:00', NULL),
+(30003, 60003, NULL, '2024-05-20 09:30:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -258,8 +268,9 @@ CREATE TABLE `tbltest` (
 
 INSERT INTO `tbltest` (`ID`, `class_id`, `TestName`, `CreationTime`, `StartTime`, `EndTime`) VALUES
 (60000, 40000, 'Chap 1 Revision - Speaking Skills', '2024-05-12 00:00:00', '2024-03-14 14:00:00', '2024-03-14 14:30:00'),
-(60001, 40001, 'Midterm Test - Python', '2024-05-13 00:00:00', '2024-05-20 09:00:00', '2024-05-20 10:30:00'),
-(60002, 40001, 'Final Test - Secure Coding', '2024-05-14 00:00:00', '2024-06-20 09:00:00', '2024-06-20 11:00:00');
+(60001, 40001, 'Midterm Test - Python', '2024-05-13 00:00:00', '2024-04-15 09:00:00', '2024-04-15 10:30:00'),
+(60002, 40001, 'Final Test - Secure Coding', '2024-05-14 00:00:00', '2024-06-20 09:00:00', '2024-06-20 11:00:00'),
+(60003, 40001, 'Revision Test - Java', '2024-05-15 00:00:00', '2024-05-20 00:00:00', '2024-05-27 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -309,6 +320,11 @@ CREATE TABLE `tbltest_question` (
   `CorrectAns` varchar(1) NOT NULL,
   `Point` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbltest_question` (`ID`, `test_id`, `Question`, `AnsA`, `AnsB`, `AnsC`, `AnsD`, `CorrectAns`, `Point`) VALUES
+(80000, 60003, '1 + 1 = ?', '2', '1', NULL, NULL, 'A', 1),
+(80001, 60003, 'What is the correct answer?', 'Not this', 'This', 'Not this', 'Not this', 'B', 2);
+
 
 CREATE TABLE `tblstudent_question` (
   `student_id` int(11) NOT NULL,

@@ -113,7 +113,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         $total_pages = ceil($total_rows / $no_of_records_per_page);
                         #$sql = "SELECT tblclass.* from tblclass where teacher_id=:uid ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
                         #query all classes belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
-                        $sql = "SELECT t.*, c.ClassName from tbltest t, tblclass c, tblstudent_class sc, tbltoken where sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id AND tbltoken.UserToken = :sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY t.StartTime ASC LIMIT $offset, $no_of_records_per_page";
+                        $sql = "SELECT t.*, c.ClassName from tbltest t, tblclass c, tblstudent_class sc, tbltoken where sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id AND tbltoken.UserToken = :sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY t.StartTime DESC LIMIT $offset, $no_of_records_per_page";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':uid',$uid,PDO::PARAM_STR);
                         $query->bindParam(':sessionToken',$sessionToken,PDO::PARAM_STR);
