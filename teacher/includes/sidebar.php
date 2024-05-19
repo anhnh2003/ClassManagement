@@ -45,10 +45,16 @@ foreach($results as $row)
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="manage-test.php">
+              <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
                 <span class="menu-title">My Test</span>
                 <i class="icon-hourglass menu-icon"></i>
               </a>
+              <div class="collapse" id="ui-basic">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="add-test.php">Add Test</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="manage-test.php">Manage Tests</a></li>
+                </ul>
+              </div>
             </li>
           </ul>
         </nav>

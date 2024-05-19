@@ -1,5 +1,6 @@
 <?php
 session_start();
+//error_reporting(0);
 include('includes/dbconnection.php');
 // Check if the user is logged in and the session variables are set
 $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
@@ -23,14 +24,14 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
       // Token is invalid or expired, redirect to logout
       header('location:logout.php');
       exit();
-
-  } }
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <title>Student Management System || My Class</title>
+  <title>Student Management System || My Test</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -58,11 +59,11 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="page-header">
-            <h3 class="page-title"> My Class </h3>
+            <h3 class="page-title"> My Test </h3>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page"> Manage My Class</li>
+                <li class="breadcrumb-item active" aria-current="page"> Manage Created Test</li>
               </ol>
             </nav>
           </div>
@@ -71,19 +72,18 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
               <div class="card">
                 <div class="card-body">
                   <div class="d-sm-flex align-items-center mb-4">
-                    <h4 class="card-title mb-sm-0">My Class</h4>
-                    <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> View all Classes</a>
+                    <h4 class="card-title mb-sm-0">My Test</h4>
+                    <a href="#" class="text-dark ml-auto mb-3 mb-sm-0"> View all Tests</a>
                   </div>
                   <div class="table-responsive border rounded p-1">
                     <table class="table">
                       <thead>
                         <tr>
                           <th class="font-weight-bold">No.</th>
-                          <th class="font-weight-bold">Name</th>
-                          <th class="font-weight-bold">Code</th>
-                          <th class="font-weight-bold">Student</th>
-                          <th class="font-weight-bold">Test</th>
-                          <th class="font-weight-bold">Attendance</th>
+                          <th class="font-weight-bold">Title</th>
+                          <th class="font-weight-bold">Class</th>
+                          <th class="font-weight-bold">Start Time</th>
+                          <th class="font-weight-bold">Submitted</th>
                           <th class="font-weight-bold">Action</th>
                         </tr>
                       </thead>
@@ -111,7 +111,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         $total_pages = ceil($total_rows / $no_of_records_per_page);
                         #$sql = "SELECT tblclass.* from tblclass where teacher_id=:uid ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
                         #query all classes belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
-                        $sql = "SELECT tblclass.* from tblclass, tbltoken where tblclass.teacher_id=:uid AND tbltoken.UserID = tblclass.teacher_id AND tbltoken.UserToken = :sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
+                        $sql = "SELECT tbltest.*, tblclass.ClassName from tbltest, tblclass, tbltoken where tbltest.class_id=tblclass.ID and tblclass.teacher_id=:uid AND tbltoken.UserID = tblclass.teacher_id AND tbltoken.UserToken = :sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY tbltest.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':uid',$uid,PDO::PARAM_STR);
                         $query->bindParam(':sessionToken',$sessionToken,PDO::PARAM_STR);
@@ -123,43 +123,23 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         ?>
                             <tr>
                               <td><?php echo htmlentities($cnt); ?></td>
+                              <td><?php echo htmlentities($row->TestName); ?></td>
                               <td><?php echo htmlentities($row->ClassName); ?></td>
-                              <td><?php echo htmlentities($row->JoinCode); ?></td>
+                              <td><?php echo htmlentities($row->StartTime); ?></td>
                               <td>
-                                <?php
-                                $cid = $row->ID;
-                                $sql1 = "SELECT * from tblstudent_class where class_id=:cid";
-                                $query1 = $dbh->prepare($sql1);
-                                $query1->bindParam(':cid', $cid, PDO::PARAM_STR);
-                                $query1->execute();
-                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
-                                $totalstudent = $query1->rowCount();
-                                echo htmlentities($totalstudent);
-                                ?>
+                              <?php
+                              $tid = $row->ID;
+                              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                              $query1 = $dbh->prepare($sql1);
+                              $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
+                              $query1->execute();
+                              $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                              $totalstudent = $query1->rowCount();
+                              echo htmlentities($totalstudent);
+                              ?>
                               </td>
                               <td>
-                                <?php
-                                $sql1 = "SELECT * from tbltest where class_id=:cid";
-                                $query1 = $dbh->prepare($sql1);
-                                $query1->bindParam(':cid', $cid, PDO::PARAM_STR);
-                                $query1->execute();
-                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
-                                $totaltest = $query1->rowCount();
-                                echo htmlentities($totaltest);
-                                ?>
-                              </td>
-                              <td>
-                                <?php
-                                $sql1 = "SELECT * from tblattendance where class_id=:cid";
-                                $query1 = $dbh->prepare($sql1);
-                                $query1->bindParam(':cid', $cid, PDO::PARAM_STR);
-                                $query1->execute();
-                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
-                                $totalattendance = $query1->rowCount();
-                                echo htmlentities($totalattendance);
-                                ?>
-                              <td>
-                                <div><a href="class-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
+                                <div><a href="test-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
                               </td>
                             </tr>
                         <?php $cnt = $cnt + 1;
