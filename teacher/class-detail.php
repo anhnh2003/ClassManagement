@@ -111,9 +111,13 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
   if (isset($_POST['delete_attendance'])) {
     $aid = $_POST['attendance_id'];
     $sql = "delete from tblattendance where ID=:aid";
+    $sql2 = "delete from tblstudent_attendance where attendance_id=:aid";
     $query = $dbh->prepare($sql);
+    $query2 = $dbh->prepare($sql2);
     $query->bindParam(':aid', $aid, PDO::PARAM_STR);
+    $query2->bindParam(':aid', $aid, PDO::PARAM_STR);
     $query->execute();
+    $query2->execute();
     echo '<script>alert("Attendance record has been deleted")</script>';
   }
 }
