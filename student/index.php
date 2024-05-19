@@ -1,9 +1,9 @@
 <?php
 session_start();
 include('includes/dbconnection.php');
-
 // Check if the user is logged in and the session variables are set
-if (strlen($_SESSION['sturecmsaid']) == 0) {
+if (strlen($_SESSION['sturecmsstuid']) == 0) {
+
   header('location:login.php');
   exit();
 } else {
@@ -18,12 +18,12 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
   $query->execute();
   $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
   // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 1)) {
+  if (($query->rowCount() == 0) || ($role_id != 3)) {
       // Token is invalid or expired, redirect to logout
       header('location:login.php');
       exit();
 
   } else {
-    // Token is valid, continue
+    // Token is valid, continue to the dashboard  
     header('location:dashboard.php');
   }}?>

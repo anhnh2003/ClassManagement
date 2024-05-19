@@ -1,0 +1,62 @@
+# Turn on the rewrite engine
+RewriteEngine On
+# Hide Apache server version and other sensitive information
+ServerSignature Off
+
+ErrorDocument 403 /studentms/error.html
+
+
+# Deny access to the 'temp' directory
+RewriteRule ^student/temp/ - [F,L]
+#Deny access to the 'includes' directory
+RewriteRule ^student/includes/ - [F,L]
+#Deny access to the 'vendors' directory
+RewriteRule ^student/vendors/ - [F,L]
+#Deny access to the 'js' directory
+RewriteRule ^student/js/ - [F,L]
+
+# Allow access to 'dashboard.php'
+<Files "student/dashboard.php">
+    Require all granted
+</Files>
+# Deny access to the 'temp' directory
+RewriteRule ^admin/temp/ - [F,L]
+#Deny access to the 'includes' directory
+RewriteRule ^admin/includes/ - [F,L]
+#Deny access to the 'vendors' directory
+RewriteRule ^admin/vendors/ - [F,L]
+#Deny access to the 'js' directory
+RewriteRule ^admin/js/ - [F,L]
+
+# Allow access to 'dashboard.php'
+<Files "admin/dashboard.php">
+    Require all granted
+</Files>
+# Deny access to the 'temp' directory
+RewriteRule ^teacher/temp/ - [F,L]
+#Deny access to the 'includes' directory
+RewriteRule ^teacher/includes/ - [F,L]
+#Deny access to the 'vendors' directory
+RewriteRule ^teacher/vendors/ - [F,L]
+#Deny access to the 'temp' directory
+RewriteRule ^teacher/temp/ - [F,L]
+#Deny access to the 'js' directory
+RewriteRule ^teacher/js/ - [F,L]
+
+# Allow access to 'dashboard.php'
+<Files "teacher/dashboard.php">
+    Require all granted
+</Files>
+
+#deny access to the 'phpqrcode' directory
+RewriteRule ^phpqrcode/ - [F,L]
+#deny access to the 'lib' directory
+RewriteRule ^lib/ - [F,L]
+#deny access to the 'includes' directory
+RewriteRule ^includes/ - [F,L]
+#deny access to the 'js' directory
+RewriteRule ^js/ - [F,L]
+#deny access to the 'database' directory
+RewriteRule ^database/ - [F,L]
+#deny access to the '.htaccess' file
+RewriteRule ^\.htaccess - [F,L]
