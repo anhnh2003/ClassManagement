@@ -34,7 +34,7 @@ $cpassword=($_POST['currentpassword']);
 $newpassword=($_POST['newpassword']);
 if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
   $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
-  header('Location: add-students.php');
+  header('Location: change-password.php');
   exit();
 }
 $sql ="SELECT ID, Password FROM tbladmin WHERE ID=:adminid";

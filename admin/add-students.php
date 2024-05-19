@@ -32,13 +32,15 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
  $stuid=$_POST['stuid'];
  $connum=$_POST['connum'];
  $uname=$_POST['uname'];
- $password=password_hash($_POST['password'],PASSWORD_DEFAULT);
+ $password=$_POST['password'];
  // Password policy enforcement
- if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
+ if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $password)) {
   $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
   header('Location: add-students.php');
   exit();
 }
+ $password=password_hash($_POST['password'],PASSWORD_DEFAULT);
+ 
  $ret="select UserName from tblstudent where UserName=:uname || StuID=:stuid";
  $query= $dbh -> prepare($ret);
 $query->bindParam(':uname',$uname,PDO::PARAM_STR);
