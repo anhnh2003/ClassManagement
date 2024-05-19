@@ -84,6 +84,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                           <th class="font-weight-bold">Class</th>
                           <th class="font-weight-bold">Start Time</th>
                           <th class="font-weight-bold">Submitted</th>
+                          <th class="font-weight-bold">Average</th>
                           <th class="font-weight-bold">Action</th>
                         </tr>
                       </thead>
@@ -137,6 +138,21 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                               $totalstudent = $query1->rowCount();
                               echo htmlentities($totalstudent);
                               ?>
+                              </td>
+                              <td>
+                                <?php
+                                $tid = $row->ID;
+                                $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                                $query1 = $dbh->prepare($sql1);
+                                $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
+                                $query1->execute();
+                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                                if ($results1[0]->average != Null) {
+                                  echo htmlentities($results1[0]->average);
+                                } else {
+                                  echo "N/A";
+                                }
+                            ?>
                               </td>
                               <td>
                                 <div><a href="test-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
