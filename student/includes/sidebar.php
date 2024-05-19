@@ -42,5 +42,11 @@ foreach($results as $row)
                 <i class="icon-book-open menu-icon"></i>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="manage-class.php">
+                <span class="menu-title">My Class</span>
+                <i class="icon-book-open menu-icon"></i>
+              </a>
+            </li>
           </ul>
         </nav>
