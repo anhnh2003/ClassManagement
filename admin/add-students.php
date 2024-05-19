@@ -34,22 +34,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
  $uname=$_POST['uname'];
  $password=password_hash($_POST['password'],PASSWORD_DEFAULT);
  // Password policy enforcement
-if(strlen($newpassword) < 8) {
-  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
-  header('Location: add-students.php');
-  exit();
-}
-if(!preg_match('/[A-Z]/', $newpassword)) {
-  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
-  header('Location: add-students.php');
-  exit();
-}
-if(!preg_match('/[0-9]/', $newpassword)) {
-  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
-  header('Location: add-students.php');
-  exit();
-}
-if(!preg_match('/[\W]/', $newpassword)) {
+ if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
   $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
   header('Location: add-students.php');
   exit();
