@@ -28,7 +28,7 @@ foreach($results as $row)
               </a>
             </li>
             <li class="nav-item nav-category">
-              <span class="nav-link">Dashboard</span>
+              <span class="nav-link">Admin</span>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="dashboard.php">
@@ -93,7 +93,7 @@ foreach($results as $row)
               <div class="collapse" id="auth1">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="add-public-notice.php"> Add Public Notice </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="manage-public-notice.php"> Manage Public Notice </a></li>
+                  <li class="nav-item"> <a class="nav-link" href="manage-public-notice.php"> Manage Public Notices </a></li>
                 </ul>
               </div>
               <li class="nav-item">
