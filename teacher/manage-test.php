@@ -124,7 +124,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                             <tr>
                               <td><?php echo htmlentities($cnt); ?></td>
                               <td><?php echo htmlentities($row->TestName); ?></td>
-                              <td><?php echo htmlentities($row->ClassName); ?></td>
+                              <td><a href="class-detail.php?editid=<?php echo htmlentities($row->class_id); ?>"><?php echo htmlentities($row->ClassName); ?></a></td>
                               <td><?php echo htmlentities($row->StartTime); ?></td>
                               <td>
                               <?php
