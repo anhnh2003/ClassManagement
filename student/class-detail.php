@@ -28,6 +28,35 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
     echo "<script>window.location.href = 'manage-class.php'</script>";
   }
 }
+
+
+$filePath = __DIR__ . "/temp/photo.png";
+if (file_exists($filePath)) {
+    require __DIR__ . "/../vendor/autoload.php";
+    $qrcode = new Zxing\QrReader($filePath);
+    $text = $qrcode->text();
+}
+// exit;
+
+$sql = "SELECT ID FROM tblattendance WHERE Secret=:text";
+$query = $dbh->prepare($sql);
+$query->bindParam(':text',$text,PDO::PARAM_STR);
+$query->execute();
+if ($query->rowCount() == 1) {
+  $result = $query->fetch(PDO::FETCH_ASSOC);
+  $aid = $result['ID'];
+
+  $sql = "INSERT INTO tblstudent_attendance (student_id, attendance_id) VALUES (:uid, :aid)";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+  $query->bindParam(':aid',$aid,PDO::PARAM_STR);
+  $query->execute();
+  echo "<script>alert('Attendance recorded');</script>";
+  echo "<script>window.location.href = 'class-detail.php?editid=$eid'</script>";
+
+  unlink('temp/photo.png');
+  die;
+}
 ?>
 
 <!DOCTYPE html>
