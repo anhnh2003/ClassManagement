@@ -103,8 +103,8 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
           <h3 class="page-title"> Manage Test </h3>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-              <li class="breadcrumb-item active" aria-current="page"> Manage Test</li>
+              <li class="breadcrumb-item"><a href="manage-test.php">Manage Tests</a></li>
+              <li class="breadcrumb-item active" aria-current="page"> Test Details</li>
             </ol>
           </nav>
         </div>
