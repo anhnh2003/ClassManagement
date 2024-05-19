@@ -18,7 +18,7 @@
                 <li><a href="index.php"><span data-hover="Home">Home</span></a></li>
                 <li><a href="about.php"><span data-hover="About">About</span></a></li>
                 
-                <li><a href="contact.php"><span data-hover="Contact">Contact</span></a></li>
+                <!--<li><a href="contact.php"><span data-hover="Contact">Contact</span></a></li>-->
                 <li><a href="admin/login.php"><span data-hover="Contact">Admin</span></a></li>
                 <li><a href="student/login.php"><span data-hover="Shortcodes">Student</span></a></li>
                 <li><a href="teacher/login.php"><span data-hover="Shortcodes">Teacher</span></a></li>

@@ -6,9 +6,10 @@
         <ul>
           <li><a href="index.php">Home</a></li>
           <li><a href="about.php">About</a></li>
-          <li><a href="contact.php">Contact</a></li>
+          <!--<li><a href="contact.php">Contact</a></li>-->
           <li><a href="admin/login.php">Admin</a></li>
-          <li><a href="user/login.php">Student</a></li>
+          <li><a href="student/login.php">Student</a></li>
+          <li><a href="teacher/login.php">Teacher</a></li>
         </ul>
        
       </div>
@@ -20,23 +21,8 @@ $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 
 $cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>
-        <h3>Address</h3>
-        <div class="address">
-          <p><?php  echo htmlentities($row->PageDescription);?>
-          </p>
-        </div>
-        <div class="phone">
-          <p><?php  echo htmlentities($row->ContactNumber);?></p>
-        </div>
-      <?php $cnt=$cnt+1;}} ?></div>
-      <div class="col-md-3 footer-right">
-        <h3>SMS</h3>
-        <p>Proin eget ipsum ultrices, aliquet velit eget, tempus tortor. Phasellus non velit sit amet diam faucibus molestie tincidunt efficitur nisi.</p>
-      </div>
+ ?></div>
+
       <div class="clearfix"> </div> 
     </div>
     <!-- //container -->
@@ -51,12 +37,12 @@ foreach($results as $row)
       </div>
       <div class="copyright-right">
         <ul>
-          <li><a href="#" class="twitter"> </a></li>
-          <li><a href="#" class="twitter facebook"> </a></li>
-          <li><a href="#" class="twitter chrome"> </a></li>
-          <li><a href="#" class="twitter pinterest"> </a></li>
-          <li><a href="#" class="twitter linkedin"> </a></li>
-          <li><a href="#" class="twitter dribbble"> </a></li>
+          <!-- Add icon library -->
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+          <!-- Add font awesome icons -->
+          <li><a href="https://www.facebook.com/SoictOfficially/" class="fa fa-facebook"></a></li>
+          <li><a href="https://github.com/anhnh2003/ClassManagement" class="fa fa-github"></a></li>
         </ul>
       </div>
       <div class="clearfix"> </div>

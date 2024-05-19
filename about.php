@@ -6,7 +6,7 @@ include('includes/dbconnection.php');
 <!doctype html>
 <html>
 <head>
-<title>Student  Management System || About Us Page</title>
+<title>Student  Management System || About Us</title>
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!--bootstrap-->
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
@@ -47,10 +47,10 @@ include('includes/dbconnection.php');
 <div class="about">
 	 <div class="container">
 		 <div class="about-info-grids">
-			 <div class="col-md-5 abt-pic">
-				 <img src="images/abt.jpg" class="img-responsive" alt=""/>
+			 <div class="col-md-7 abt-pic">
+				 <img src="images/soict.jpg" class="img-responsive" alt=""/>
 			 </div>
-			 <div class="col-md-7 abt-info-pic">
+			 <div class="col-md-5 abt-info-pic">
 			 	<?php
 $sql="SELECT * from tblpage where PageType='aboutus'";
 $query = $dbh -> prepare($sql);
