@@ -175,7 +175,7 @@ CREATE TABLE `tblstudent` (
   `CreationTime` timestamp NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL DEFAULT 3,
   `StuID` varchar(10) DEFAULT NULL,
-  `is2FA` boolean DEFAULT false
+  `is2FA` boolean NOT NULL DEFAULT false
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
@@ -200,7 +200,17 @@ CREATE TABLE `tblstudent_class` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `tblstudent_class` (`student_id`, `class_id`) VALUES
-(30003, 40001);
+(30003, 40001),
+(30002, 40001),
+(30001, 40001),
+(30000, 40001),
+(30000, 40000),
+(30003, 40000),
+(30002, 40000),
+(30001, 40000),
+(30000, 40002),
+(30001, 40002),
+(30000, 40003);
 
 -- --------------------------------------------------------
 
@@ -238,7 +248,8 @@ CREATE TABLE `tblteacher` (
   `ContactNumber` bigint(15) DEFAULT NULL,
   `CreationTime` timestamp NULL DEFAULT current_timestamp(),
   `role_id` int(11) NOT NULL DEFAULT 2,
-  `TeaID` varchar(10) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL
+  `TeaID` varchar(10) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `is2FA` boolean DEFAULT false
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -246,7 +257,7 @@ CREATE TABLE `tblteacher` (
 --
 
 INSERT INTO `tblteacher` (`ID`, `TeacherName`, `Email`, `Gender`, `Username`, `Password`, `ContactNumber`, `CreationTime`, `role_id`, `TeaID`) VALUES
-(20000, 'Nguyen Anh', 'a@gmail.com', 'Male', 'anh', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', NULL, '2024-05-15 03:18:58', 2, '20000'),
+(20000, 'Nguyen Anh', 'hwisigninguprandomthing@gmail.com', 'Male', 'anh', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', NULL, '2024-05-15 03:18:58', 2, '20000'),
 (20001, 'Nguyen Be', 'b@gmail.com', 'Male', 'be', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', NULL, '2024-05-16 02:35:52', 2, '20001'),
 (20002, 'Duong Nam', 'c@gmail.com', 'Male', 'nam', '$2y$10$9B09BrFure7jRVEbDTbh0.DVTTcK4djM8.dvcfI4Ahj54Rev9FQ2u', 113, '2024-05-18 01:05:42', 2, '20002');
 

@@ -29,6 +29,42 @@ if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', sessi
 error_reporting(0);
 include('includes/dbconnection.php');
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+require("../lib/PHPMailer/src/PHPMailer.php");
+require("../lib/PHPMailer/src/SMTP.php");
+require("../lib/PHPMailer/src/Exception.php");
+$hideOTP = "display: none;";
+$hideLogin = "";
+
+function generateSessionToken($dbh, $userid, $uid) {
+  $_SESSION['sturecmsstuid']=$userid;
+  $_SESSION['sturecmsuid']=$uid;
+  // Generate a random session token
+  $token = bin2hex(random_bytes(32));
+  // Store the token in the database
+  $insertTokenSQL = "INSERT INTO tbltoken (UserToken, UserID, role_id) VALUES (:token, :userid, 3)";
+  $tokenQuery = $dbh->prepare($insertTokenSQL);
+  $tokenQuery->bindParam(':token', $token, PDO::PARAM_STR);
+  $tokenQuery->bindParam(':userid', $uid, PDO::PARAM_INT);
+  $tokenQuery->execute();
+
+  // Send the token to the client to save it
+  setcookie("session_token", $token, time() + 7200); // 7200 seconds = 2 hours
+
+  if(!empty($_POST["remember"])) {
+    //COOKIES for username
+    setcookie ("uid",$uid,time()+7200);
+  } else {
+    setcookie ("uid",$uid,time()+9999);
+  }
+
+  $_SESSION['login']=$_POST['username'];
+
+  echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+}
+
 if(isset($_POST['login'])) 
   {
     $username=$_POST['username'];
@@ -49,51 +85,71 @@ if(isset($_POST['login']))
         exit();
       }
     }
-    $sql ="SELECT StuID,ID, Password FROM tblstudent WHERE UserName=:username";
+    $sql ="SELECT StudentName uname, Email, StuID, ID, Password, is2FA FROM tblstudent WHERE UserName=:username";
     $query=$dbh->prepare($sql);
     $query-> bindParam(':username', $username, PDO::PARAM_STR);
     $query-> execute();
     $result=$query->fetch(PDO::FETCH_OBJ);
-    if($query->rowCount()>0)
-{
+    if($query->rowCount()>0) {
 if(password_verify($password, $result->Password)){
-$_SESSION['sturecmsstuid']=$result->StuID;
-$_SESSION['sturecmsuid']=$result->ID;
-// Generate a random session token
-$token = bin2hex(random_bytes(32));
-// Store the token in the database
-$insertTokenSQL = "INSERT INTO tbltoken (UserToken, UserID, role_id) VALUES (:token, :userid, 3)";
-$tokenQuery = $dbh->prepare($insertTokenSQL);
-$tokenQuery->bindParam(':token', $token, PDO::PARAM_STR);
-$tokenQuery->bindParam(':userid', $result->ID, PDO::PARAM_INT);
-$tokenQuery->execute();
+  if ($result->is2FA == 1) {
+    $hideOTP = "";
+    $hideLogin = "display: none;";
+    $genotp = rand(100000, 999999);
+    $_SESSION['otp'] = $genotp;
+    $_SESSION['stuid'] = $result->StuID;
+    $_SESSION['uid'] = $result->ID;
 
-// Send the token to the client to save it
-setcookie("session_token", $token, time() + 7200); // 7200 seconds = 2 hours
-
-
-if(!empty($_POST["remember"])) {
-//COOKIES for username
-setcookie ("uid",$result->ID,time()+7200);
+    // Send Email OTP
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();
+    $mail->SMTPDebug = 0;
+    $mail->SMTPAuth = true;
+    $mail->SMTPSecure = 'tls';
+    $mail->Host = 'smtp.gmail.com';
+    $mail->Post = 587;
+    $mail->isHTML(true);
+    $mail->Username = 'nguyenquochuy712@gmail.com';
+    $mail->Password = 'cthcwberksoutoss';
+    
+    $mail->setFrom('nguyenquochuy712@gmail.com');
+    $mail->addAddress($result->Email, 'Student'); 
+    
+    $mail->Subject = '2FA Login OTP - Student Management System';
+    $mail->Body = '<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2"> <div style="margin:50px auto;width:70%;padding:20px 0"> <div style="border-bottom:1px solid #eee"> <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Student Management System</a> </div> <p style="font-size:1.1em">Hi, '. $results->uname .'</p> <p>Use the following OTP to complete your 2FA Login procedures.</p> <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">'. $genotp .'</h2> <hr style="border:none;border-top:1px solid #eee" /> <p style="font-size:0.9em;"><em>If this is not you, please do not share this OTP.</em></p> </div> </div>';
+    if (!$mail->send()) {
+        echo "<script>alert('" . $mail->ErrorInfo ."');</script>";
+    }
+    $mail->smtpClose();
+  } else {
+    generateSessionToken($dbh, $result->StuID, $result->ID);
+  }
 } else {
-
-setcookie ("uid",$result->ID,time()+9999);
-
-  
-}
-
-$_SESSION['login']=$_POST['username'];
-
-echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-} else{
   $_SESSION['error'] = "Wrong username or password.";
   header('Location: login.php');
   exit();
-} }else{
+} } else{
   $_SESSION['error'] = "Wrong username or password.";
   header('Location: login.php');
   exit();
 }
+}
+
+if (isset($_POST['confirm'])) {
+  $otp = $_POST['otp'];
+  if ($otp == $_SESSION['otp']) {
+    $_SESSION['otp'] = 0;
+    generateSessionToken($dbh, $_SESSION['stuid'], $_SESSION['uid']);
+    $_SESSION['stuid'] = 0;
+    $_SESSION['uid'] = 0;
+  } else {
+    $_SESSION['error'] = "Invalid OTP.";
+    $_SESSION['otp'] = 0;
+    $_SESSION['stuid'] = 0;
+    $_SESSION['uid'] = 0;
+    header('Location: login.php');
+    exit();
+  }
 }
 
 ?>
@@ -101,7 +157,7 @@ echo "<script type='text/javascript'> document.location ='dashboard.php'; </scri
 <html lang="en">
   <head>
   
-    <title>Student  Management System|| Student Login Page</title>
+    <title>Student Management System || Student Login</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -125,9 +181,9 @@ echo "<script type='text/javascript'> document.location ='dashboard.php'; </scri
                 <div class="brand-logo">
                   <img src="images/logo.svg">
                 </div>
-                <h4>Hello! Let's get started</h4>
-                <h6 class="font-weight-light">Sign in to continue.</h6>
-                <form class="pt-3" id="user_login" method="post" name="user_login">
+                <h4 style="<?php echo $hideLogin; ?>">Hello! Let's get started</h4>
+                <h6 class="font-weight-light" style="<?php echo $hideLogin; ?>">Sign in to continue. </h6>
+                <form class="pt-3" id="user_login" method="post" name="user_login" style="<?php echo $hideLogin; ?>">
                   <div class="form-group">
                     <input type="text" class="form-control form-control-lg" placeholder="Enter username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
                   </div>
@@ -158,6 +214,15 @@ echo "<script type='text/javascript'> document.location ='dashboard.php'; </scri
                       <i class="icon-social-home mr-2"></i>Back Home </a>
                   </div>
                   
+                </form>
+                <form class="pt-3" id="user_otp" method="post" name="user_otp" style="<?php echo $hideOTP; ?>">
+                <h4>Two-Factor Authentication</h4>
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter OTP sent to Email" required="true" name="otp" value="" maxlength="6" pattern="[0-9]+">
+                  </div>
+                  <div class="mt-3">
+                    <button class="btn btn-success btn-block loginbtn" name="confirm" type="submit">Confirm</button>
+                  </div>
                 </form>
               </div>
             </div>

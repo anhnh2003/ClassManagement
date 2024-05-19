@@ -29,19 +29,38 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
   {
     $uid=$_SESSION['sturecmsuid'];
     $UName=$_POST['name'];
-  $connum=$_POST['connum'];
-  $email=$_POST['email'];
-  $sql="update tblstudent set StudentName=:name,ContactNumber=:connum,Email=:email where ID=:uid";
-     $query = $dbh->prepare($sql);
-     $query->bindParam(':name',$UName,PDO::PARAM_STR);
-     $query->bindParam(':email',$email,PDO::PARAM_STR);
-     $query->bindParam(':connum',$connum,PDO::PARAM_STR);
-     $query->bindParam(':uid',$uid,PDO::PARAM_STR);
-$query->execute();
+    $gender=$_POST['gender'];
+    $connum=$_POST['connum'];
+    $email=$_POST['email'];
+    $is2FA=$_POST['is2FA'];
+
+    if ($is2FA == 1) {
+      $sql = "SELECT is2FA FROM tblstudent WHERE ID=:uid";
+      $query = $dbh->prepare($sql);
+      $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+      $query->execute();
+      $results = $query->fetchAll(PDO::FETCH_OBJ);
+      if ($results[0]->is2FA == 0) {
+        if ($email == '' || $email == null) {
+          echo '<script>alert("Please enter your email address")</script>';
+          echo "<script>window.location.href ='student-profile.php'</script>";
+          exit();
+        }
+      }
+    } 
+
+  $sql="UPDATE tblstudent set StudentName=:name, Gender=:gender, ContactNumber=:connum,Email=:email, is2FA=:is2FA where ID=:uid";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':name',$UName,PDO::PARAM_STR);
+    $query->bindParam(':gender',$gender,PDO::PARAM_STR);
+    $query->bindParam(':email',$email,PDO::PARAM_STR);
+    $query->bindParam(':connum',$connum,PDO::PARAM_STR);
+    $query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
+    $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+    $query->execute();
 
     echo '<script>alert("Your profile has been updated")</script>';
     echo "<script>window.location.href ='student-profile.php'</script>";
-
   }
   ?>
 <!DOCTYPE html>
@@ -107,8 +126,21 @@ if($query->rowCount() > 0)
                         <input type="text" name="name" value="<?php  echo $row->StudentName;?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
+                        <label for="exampleInputEmail3">ID</label>
+                        <input type="text" name="stuid" value="<?php  echo $row->StuID;?>" class="form-control" readonly>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Gender</label>
+                        <select name="gender" value="" class="form-control" required='true'>
+                          <option value="<?php  echo htmlentities($row->Gender);?>"><?php  echo htmlentities($row->Gender);?></option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
                         <label for="exampleInputEmail3">User Name</label>
-                        <input type="text" name="username" value="<?php  echo $row->UserName;?>" class="form-control" readonly="">
+                        <input type="text" name="username" value="<?php  echo $row->UserName;?>" class="form-control" readonly>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputPassword4">Contact Number</label>
@@ -120,8 +152,32 @@ if($query->rowCount() > 0)
                       </div>
                       <div class="form-group">
                         <label for="exampleInputCity1">Creation Date</label>
-                         <input type="text" name="" value="<?php  echo $row->CreationTime;?>" readonly="" class="form-control">
-                      </div><?php $cnt=$cnt+1;} ?> 
+                         <input type="text" name="ctime" value="<?php  echo $row->CreationTime;?>" readonly="" class="form-control">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Two Factor Authentication</label>
+                        <select name="is2FA" value="" class="form-control" required='true'>
+                          <option value="<?php  echo $row->is2FA;?>">
+                          <?php if($row->is2FA==1)
+                          {
+                            echo "Enabled";
+                          } else {
+                            echo "Disabled";
+                          }
+                          ?></option>
+                          <option value="
+                          <?php if($row->is2FA==1) {
+                            echo "0";
+                          } else {
+                            echo "1";
+                          } ?>"> <?php if($row->is2FA==1) {
+                            echo "Disabled";
+                          } else {
+                            echo "Enabled";
+                          } ?></option>
+                        </select>
+                      </div>
+                      <?php $cnt=$cnt+1;} ?> 
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
                      
                     </form>

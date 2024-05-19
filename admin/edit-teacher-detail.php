@@ -26,20 +26,21 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
 
   } else {
     // Token is valid, continue
-  } else{
    if(isset($_POST['submit']))
   {
  $name=$_POST['name'];
  $email=$_POST['email'];
  $gender=$_POST['gender'];
  $connum=$_POST['connum'];
+ $is2FA=$_POST['is2FA'];
  $eid=$_GET['editid'];
-$sql="update tblteacher set TeacherName=:name,Email=:email,Gender=:gender,ContactNumber=:connum where ID=:eid";
+$sql="update tblteacher set TeacherName=:name,Email=:email,Gender=:gender,ContactNumber=:connum,is2FA=:is2FA where ID=:eid";
 $query=$dbh->prepare($sql);
 $query->bindParam(':name',$name,PDO::PARAM_STR);
 $query->bindParam(':email',$email,PDO::PARAM_STR);
 $query->bindParam(':gender',$gender,PDO::PARAM_STR);
 $query->bindParam(':connum',$connum,PDO::PARAM_STR);
+$query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
  $query->execute();
   echo '<script>alert("Teacher has been updated")</script>';
@@ -96,7 +97,7 @@ $query->bindParam(':eid',$eid,PDO::PARAM_STR);
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
 $eid=$_GET['editid'];
-$sql="SELECT TeacherName,Email,Gender, ContactNumber from tblteacher where tblteacher.ID=:eid";
+$sql="SELECT is2FA, TeacherName,Email,Gender, ContactNumber from tblteacher where tblteacher.ID=:eid";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':eid',$eid,PDO::PARAM_STR);
 $query->execute();
@@ -125,7 +126,31 @@ foreach($results as $row)
                       </div><div class="form-group">
                         <label for="exampleInputName1">Contact Number</label>
                         <input type="text" name="connum" value="<?php  echo htmlentities($row->ContactNumber);?>" class="form-control" required='true' maxlength="15" pattern="[0-9]+">
-                      </div><?php $cnt=$cnt+1;}} ?>
+                        </div>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Two Factor Authentication</label>
+                        <select name="is2FA" value="" class="form-control" required='true'>
+                          <option value="<?php  echo $row->is2FA;?>">
+                          <?php if($row->is2FA==1)
+                          {
+                            echo "Enabled";
+                          } else {
+                            echo "Disabled";
+                          }
+                          ?></option>
+                          <option value="
+                          <?php if($row->is2FA==1) {
+                            echo "0";
+                          } else {
+                            echo "1";
+                          } ?>"> <?php if($row->is2FA==1) {
+                            echo "Disabled";
+                          } else {
+                            echo "Enabled";
+                          } ?></option>
+                        </select>
+                      </div>
+                      <?php $cnt=$cnt+1;}} ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
                      
                     </form>

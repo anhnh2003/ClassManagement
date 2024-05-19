@@ -31,11 +31,13 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
     $UName=$_POST['name'];
   $connum=$_POST['connum'];
   $email=$_POST['email'];
-  $sql="update tblteacher set TeacherName=:name,ContactNumber=:connum,Email=:email where ID=:uid";
+  $is2FA=$_POST['is2FA'];
+  $sql="update tblteacher set TeacherName=:name,ContactNumber=:connum,Email=:email,is2FA=:is2FA where ID=:uid";
      $query = $dbh->prepare($sql);
      $query->bindParam(':name',$UName,PDO::PARAM_STR);
      $query->bindParam(':email',$email,PDO::PARAM_STR);
      $query->bindParam(':connum',$connum,PDO::PARAM_STR);
+      $query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
      $query->bindParam(':uid',$uid,PDO::PARAM_STR);
 $query->execute();
 
@@ -121,7 +123,31 @@ if($query->rowCount() > 0)
                       <div class="form-group">
                         <label for="exampleInputCity1">Creation Date</label>
                          <input type="text" name="" value="<?php  echo $row->CreationTime;?>" readonly="" class="form-control">
-                      </div><?php $cnt=$cnt+1;} ?> 
+                         </div>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Two Factor Authentication</label>
+                        <select name="is2FA" value="" class="form-control" required='true'>
+                          <option value="<?php  echo $row->is2FA;?>">
+                          <?php if($row->is2FA==1)
+                          {
+                            echo "Enabled";
+                          } else {
+                            echo "Disabled";
+                          }
+                          ?></option>
+                          <option value="
+                          <?php if($row->is2FA==1) {
+                            echo "0";
+                          } else {
+                            echo "1";
+                          } ?>"> <?php if($row->is2FA==1) {
+                            echo "Disabled";
+                          } else {
+                            echo "Enabled";
+                          } ?></option>
+                        </select>
+                      </div>
+                      <?php $cnt=$cnt+1;} ?> 
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
                      
                     </form>
