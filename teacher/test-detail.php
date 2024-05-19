@@ -124,7 +124,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                 if ($query->rowCount() > 0) {
                   foreach ($results as $row) {
                     ?>
-                    <h4 class="card-title" style="text-align: center;"> Details </h4>
+                    <h4 class="card-title" style="text-align: center;"> <?php echo htmlentities($row->TestName); ?> </h4>
                     <form class="forms-sample" method="post">
                       <div class="form-group">
                         <label for="exampleInputName1">Title</label>

@@ -130,7 +130,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                               <td>
                               <?php
                               $tid = $row->ID;
-                              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime is not Null";
                               $query1 = $dbh->prepare($sql1);
                               $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
                               $query1->execute();
@@ -142,7 +142,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                               <td>
                                 <?php
                                 $tid = $row->ID;
-                                $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime!=Null";
+                                $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime is not Null";
                                 $query1 = $dbh->prepare($sql1);
                                 $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
                                 $query1->execute();
