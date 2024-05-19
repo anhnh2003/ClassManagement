@@ -20,7 +20,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
   $query->execute();
   $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
   // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
+  if (($query->rowCount() == 0) || ($role_id != 3)) {
       // Token is invalid or expired, redirect to logout
       header('location:logout.php');
       exit();
@@ -63,7 +63,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page"> Manage Created Test</li>
+                <li class="breadcrumb-item active" aria-current="page"> View Tests</li>
               </ol>
             </nav>
           </div>
@@ -83,8 +83,8 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                           <th class="font-weight-bold">Title</th>
                           <th class="font-weight-bold">Class</th>
                           <th class="font-weight-bold">Start Time</th>
-                          <th class="font-weight-bold">Submitted</th>
-                          <th class="font-weight-bold">Average</th>
+                          <th class="font-weight-bold">Submit Time</th>
+                          <th class="font-weight-bold">Score</th>
                           <th class="font-weight-bold">Action</th>
                         </tr>
                       </thead>
@@ -104,7 +104,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                             $sessionToken = $_COOKIE['session_token'] ?? '';
                         $no_of_records_per_page = 15;
                         $offset = ($pageno - 1) * $no_of_records_per_page;
-                        $ret = "SELECT * from tbltest, tblclass where tbltest.class_id=tblclass.ID and tblclass.teacher_id=:uid";
+                        $ret = "SELECT * from tbltest t, tblclass c, tblstudent_class sc where sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id";
                         $query1 = $dbh->prepare($ret);
                         $query1->bindParam(':uid',$uid,PDO::PARAM_STR);
                         $query1->execute();
@@ -113,7 +113,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         $total_pages = ceil($total_rows / $no_of_records_per_page);
                         #$sql = "SELECT tblclass.* from tblclass where teacher_id=:uid ORDER BY tblclass.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
                         #query all classes belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
-                        $sql = "SELECT tbltest.*, tblclass.ClassName from tbltest, tblclass, tbltoken where tbltest.class_id=tblclass.ID and tblclass.teacher_id=:uid AND tbltoken.UserID = tblclass.teacher_id AND tbltoken.UserToken = :sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY tbltest.CreationTime DESC LIMIT $offset, $no_of_records_per_page";
+                        $sql = "SELECT t.*, c.ClassName from tbltest t, tblclass c, tblstudent_class sc, tbltoken where sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id AND tbltoken.UserToken = :sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY t.StartTime ASC LIMIT $offset, $no_of_records_per_page";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':uid',$uid,PDO::PARAM_STR);
                         $query->bindParam(':sessionToken',$sessionToken,PDO::PARAM_STR);
@@ -128,32 +128,38 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                               <td><?php echo htmlentities($row->TestName); ?></td>
                               <td><a href="class-detail.php?editid=<?php echo htmlentities($row->class_id); ?>"><?php echo htmlentities($row->ClassName); ?></a></td>
                               <td><?php echo htmlentities($row->StartTime); ?></td>
-                              <td>
-                              <?php
-                              $tid = $row->ID;
-                              $sql1 = "SELECT * from tblstudent_test where test_id=:tid and SubmitTime is not Null";
-                              $query1 = $dbh->prepare($sql1);
-                              $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
-                              $query1->execute();
-                              $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
-                              $totalstudent = $query1->rowCount();
-                              echo htmlentities($totalstudent);
-                              ?>
+                              <td><?php
+                                $tid = $row->ID;
+                                $sql1 = "SELECT * from tblstudent_test where test_id=:tid and student_id=:uid";
+                                $query1 = $dbh->prepare($sql1);
+                                $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
+                                $query1->bindParam(':uid', $uid, PDO::PARAM_STR);
+                                $query1->execute();
+                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+                                if ($query1->rowCount() == 0) {
+                                  echo "Not Started";
+                                } else {
+                                  if ($results1[0]->SubmitTime != Null) {
+                                    echo htmlentities($results1[0]->SubmitTime);
+                                  } else {
+                                    echo "On Going";
+                                  }
+                                }
+                                
+                            ?>
                               </td>
                               <td>
                                 <?php
-                                $tid = $row->ID;
-                                $sql1 = "SELECT ROUND(AVG(TotalPoint),2) as average from tblstudent_test where test_id=:tid and SubmitTime is not Null";
-                                $query1 = $dbh->prepare($sql1);
-                                $query1->bindParam(':tid', $tid, PDO::PARAM_STR);
-                                $query1->execute();
-                                $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
-                                if ($results1[0]->average != Null) {
-                                  echo htmlentities($results1[0]->average);
-                                } else {
+                                if ($query1->rowCount() == 0) {
                                   echo "N/A";
+                                } else {
+                                  if ($results1[0]->TotalPoint == Null) {
+                                    echo "N/A";
+                                  } else {
+                                    echo htmlentities($results1[0]->TotalPoint);
+                                  }
                                 }
-                            ?>
+                                ?>
                               </td>
                               <td>
                                 <div><a href="test-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><i class="icon-eye"></i></a></div>
