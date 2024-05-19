@@ -220,8 +220,7 @@ CREATE TABLE `tblstudent_test` (
 
 INSERT INTO `tblstudent_test` (`student_id`, `test_id`, `TotalPoint`, `StartTime`, `SubmitTime`) VALUES
 (30003, 60001, 10, '2024-04-15 09:05:00', '2024-04-15 09:55:59'),
-(30002, 60003, NULL, '2024-05-20 09:40:00', NULL),
-(30003, 60003, NULL, '2024-05-20 09:30:00', NULL);
+(30002, 60003, NULL, '2024-05-20 09:40:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -468,13 +467,13 @@ ALTER TABLE `tblteacher`
 -- AUTO_INCREMENT for table `tbltest`
 --
 ALTER TABLE `tbltest`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60003;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60004;
 
 ALTER TABLE `tblattendance`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70000;
 
 ALTER TABLE `tbltest_question`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80000;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80002;
 --
 -- Constraints for dumped tables
 --
