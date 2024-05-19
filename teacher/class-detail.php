@@ -36,15 +36,18 @@ function getRandomStringShuffle($length = 43)
     return $randomString;
 }
 
-if (strlen($_SESSION['sturecmsuid']) == 0) {
+if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)){
   header('location:logout.php');
+  exit();
 } else {
-  $uid = $_SESSION['sturecmsuid'];
+  $uid = $_COOKIE['uid'] ?? '';
   $eid = $_GET['editid'];
-  $sql = "SELECT * FROM tblclass, tblteacher WHERE teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=:eid";
+  #check if the class belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
+  $sql = "SELECT * FROM tblclass, tblteacher, tbltoken WHERE teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=:eid AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
   $query = $dbh->prepare($sql);
   $query->bindParam(':uid',$uid,PDO::PARAM_STR);
   $query->bindParam(':eid',$eid,PDO::PARAM_STR);
+  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
   $query->execute();
   $results = $query->fetchAll(PDO::FETCH_OBJ);
   if ($query->rowCount() == 0) {
