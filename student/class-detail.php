@@ -99,7 +99,7 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                              class="form-control" required='true', readonly>
                       </div>
                       <div class="text-right">
-                        <button type="submit" class="btn btn-primary mr-2" name="leave" style="background-color: red;">Leave Class</button>
+                        <button type="submit" class="btn btn-primary mr-2" name="leave" style="background-color: red; border-color: red;">Leave Class</button>
                       </div>
                       <?php $cnt = $cnt + 1;
                     }
@@ -166,6 +166,12 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                       </tbody>
                     </table>
                   </div>
+
+                  <!-- <div class="mt-4"></div> -->
+                  <button id="startStop">Start Camera</button>
+                    <video id="video" width="640" height="480" autoplay></video>
+                    <canvas id="canvas" width="640" height="480"></canvas>
+                    <button id="snap">Snap Photo</button>
               </div>
             </div>
           </div>
@@ -257,6 +263,50 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
 <!-- Custom js for this page -->
 <script src="js/typeahead.js"></script>
 <script src="js/select2.js"></script>
+<script src="https://unpkg.com/jsqr"></script>
+<script>
+  var video = document.getElementById('video');
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
+  var snap = document.getElementById('snap');
+  var startStop = document.getElementById('startStop');
+  var stream;
+
+  // Get access to the camera
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      startStop.addEventListener("click", function() {
+          if (stream) {
+              stream.getTracks().forEach(track => track.stop());
+              stream = null;
+              startStop.textContent = 'Start Camera';
+          } else {
+              navigator.mediaDevices.getUserMedia({ video: true }).then(function(mediaStream) {
+                  stream = mediaStream;
+                  video.srcObject = stream;
+                  video.play();
+                  startStop.textContent = 'Stop Camera';
+              });
+          }
+      });
+  }
+
+  // Trigger photo take
+  snap.addEventListener("click", function() {
+    context.drawImage(video, 0, 0, 640, 480);
+    var dataUrl = canvas.toDataURL('image/png');
+    // Send the data URL to the server-side script
+    $.ajax({
+        url: 'save_image.php',
+        type: 'post',
+        data: { imgData: dataUrl },
+        success: function(response) {
+            console.log('Image saved successfully');
+        }
+      });
+    });
+
+  canvas.style.display = 'none'; // Hide the canvas
+</script>
 <!-- End custom js for this page -->
 </body>
 </html>
