@@ -180,11 +180,10 @@ if ((strlen($_SESSION['sturecmsstuid'])== 0 )||( strlen($_COOKIE['uid']) == 0) |
                                 <?php
                                 #$sql1 = "SELECT t.ID, st.SubmitTime from tbltest t LEFT JOIN (SELECT * FROM tblstudent_test WHERE student_id=:uid) st ON test_id=ID WHERE class_id=:cid ORDER BY t.StartTime ASC;";
                                 #change the query above to check the token
-                                $sql1 = "SELECT t.ID, st.SubmitTime from tbltest t LEFT JOIN (SELECT * FROM tblstudent_test WHERE student_id=:uid) st ON test_id=ID JOIN tbltoken tk ON tk.UserID=st.student_id WHERE class_id=:cid and tk.UserToken=:sessionToken and (tk.CreationTime + INTERVAL 2 HOUR) >= NOW() ORDER BY t.StartTime ASC;";
+                                $sql1 = "SELECT t.ID, st.SubmitTime from tbltest t LEFT JOIN (SELECT * FROM tblstudent_test WHERE student_id=:uid) st ON test_id=ID WHERE class_id=:cid ORDER BY t.StartTime ASC;";
                                 $query1 = $dbh->prepare($sql1);
                                 $query1->bindParam(':cid', $cid, PDO::PARAM_STR);
                                 $query1->bindParam(':uid', $uid, PDO::PARAM_STR);
-                                $query1->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
                                 $query1->execute();
                                 $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
                                 $totaltest = $query1->rowCount();
