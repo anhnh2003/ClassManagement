@@ -99,7 +99,7 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                              class="form-control" required='true', readonly>
                       </div>
                       <div class="text-right">
-                        <button type="submit" class="btn btn-primary mr-2" name="leave" style="background-color: red;">Leave Class</button>
+                        <button type="submit" class="btn btn-primary mr-2" name="leave" style="background-color: red; border-color: red;">Leave Class</button>
                       </div>
                       <?php $cnt = $cnt + 1;
                     }
