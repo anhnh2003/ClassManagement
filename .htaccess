@@ -8,10 +8,8 @@ ErrorDocument 403 /studentms/error.html
 Options -Indexes
 
 
-# Deny access to the 'temp' directory
-RewriteRule ^student/temp/ - [F,L]
 #Deny access to the 'includes' directory
-RewriteRule ^student/includes/dbconnection\.php - [F,L]
+RewriteRule ^student/includes/ - [F,L]
 
 
 #Deny access to the 'includes' directory
@@ -21,8 +19,6 @@ RewriteRule ^admin/includes - [F,L]
 
 
 
-# Deny access to the 'temp' directory
-RewriteRule ^teacher/temp/ - [F,L]
 #Deny access to the 'includes' directory
 RewriteRule ^teacher/includes/- [F,L]
 #Deny access to the 'vendors' directory
