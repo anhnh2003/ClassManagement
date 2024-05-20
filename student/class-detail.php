@@ -43,10 +43,11 @@ $sql = "SELECT ID, LastGeneratedTime FROM tblattendance WHERE Secret=:text";
 $query = $dbh->prepare($sql);
 $query->bindParam(':text',$text,PDO::PARAM_STR);
 $query->execute();
+$result = $query->fetch(PDO::FETCH_OBJ);
 if ($query->rowCount() == 1) {
   date_default_timezone_set('Asia/Ho_Chi_Minh');
   $current_time = date('Y-m-d H:i:s');
-  $last_generated_time = strtotime($query->fetch(PDO::FETCH_ASSOC)['LastGeneratedTime']);
+  $last_generated_time = strtotime($result->LastGeneratedTime);
   $time_difference = strtotime($current_time) - $last_generated_time;
   if ($time_difference > $QRTimeToLive) {
     echo "<script>alert('QR code expired');</script>";
@@ -54,8 +55,7 @@ if ($query->rowCount() == 1) {
     unlink('temp/photo.png');
     die;
   } else {
-    $result = $query->fetch(PDO::FETCH_ASSOC);
-    $aid = $result['ID'];
+    $aid = $result->ID;
 
     $sql = "INSERT INTO tblstudent_attendance (student_id, attendance_id) VALUES (:uid, :aid)";
     $query = $dbh->prepare($sql);
