@@ -44,24 +44,30 @@ $query = $dbh->prepare($sql);
 $query->bindParam(':text',$text,PDO::PARAM_STR);
 $query->execute();
 if ($query->rowCount() == 1) {
-  if (time() - strtotime($query->fetch(PDO::FETCH_ASSOC)['LastGeneratedTime']) > $QRTimeToLive) {
+  date_default_timezone_set('Asia/Ho_Chi_Minh');
+  $current_time = date('Y-m-d H:i:s');
+  $last_generated_time = strtotime($query->fetch(PDO::FETCH_ASSOC)['LastGeneratedTime']);
+  $time_difference = strtotime($current_time) - $last_generated_time;
+  if ($time_difference > $QRTimeToLive) {
     echo "<script>alert('QR code expired');</script>";
     echo "<script>window.location.href = 'class-detail.php?editid=$eid'</script>";
+    unlink('temp/photo.png');
+    die;
+  } else {
+    $result = $query->fetch(PDO::FETCH_ASSOC);
+    $aid = $result['ID'];
+
+    $sql = "INSERT INTO tblstudent_attendance (student_id, attendance_id) VALUES (:uid, :aid)";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+    $query->bindParam(':aid',$aid,PDO::PARAM_STR);
+    $query->execute();
+    echo "<script>alert('Attendance recorded');</script>";
+    echo "<script>window.location.href = 'class-detail.php?editid=$eid'</script>";
+
+    unlink('temp/photo.png');
     die;
   }
-  $result = $query->fetch(PDO::FETCH_ASSOC);
-  $aid = $result['ID'];
-
-  $sql = "INSERT INTO tblstudent_attendance (student_id, attendance_id) VALUES (:uid, :aid)";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid',$uid,PDO::PARAM_STR);
-  $query->bindParam(':aid',$aid,PDO::PARAM_STR);
-  $query->execute();
-  echo "<script>alert('Attendance recorded');</script>";
-  echo "<script>window.location.href = 'class-detail.php?editid=$eid'</script>";
-
-  unlink('temp/photo.png');
-  die;
 }
 ?>
 
