@@ -38,11 +38,17 @@ if (file_exists($filePath)) {
 }
 // exit;
 
-$sql = "SELECT ID FROM tblattendance WHERE Secret=:text";
+$QRTimeToLive = 60;
+$sql = "SELECT ID, LastGeneratedTime FROM tblattendance WHERE Secret=:text";
 $query = $dbh->prepare($sql);
 $query->bindParam(':text',$text,PDO::PARAM_STR);
 $query->execute();
 if ($query->rowCount() == 1) {
+  if (time() - strtotime($query->fetch(PDO::FETCH_ASSOC)['LastGeneratedTime']) > $QRTimeToLive) {
+    echo "<script>alert('QR code expired');</script>";
+    echo "<script>window.location.href = 'class-detail.php?editid=$eid'</script>";
+    die;
+  }
   $result = $query->fetch(PDO::FETCH_ASSOC);
   $aid = $result['ID'];
 

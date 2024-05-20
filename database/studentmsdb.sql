@@ -519,10 +519,6 @@ COMMIT;
 ALTER TABLE `tblattendance`
   ADD CONSTRAINT `tblattendance_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `tblclass` (`ID`);
 
-ALTER TABLE `tblstudent_attendance`
-  ADD CONSTRAINT `tblstudent_attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),
-  ADD CONSTRAINT `tblstudent_attendance_ibfk_2` FOREIGN KEY (`attendance_id`) REFERENCES `tblattendance` (`ID`);
-
 ALTER TABLE `tbltest_question`
   ADD CONSTRAINT `tbltest_question_ibfk_1` FOREIGN KEY (`test_id`) REFERENCES `tbltest` (`ID`);
 
