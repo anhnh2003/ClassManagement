@@ -293,7 +293,8 @@ CREATE TABLE `tblattendance` (
   `class_id` int(11) NOT NULL,
   `Secret` varchar(100) DEFAULT NULL,
   `CreationTime` timestamp NOT NULL DEFAULT current_timestamp(),
-  `LastGeneratedTime` timestamp NULL DEFAULT NULL
+  `LastGeneratedTime` timestamp NULL DEFAULT NULL,
+  `TimeToLive` int(11) NOT NULL DEFAULT 30
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -304,7 +305,8 @@ CREATE TABLE `tblattendance` (
 
 CREATE TABLE `tblstudent_attendance` (
   `student_id` int(11) NOT NULL,
-  `attendance_id` int(11) NOT NULL
+  `attendance_id` int(11) NOT NULL,
+  `AttendanceTime` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 -- --------------------------------------------------------
 
