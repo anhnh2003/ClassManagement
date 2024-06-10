@@ -54,34 +54,12 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
     header('location:manage-class.php');
     exit();
   }
-  
-  if (isset($_POST['genqr'])) {
-    $aid = $_POST['attendance_id'];
-
-    // Generate QR code
-    include_once('../phpqrcode/qrlib.php');
-    $tempDir = 'temp/';
-
-    $qrContent = getRandomStringShuffle();
-    $qrImgName = "qrImg.png";
-    date_default_timezone_set('Asia/Ho_Chi_Minh');
-    $gentime = date('Y-m-d H:i:s');
-    $sql = "UPDATE tblattendance SET Secret=:qrContent, LastGeneratedTime=:gentime WHERE ID=:aid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':aid', $aid, PDO::PARAM_STR);
-    $query->bindParam(':qrContent', $qrContent, PDO::PARAM_STR);
-    $query->bindParam(':gentime', $gentime, PDO::PARAM_STR);
-    $query->execute();
-    $pngAbsoluteFilePath = $tempDir.$qrImgName;
-    QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 10, 10);
-    // echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>";
-    // echo "<img src='".$pngAbsoluteFilePath."'>";
-    // echo "</div>";
-    // echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>";
-    // echo "<br>Using shuffle(): " . getRandomStringShuffle();
-    // echo "</div>";
-    echo "<script>window.open('".$pngAbsoluteFilePath."');</script>";
-  }
+  $sql1 = "SELECT * from tblstudent_class where class_id=:eid";
+  $query1 = $dbh->prepare($sql1);
+  $query1->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query1->execute();
+  $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+  $students_in_class = $query1->rowCount();
 
   if (isset($_POST['regencode'])) {
     $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -156,7 +134,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
           <h3 class="page-title"> Manage Class </h3>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="dashboard.php">Manage Class</a></li>
+              <li class="breadcrumb-item"><a href="manage-class.php">Manage Class</a></li>
               <li class="breadcrumb-item active" aria-current="page"> Class Details</li>
             </ol>
           </nav>
@@ -218,7 +196,6 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                           <th class="font-weight-bold">No.</th>
                           <th class="font-weight-bold">Time</th>
                           <th class="font-weight-bold">Student</th>
-                          <th class="font-weight-bold"></th>
                           <th class="font-weight-bold">Action</th>
                         </tr>
                       </thead>
@@ -243,7 +220,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                         ?>
                             <tr>
                               <td><?php echo htmlentities($cnt); ?></td>
-                              <td><?php echo htmlentities($row->CreationTime); ?></td>
+                              <td><a href="attendance-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><?php echo htmlentities($row->CreationTime); ?></a></td>
                               <td>
                                 <?php
                                 $aid = $row->ID;
@@ -253,15 +230,9 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                                 $query1->execute();
                                 $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
                                 $totalstudent = $query1->rowCount();
-                                echo htmlentities($totalstudent);
+                                echo htmlentities($totalstudent." / ".$students_in_class);
                                 ?>
-                              </td>
-                              <td>
                                 <td >
-                                  <form class="forms-sample" method="post">
-                                    <input type="hidden" name="attendance_id" value="<?php echo htmlentities($aid); ?>">
-                                    <button type="submit" class="btn btn-sm btn-primary mr-2" style="background-color: gray; width: 100pt;" name="genqr">Gen QR</button>
-                                  </form>
                                   <form class="forms-sample" method="post">
                                     <input type="hidden" name="attendance_id" value="<?php echo htmlentities($aid); ?>">
                                     <button type="submit" class="btn btn-sm btn-primary mr-2" name="delete_attendance" style="background-color: red; border-color: red; width: 100pt;">Delete</button>
@@ -335,7 +306,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
               $query1->execute();
               $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
               $totalstudent = $query1->rowCount();
-              echo htmlentities($totalstudent);
+              echo htmlentities($totalstudent." / ".$students_in_class);
               ?>
                   </td>
                   <td>
