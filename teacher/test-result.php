@@ -221,15 +221,15 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         <td><?php echo htmlentities($row->Point); ?></td>
                         <td>
                           <?php
-                          $sql = "SELECT sq.student_id, sq.ChooseAns, q.CorrectAns FROM tblstudent_question sq, tbltest_question q WHERE q.ID=sq.question_id";
-                          $query = $dbh->prepare($sql);
-                          $query->execute();
-                          $results = $query->fetchAll(PDO::FETCH_OBJ);
+                          $sql1 = "SELECT sq.student_id, sq.ChooseAns, q.CorrectAns FROM tblstudent_question sq, tbltest_question q WHERE q.ID=sq.question_id";
+                          $query1 = $dbh->prepare($sql1);
+                          $query1->execute();
+                          $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
                           $correct = 0;
                           $total = 0;
-                          if ($query->rowCount() > 0) {
-                            foreach ($results as $row) {
-                              if ($row->ChooseAns == $row->CorrectAns) {
+                          if ($query1->rowCount() > 0) {
+                            foreach ($results1 as $row1) {
+                              if ($row1->ChooseAns == $row1->CorrectAns) {
                                 $correct = $correct + 1;
                               }
                               $total = $total + 1;
