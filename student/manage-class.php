@@ -198,7 +198,7 @@ if ((strlen($_SESSION['sturecmsstuid'])== 0 )||( strlen($_COOKIE['uid']) == 0) |
                               </td>
                               <td>
                                 <?php
-                                $sql1 = "SELECT ID, CreationTime, sa.student_id FROM tblattendance LEFT JOIN (SELECT * FROM tblstudent_attendance WHERE student_id=:uid) sa ON sa.attendance_id=ID WHERE class_id=:cid ORDER BY CreationTime ASC;";
+                                $sql1 = "SELECT ID, CreationTime, sa.student_id FROM tblattendance LEFT JOIN (SELECT attendance_id, student_id FROM tblstudent_attendance WHERE student_id=:uid) sa ON sa.attendance_id=ID WHERE class_id=:cid ORDER BY CreationTime ASC;";
                                 #change the query above to check the token
                                 $query1 = $dbh->prepare($sql1);
                                 $query1->bindParam(':cid', $cid, PDO::PARAM_STR);

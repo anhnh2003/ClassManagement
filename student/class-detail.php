@@ -135,7 +135,7 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
                         // Formula for pagination
                         $eid = $_GET['editid'];
                         $uid = $_SESSION['sturecmsuid'];
-                        $sql = "SELECT ID, CreationTime, sa.student_id FROM tblattendance LEFT JOIN (SELECT * FROM tblstudent_attendance WHERE student_id=:uid) sa ON sa.attendance_id=ID WHERE class_id=:eid ORDER BY CreationTime ASC;";
+                        $sql = "SELECT ID, CreationTime, sa.student_id FROM tblattendance LEFT JOIN (SELECT student_id, attendance_id  FROM tblstudent_attendance WHERE student_id=:uid) sa ON sa.attendance_id=ID WHERE class_id=:eid ORDER BY CreationTime ASC;";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':eid', $eid, PDO::PARAM_STR);
                         $query->bindParam(':uid', $uid, PDO::PARAM_STR);
