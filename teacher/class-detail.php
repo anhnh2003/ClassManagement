@@ -68,7 +68,6 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
       $index = rand(0, strlen($characters) - 1);
       $joincode .= $characters[$index];
     }
-    $eid = $_GET['editid'];
     $sql = "UPDATE tblclass SET JoinCode=:joincode WHERE ID=:eid";
     $query = $dbh->prepare($sql);
     $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
@@ -78,7 +77,6 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
   }
 
   if (isset($_POST['new_attendance'])) {
-    $eid = $_GET['editid'];
     $sql = "insert into tblattendance (class_id) values (:eid)";
     $query = $dbh->prepare($sql);
     $query->bindParam(':eid', $eid, PDO::PARAM_STR);
@@ -207,7 +205,6 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                           $pageno = 1;
                         }
                         // Formula for pagination
-                        $eid = $_GET['editid'];
                         $sql = "SELECT tblattendance.* from tblattendance where class_id=:eid ORDER BY CreationTime ASC";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':eid',$eid,PDO::PARAM_STR);
@@ -220,7 +217,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                         ?>
                             <tr>
                               <td><?php echo htmlentities($cnt); ?></td>
-                              <td><a href="attendance-detail.php?editid=<?php echo htmlentities($row->ID); ?>"><?php echo htmlentities($row->CreationTime); ?></a></td>
+                              <td><a href="attendance-detail.php?editid=<?php echo htmlentities($row->ID); ?>&classid=<?php echo htmlentities($eid); ?>"><?php echo htmlentities($row->CreationTime); ?></a></td>
                               <td>
                                 <?php
                                 $aid = $row->ID;

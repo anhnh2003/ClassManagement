@@ -85,9 +85,9 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
     QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 15, 2);
 
     // Update the QR code and the last generated time in the database
-    $sql = "UPDATE tblattendance SET Secret=:qrContent, LastGeneratedTime=:gentime WHERE ID=:aid";
+    $sql = "UPDATE tblattendance SET Secret=:qrContent, LastGeneratedTime=:gentime WHERE ID=:eid";
     $query = $dbh->prepare($sql);
-    $query->bindParam(':aid', $aid, PDO::PARAM_STR);
+    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
     $query->bindParam(':qrContent', $qrContent, PDO::PARAM_STR);
     $query->bindParam(':gentime', $gentime, PDO::PARAM_STR);
     $query->execute();
@@ -163,7 +163,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
             <h3 class="page-title"> Manage Attendance </h3>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="manage-class.php">Manage Class</a></li>
+                <li class="breadcrumb-item"><a href="class-detail.php?editid=<?php echo $_GET['classid']; ?>">Class Details</a></li>
                 <li class="breadcrumb-item active" aria-current="page"> Attendance Details</li>
               </ol>
             </nav>

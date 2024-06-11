@@ -304,6 +304,7 @@ CREATE TABLE `tblattendance` (
 --
 
 CREATE TABLE `tblstudent_attendance` (
+  `ID` int(11) NOT NULL PRIMARY KEY,
   `student_id` int(11) NOT NULL,
   `attendance_id` int(11) NOT NULL,
   `AttendanceTime` timestamp NOT NULL DEFAULT current_timestamp()
@@ -527,6 +528,10 @@ ALTER TABLE `tbltest_question`
 ALTER TABLE `tblstudent_question`
   ADD CONSTRAINT `tblstudent_question_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),
   ADD CONSTRAINT `tblstudent_question_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `tbltest_question` (`ID`);
+
+ALTER TABLE `tblstudent_attendance`
+  ADD CONSTRAINT `tblstudent_attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),
+  ADD CONSTRAINT `tblstudent_attendance_ibfk_2` FOREIGN KEY (`attendance_id`) REFERENCES `tblattendance` (`ID`);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
