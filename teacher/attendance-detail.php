@@ -125,6 +125,14 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
       $query->execute();
     }
   }
+
+  if (isset($_POST['stopqr'])) {
+    // Stop the QR code
+    $sql = "UPDATE tblattendance SET Secret=NULL, LastGeneratedTime=NULL WHERE ID=:eid";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->execute();
+  }
 }
 ?>
 
@@ -203,6 +211,11 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                     } ?>
                     <button type="submit" class="btn btn-primary mr-2" name="update_ttl">Update</button>
                     <button type="submit" class="btn btn-primary mr-2" name="genqr">Generate QR</button>
+                    <?php
+                    if (file_exists($pngAbsoluteFilePath)) {
+                      echo '<button type="stop" class="btn btn-danger mr-2" name="stopqr">Stop Now</button>';
+                    }
+                    ?>
                   </form>
                   <?php
                   // Check if the QR image exists
@@ -243,7 +256,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                         }
 
                         // Formula for pagination
-                        $sql = "SELECT * FROM (SELECT s.ID, s.StudentName, s.StuID, a.ID aid FROM tblattendance a, tblstudent_class sc, tblstudent s WHERE a.ID=:eid and a.class_id=sc.class_id and sc.student_id=s.ID) tb LEFT JOIN tblstudent_attendance sa ON sa.student_id = tb.ID and sa.attendance_id = tb.aid ORDER BY StudentName";
+                        $sql = "SELECT tb.*, sa.AttendanceTime FROM (SELECT s.ID, s.StudentName, s.StuID, a.ID aid FROM tblattendance a, tblstudent_class sc, tblstudent s WHERE a.ID=:eid and a.class_id=sc.class_id and sc.student_id=s.ID) tb LEFT JOIN tblstudent_attendance sa ON sa.student_id = tb.ID and sa.attendance_id = tb.aid ORDER BY StudentName";
                         $query = $dbh->prepare($sql);
                         $query->bindParam(':eid', $eid, PDO::PARAM_STR);
                         $query->execute();
@@ -259,7 +272,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                               <td><?php echo htmlentities($row->StuID); ?></td>
                               <td>
                                 <?php
-                                if ($row->attendance_id != null) {
+                                if ($row->AttendanceTime != null) {
                                   echo '<label class="badge badge-success"style="width: 30pt; height: 15pt; font-size: 12px;">Yes</label>';
                                 } else {
                                   echo '<label class="badge badge-danger" style="width: 30pt; height: 15pt; font-size: 12px;">No</label>';
@@ -268,7 +281,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                               </td>
                               <td>
                                 <?php
-                                if ($row->attendance_id != null) {
+                                if ($row->AttendanceTime != null) {
                                   echo htmlentities($row->AttendanceTime);
                                 } else {
                                   echo 'N/A';
@@ -278,7 +291,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
                               <td>
                                 <form class="forms-sample" method="post">
                                   <input type="hidden" name="student_id" value="<?php echo htmlentities($row->ID); ?>">
-                                  <input type="hidden" name="isAttended" value="<?php echo htmlentities($row->attendance_id); ?>">
+                                  <input type="hidden" name="isAttended" value="<?php echo htmlentities($row->AttendanceTime); ?>">
                                   <button type="submit" class="btn btn-sm btn-primary mr-2" name="toggle_attendance" style="width: 70pt;">Toggle</button>
                                 </form>
                               </td>
@@ -320,5 +333,4 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
   <script src="js/select2.js"></script>
   <!-- End custom js for this page -->
 </body>
-
 </html>
