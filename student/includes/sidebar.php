@@ -54,5 +54,11 @@ foreach($results as $row)
                 <i class="icon-hourglass menu-icon"></i>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="check-attendance.php">
+                <span class="menu-title">Check Attendance</span>
+                <i class="icon-camera menu-icon"></i>
+              </a>
+            </li>
           </ul>
         </nav>
