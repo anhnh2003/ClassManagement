@@ -30,7 +30,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
     $uid = $_COOKIE['uid'] ?? '';
     $eid = $_GET['editid'];
 
-    $sql = "SELECT * FROM tbltest_question, tbltest, tblclass, tblteacher, tbltoken WHERE tbltest.ID=test_id and tbltest_question.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=tbltest.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+    $sql = "SELECT * FROM tblquestion, tbltest_question, tbltest, tblclass, tblteacher, tbltoken WHERE tbltest.ID=tbltest_question.test_id and tblquestion.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=tbltest.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
     $query = $dbh->prepare($sql);
     $query->bindParam(':uid', $uid, PDO::PARAM_STR);
     $query->bindParam(':eid', $eid, PDO::PARAM_STR);
@@ -49,7 +49,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
   if (isset($_POST['edit'])) {
     $eid = $_GET['editid'];
     $qname = $_POST['qname'];
-    $point = $_POST['point'];
     $correct_ans = $_POST['correct_ans'];
     $ansA = $_POST['ansA'];
     if ($ansA == '') $ansA = "Untitled";
@@ -59,16 +58,17 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
     if ($ansC == '') $ansC = null;
     $ansD = $_POST['ansD'];
     if ($ansD == '') $ansD = null;
+    $ismul = $_POST['ismul'];
 
-    $sql = "UPDATE tbltest_question SET Question=:qname, Point=:point, CorrectAns=:correct_ans, AnsA=:ansA, AnsB=:ansB, AnsC=:ansC, AnsD=:ansD WHERE ID=:eid";
+    $sql = "UPDATE tblquestion SET Question=:qname, CorrectAns=:correct_ans, AnsA=:ansA, AnsB=:ansB, AnsC=:ansC, AnsD=:ansD, isMultipleChoice=:ismul WHERE ID=:eid";
     $query = $dbh->prepare($sql);
     $query->bindParam(':qname', $qname, PDO::PARAM_STR);
-    $query->bindParam(':point', $point, PDO::PARAM_STR);
     $query->bindParam(':correct_ans', $correct_ans, PDO::PARAM_STR);
     $query->bindParam(':ansA', $ansA, PDO::PARAM_STR);
     $query->bindParam(':ansB', $ansB, PDO::PARAM_STR);
     $query->bindParam(':ansC', $ansC, PDO::PARAM_STR);
     $query->bindParam(':ansD', $ansD, PDO::PARAM_STR);
+    $query->bindParam(':ismul', $ismul, PDO::PARAM_INT);
     $query->bindParam(':eid', $eid, PDO::PARAM_STR);
     $query->execute();
 
@@ -120,12 +120,16 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
       <div class="content-wrapper">
         <div class="page-header">
           <h3 class="page-title"> Edit Question </h3>
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="test-detail.php?editid=<?php echo htmlentities($tid); ?>">Test Details</a></li>
-              <li class="breadcrumb-item active" aria-current="page"> Edit Test Question</li>
-            </ol>
-          </nav>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+          <?php if (!empty($_GET['testid'])) { ?>
+                <li class="breadcrumb-item"><a href="test-detail.php?editid=<?php echo htmlentities($_GET['testid']); ?>">Test Details</a></li>
+          <?php } else { ?>
+            <li class="breadcrumb-item"><a href="manage-question.php">Manage Questions</a></li>
+          <?php } ?>
+          <li class="breadcrumb-item active" aria-current="page"> Edit Test Question</li>
+          </ol>
+        </nav>
         </div>
         <div class="row">
           <div class="col-12 grid-margin stretch-card">
@@ -134,7 +138,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                 <?php
                 $uid = $_SESSION['sturecmsuid'];
                 $eid = $_GET['editid'];
-                $sql = "SELECT tq.*, TestName FROM tbltest_question tq, tbltest t WHERE test_id=t.ID AND tq.ID=:eid";
+                $sql = "SELECT * FROM tblquestion q WHERE q.ID=:eid";
                 $query = $dbh->prepare($sql);
                 $query->bindParam(':eid', $eid, PDO::PARAM_STR);
                 $query->execute();
@@ -143,18 +147,12 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                 if ($query->rowCount() > 0) {
                   foreach ($results as $row) {
                     ?>
-                    <h4 class="card-title" style="text-align: center;"> <?php echo htmlentities($row->TestName); ?> </h4>
+                    <h4 class="card-title" style="text-align: center;"> Question #<?php echo htmlentities($row->ID); ?> </h4>
                     <form class="forms-sample" method="post">
                         <div class="form-group">
                           <label for="exampleInputName1">Question</label>
                           <textarea name="qname" class="form-control" rows="10" required='true'><?php echo htmlentities($row->Question); ?></textarea>
                         </div>
-                        <div class="form-group">
-                        <label for="exampleInputName1">Point</label>
-                        <input type="text" name="point"
-                             value="<?php echo htmlentities($row->Point); ?>"
-                             class="form-control" required='true' pattern="[0-9]+">
-                      </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Correct Answer</label>
                         <select name="correct_ans" class="form-control" required='true'>
@@ -200,6 +198,19 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                              value="<?php echo htmlentities($row->AnsD); ?>"
                              class="form-control" placeholder="Add answer">
                       </div>
+                      <div class="form-group">
+                        <label for="exampleInputName1">Allow Multiple choices</label>
+                        <select name="ismul" class="form-control" value="<?php if($row->isMultipleChoice){echo "Yes";} else {echo "No";} ?>">
+                          <option value="1" <?php if ($row->isMultipleChoice == 1) {
+                            echo 'selected';
+                          } ?>>Yes
+                          </option>
+                          <option value="0" <?php if ($row->isMultipleChoice == 0) {
+                            echo 'selected';
+                          } ?>>No
+                          </option>
+                        </select>
+                      </div>
                       <?php $cnt = $cnt + 1;
                   }
                 } ?>
@@ -211,8 +222,11 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
               </form>
             </div>
           </div>
-
         </div>
+
+        
+        
+        
       </div>
       <!-- content-wrapper ends -->
       <!-- partial:partials/_footer.html -->
