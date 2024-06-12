@@ -64,9 +64,11 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
     // Generate QR code
     include_once('../lib/phpqrcode/qrlib.php');
     $tempDir = 'temp/';
-
+    // Create /temp folder if not existed
+    if (!is_dir($tempDir)) {
+      mkdir($tempDir);
+    }
     // Clean /temp folder
-    $tempDir = 'temp/';
     $files = glob($tempDir . '*.png');
     if (count($files) > 5) {
       foreach ($files as $file) {

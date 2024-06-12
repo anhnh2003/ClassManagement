@@ -3,6 +3,7 @@ session_start();
 include('includes/dbconnection.php');
 
 $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
+$answers = ['A', 'B', 'C', 'D'];
 
 if (strlen($_SESSION['sturecmstuid']) == 0) {
   header('location:logout.php');
@@ -49,7 +50,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
   if (isset($_POST['edit'])) {
     $eid = $_GET['editid'];
     $qname = $_POST['qname'];
-    $answers = ['A', 'B', 'C', 'D'];
     for ($i = 0; $i < count($answers); $i++) {
       if (empty($_POST['correct' . $answers[$i]]) || empty($_POST['ans' . $answers[$i]])) {
         $answers[$i] = '';
@@ -161,18 +161,17 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                           <textarea name="qname" class="form-control" rows="10" required='true'><?php echo htmlentities($row->Question); ?></textarea>
                         </div>
                         <div class="form-group">
-                        <div class="table-responsive">
+                        <div class="table-responsive ">
                           <table class="table table-striped table-bordered">
                           <thead>
                           <tr>
-                          <th>Answer</th>
-                          <th>Content</th>
-                          <th>Correct Answer</th>
+                          <th><b>Answer</b></th>
+                          <th><b>Content</b></th>
+                          <th><b>Correct Answer(s)</b></th>
                           </tr>
                           </thead>
                           <tbody>
                           <?php
-                          $answers = ['A', 'B', 'C', 'D'];
                           foreach ($answers as $answer) {
                           echo '<tr>';
                           echo '<td>' . $answer . '</td>';
