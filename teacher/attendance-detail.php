@@ -62,7 +62,7 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
 
   if (isset($_POST['genqr'])) {
     // Generate QR code
-    include_once('../phpqrcode/qrlib.php');
+    include_once('../lib/phpqrcode/qrlib.php');
     $tempDir = 'temp/';
 
     // Clean /temp folder
