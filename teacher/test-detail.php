@@ -180,14 +180,14 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                 <table class="table">
                   <thead>
                   <tr>
-                    <th class="font-weight-bold">No.</th>
+                    <th class="font-weight-bold">ID</th>
                     <th class="font-weight-bold">Point</th>
                     <th class="font-weight-bold">Question</th>
                   </tr>
                   </thead>
                   <tbody>
                   <?php
-                  $sql = "SELECT * FROM tbltest_question WHERE test_id=:eid ORDER BY ID DESC";
+                  $sql = "SELECT * FROM tbltest_question tq, tblquestion q WHERE tq.test_id=:eid and tq.question_id=q.ID ORDER BY q.ID DESC";
                   $query = $dbh->prepare($sql);
                   $query->bindParam(':eid', $eid, PDO::PARAM_STR);
                   $query->execute();
@@ -197,10 +197,10 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                     foreach ($results as $row) {
                       ?>
                       <tr>
-                        <td><?php echo htmlentities($cnt); ?></td>
+                        <td>#<?php echo htmlentities($row->ID); ?></td>
                         <td><?php echo htmlentities($row->Point); ?></td>
                         <td>
-                          <a href="question-detail.php?editid=<?php echo htmlentities($row->ID); ?>">
+                          <a href="question-detail.php?editid=<?php echo htmlentities($row->ID); ?>&testid=<?php echo htmlentities($eid); ?>">
                             <i class="icon-pencil"></i>
                             <?php echo htmlentities($row->Question); ?>
                           </a>

@@ -304,7 +304,7 @@ CREATE TABLE `tblattendance` (
 --
 
 CREATE TABLE `tblstudent_attendance` (
-  `ID` int(11) NOT NULL PRIMARY KEY,
+  `ID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `student_id` int(11) NOT NULL,
   `attendance_id` int(11) NOT NULL,
   `AttendanceTime` timestamp NOT NULL DEFAULT current_timestamp()
@@ -322,29 +322,42 @@ CREATE TABLE `tbltoken` (
   `role_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `tbltest_question` (
+CREATE TABLE `tblquestion` (
   `ID` int(11) NOT NULL PRIMARY KEY,
-  `test_id` int(11) NOT NULL,
   `Question` mediumtext NOT NULL,
   `AnsA` mediumtext NOT NULL,
   `AnsB` mediumtext DEFAULT NULL,
   `AnsC` mediumtext DEFAULT NULL,
   `AnsD` mediumtext DEFAULT NULL,
-  `CorrectAns` varchar(1) NOT NULL,
-  `Point` int(11) NOT NULL DEFAULT 1
+  `CorrectAns` varchar(6) NOT NULL,
+  `isMultipleChoice` boolean NOT NULL DEFAULT false
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `tbltest_question` (`ID`, `test_id`, `Question`, `AnsA`, `AnsB`, `AnsC`, `AnsD`, `CorrectAns`, `Point`) VALUES
-(80000, 60003, '1 + 1 = ?', '2', '1', NULL, NULL, 'A', 1),
-(80001, 60003, 'What is the correct answer?', 'Not this', 'This', 'Not this', 'Not this', 'B', 2);
-
+INSERT INTO `tblquestion` (`ID`, `Question`, `AnsA`, `AnsB`, `AnsC`, `AnsD`, `CorrectAns`, `isMultipleChoice`) VALUES
+(80000, '1 + 1 = ?', '2', '1', NULL, NULL, 'A', false),
+(80001, 'Which is the correct answer?', 'Not this', 'This', 'Not this', 'Not this', 'B', false),
+(80002, 'Which are the correct answers?', 'Not this', 'This', 'This', 'Not this', 'BC', false);
 
 CREATE TABLE `tblstudent_question` (
+  `ID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `student_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
   `ChooseAns` varchar(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `tbltest_question` (
+  `ID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `test_id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `Point` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbltest_question` (`test_id`, `question_id`, `Point`) VALUES
+(60001, 80000, 1),
+(60001, 80001, 1),
+(60001, 80002, 1),
+(60003, 80001, 1),
+(60003, 80002, 1);
 --
 -- Indexes for dumped tables
 --
@@ -486,7 +499,7 @@ ALTER TABLE `tbltest`
 ALTER TABLE `tblattendance`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70000;
 
-ALTER TABLE `tbltest_question`
+ALTER TABLE `tblquestion`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80002;
 --
 -- Constraints for dumped tables
@@ -523,7 +536,8 @@ ALTER TABLE `tblattendance`
   ADD CONSTRAINT `tblattendance_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `tblclass` (`ID`);
 
 ALTER TABLE `tbltest_question`
-  ADD CONSTRAINT `tbltest_question_ibfk_1` FOREIGN KEY (`test_id`) REFERENCES `tbltest` (`ID`);
+  ADD CONSTRAINT `tbltest_question_ibfk_1` FOREIGN KEY (`test_id`) REFERENCES `tbltest` (`ID`),
+  ADD CONSTRAINT `tbltest_question_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `tblquestion` (`ID`);
 
 ALTER TABLE `tblstudent_question`
   ADD CONSTRAINT `tblstudent_question_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),

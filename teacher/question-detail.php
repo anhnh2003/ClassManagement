@@ -49,30 +49,37 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
   if (isset($_POST['edit'])) {
     $eid = $_GET['editid'];
     $qname = $_POST['qname'];
-    $correct_ans = $_POST['correct_ans'];
-    $ansA = $_POST['ansA'];
-    if ($ansA == '') $ansA = "Untitled";
-    $ansB = $_POST['ansB'];
-    if ($ansB == '') $ansB = null;
-    $ansC = $_POST['ansC'];
-    if ($ansC == '') $ansC = null;
-    $ansD = $_POST['ansD'];
-    if ($ansD == '') $ansD = null;
-    $ismul = $_POST['ismul'];
+    $answers = ['A', 'B', 'C', 'D'];
+    for ($i = 0; $i < count($answers); $i++) {
+      if (empty($_POST['correct' . $answers[$i]]) || empty($_POST['ans' . $answers[$i]])) {
+        $answers[$i] = '';
+      } else {
+        $answers[$i] = $_POST['correct' . $answers[$i]];
+      }
+    }
+    $correct_ans = implode('', $answers);
+    if ($correct_ans == '') {
+      echo '<script>alert("Please select a correct answer")</script>';
+    } else {
+      $ismul = $_POST['ismul'];
+      if (strlen($correct_ans) > 1 && $ismul == 0) {
+        $ismul = 1;
+      }
 
-    $sql = "UPDATE tblquestion SET Question=:qname, CorrectAns=:correct_ans, AnsA=:ansA, AnsB=:ansB, AnsC=:ansC, AnsD=:ansD, isMultipleChoice=:ismul WHERE ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':qname', $qname, PDO::PARAM_STR);
-    $query->bindParam(':correct_ans', $correct_ans, PDO::PARAM_STR);
-    $query->bindParam(':ansA', $ansA, PDO::PARAM_STR);
-    $query->bindParam(':ansB', $ansB, PDO::PARAM_STR);
-    $query->bindParam(':ansC', $ansC, PDO::PARAM_STR);
-    $query->bindParam(':ansD', $ansD, PDO::PARAM_STR);
-    $query->bindParam(':ismul', $ismul, PDO::PARAM_INT);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
+      $sql = "UPDATE tblquestion SET Question=:qname, CorrectAns=:correct_ans, AnsA=:ansA, AnsB=:ansB, AnsC=:ansC, AnsD=:ansD, isMultipleChoice=:ismul WHERE ID=:eid";
+      $query = $dbh->prepare($sql);
+      $query->bindParam(':qname', $qname, PDO::PARAM_STR);
+      $query->bindParam(':correct_ans', $correct_ans, PDO::PARAM_STR);
+      $query->bindValue(':ansA', $_POST['ansA'] ?: "Untitled", PDO::PARAM_STR);
+      $query->bindValue(':ansB', $_POST['ansB'] ?: null, PDO::PARAM_STR);
+      $query->bindValue(':ansC', $_POST['ansC'] ?: null, PDO::PARAM_STR);
+      $query->bindValue(':ansD', $_POST['ansD'] ?: null, PDO::PARAM_STR);
+      $query->bindParam(':ismul', $ismul  , PDO::PARAM_INT);
+      $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+      $query->execute();
 
-    echo '<script>alert("Question has been updated")</script>';
+      echo '<script>alert("Question has been updated")</script>';
+    }
   }
 
   if (isset($_POST['delete'])) {
@@ -153,52 +160,36 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                           <label for="exampleInputName1">Question</label>
                           <textarea name="qname" class="form-control" rows="10" required='true'><?php echo htmlentities($row->Question); ?></textarea>
                         </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Correct Answer</label>
-                        <select name="correct_ans" class="form-control" required='true'>
-                          <option value="A" <?php if ($row->CorrectAns == 'A') {
-                            echo 'selected';
-                          } ?>>A
-                          </option>
-                          <option value="B" <?php if ($row->CorrectAns == 'B') {
-                            echo 'selected';
-                          } ?>>B
-                          </option>
-                          <option value="C" <?php if ($row->CorrectAns == 'C') {
-                            echo 'selected';
-                          } ?>>C
-                          </option>
-                          <option value="D" <?php if ($row->CorrectAns == 'D') {
-                            echo 'selected';
-                          } ?>>D
-                          </option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Answer A</label>
-                        <input type="text" name="ansA"
-                             value="<?php echo htmlentities($row->AnsA); ?>"
-                             class="form-control" required='true' placeholder="Add answer">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Answer B</label>
-                        <input type="text" name="ansB"
-                             value="<?php echo htmlentities($row->AnsB); ?>"
-                             class="form-control" placeholder="Add answer">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Answer C</label>
-                        <input type="text" name="ansC"
-                             value="<?php echo htmlentities($row->AnsC); ?>"
-                             class="form-control" placeholder="Add answer">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Answer D</label>
-                        <input type="text" name="ansD"
-                             value="<?php echo htmlentities($row->AnsD); ?>"
-                             class="form-control" placeholder="Add answer">
-                      </div>
-                      <div class="form-group">
+                        <div class="form-group">
+                        <div class="table-responsive">
+                          <table class="table table-striped table-bordered">
+                          <thead>
+                          <tr>
+                          <th>Answer</th>
+                          <th>Content</th>
+                          <th>Correct Answer</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <?php
+                          $answers = ['A', 'B', 'C', 'D'];
+                          foreach ($answers as $answer) {
+                          echo '<tr>';
+                          echo '<td>' . $answer . '</td>';
+                          echo '<td>';
+                          echo '<input type="text" name="ans' . $answer . '" value="' . htmlentities($row->{'Ans' . $answer}) . '" class="form-control" placeholder="Add answer">';
+                          echo '</td>';
+                          echo '<td>';
+                          echo '<input type="checkbox" name="correct' . $answer . '" value="' . $answer . '" ' . (strpos($row->CorrectAns, $answer) !== false ? 'checked' : '') . '>';
+                          echo '</td>';
+                          echo '</tr>';
+                          }
+                          ?>
+                          </tbody>
+                          </table>
+                        </div>
+                        </div>
+                        <div class="form-group">
                         <label for="exampleInputName1">Allow Multiple choices</label>
                         <select name="ismul" class="form-control" value="<?php if($row->isMultipleChoice){echo "Yes";} else {echo "No";} ?>">
                           <option value="1" <?php if ($row->isMultipleChoice == 1) {
