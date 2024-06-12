@@ -157,7 +157,7 @@ if (isset($_POST['confirm'])) {
                                     <button class="btn btn-success btn-block loginbtn" name="confirm" type="submit">Confirm OTP</button>
                                 </div>
                                 <div class="mt-2">
-                                    <a href="../index.php" class="btn btn-block btn-facebook auth-form-btn">
+                                    <a href="login.php" class="btn btn-block btn-facebook auth-form-btn">
                                         <i class="icon-social-home mr-2"></i>Back </a>
                                 </div>
                             </form>
