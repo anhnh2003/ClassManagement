@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 
   // Code for deletion
   if (isset($_GET['delid'])) {

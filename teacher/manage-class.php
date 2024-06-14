@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 // Check if the user is logged in and the session variables are set
 $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
 if (strlen($_SESSION['sturecmstuid']) == 0) {

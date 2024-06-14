@@ -24,7 +24,7 @@ ini_set('session.gc_maxlifetime', 3600); // 1 hour
 // Set session cookie lifetime
 ini_set('session.cookie_lifetime', 9999); 
 error_reporting(0);
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 
 if(isset($_POST['login'])) 
   {

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 $uid = $_COOKIE['uid'] ?? '';
 
 if (strlen($_SESSION['sturecmsuid']) == 0) {

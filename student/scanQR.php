@@ -1,5 +1,5 @@
 <?php
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 
 if (isset($_POST['imgData'])) {
     $imgData = $_POST['imgData'];

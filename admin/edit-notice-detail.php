@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid']) == 0) {
   echo '<script>alert("Please login again.")</script>';
   header('location:logout.php');
@@ -22,9 +22,6 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
       echo '<script>alert("Please login again.")</script>';
       header('location:logout.php');
       exit();
-
-  } else {
-    // Token is valid, continue
 } else {
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];

@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 //require("../lib/SpeedSMSAPI_PHP/SpeedSMSAPI.php");
 
 use PHPMailer\PHPMailer\PHPMailer;
