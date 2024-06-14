@@ -169,14 +169,14 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                                 if ($row->SubmitTime != Null) {
                                   echo htmlentities($row->TotalPoint);
                                 } else {
-                                  echo htmlentities('N/A');
+                                  echo '<label class="badge badge-secondary">N/A</label>';
                                 } ?></td>
                               <td><?php echo htmlentities($row->StartTime); ?></td>
                               <td><?php
                                 if ($row->SubmitTime != Null) {
                                   echo htmlentities($row->SubmitTime);
                                 } else {
-                                  echo htmlentities('On Going');
+                                  echo '<label class="badge badge-danger">On Going</label>';
                                 } ?></td>
                             </tr>
                         <?php

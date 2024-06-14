@@ -137,12 +137,12 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                                 $query1->execute();
                                 $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
                                 if ($query1->rowCount() == 0) {
-                                  echo "Not Started";
+                                  echo '<label class="badge badge-secondary">Not Started</label>';
                                 } else {
                                   if ($results1[0]->SubmitTime != Null) {
                                     echo htmlentities($results1[0]->SubmitTime);
                                   } else {
-                                    echo "<b>On Going</b>";
+                                    echo '<label class="badge badge-danger">On Going</label>';
                                   }
                                 }
                                 
