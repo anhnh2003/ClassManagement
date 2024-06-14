@@ -205,7 +205,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                   }
                 } ?>
 
-                <button type="submit" class="btn btn-primary mr-2" name="edit">Edit Details
+                <button type="submit" class="btn btn-primary mr-2" name="edit">Save Change
                 </button>
                 <button type="submit" class="btn btn-primary mr-2" name="delete" style="background-color: red; border-color: red; color: white;">Delete</button>
                 </button>

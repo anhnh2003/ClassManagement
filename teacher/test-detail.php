@@ -196,7 +196,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                       }
                     } ?>
 
-                    <button type="submit" class="btn btn-primary mr-2" name="edit">Save Changes</button>
+                    <button type="submit" class="btn btn-primary mr-2" name="edit">Save Change</button>
                     <a href="test-result.php?editid=<?php echo $eid; ?>" class="btn btn-info">View Results</a>
                       </form>
                 </div>
@@ -255,7 +255,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                         </table>
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mr-2" name="edit_ques">Save Changes</button>
+                    <button type="submit" class="btn btn-primary mr-2" name="edit_ques">Save Change</button>
                     <button type="button" class="btn btn-primary mr-2" name="new_ques" data-toggle="modal" data-target="#questionModal" >Add Question</button>
                   </form>
                   <div class="mt-4"></div>

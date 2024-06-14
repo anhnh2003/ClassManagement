@@ -341,9 +341,10 @@ INSERT INTO `tblquestion` (`ID`, `Question`, `AnsA`, `AnsB`, `AnsC`, `AnsD`, `Co
 (80001, 'Which is the correct answer?', 'Not this', 'This', 'Not this', 'Not this', 'B', false),
 (80002, 'Which are the correct answers?', 'Not this', 'This', 'This', 'Not this', 'BC', false);
 
-CREATE TABLE `tblstudent_question` (
+CREATE TABLE `tblstudent_testquestion` (
   `ID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `student_id` int(11) NOT NULL,
+  `test_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
   `ChooseAns` varchar(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -542,9 +543,10 @@ ALTER TABLE `tbltest_question`
   ADD CONSTRAINT `tbltest_question_ibfk_1` FOREIGN KEY (`test_id`) REFERENCES `tbltest` (`ID`),
   ADD CONSTRAINT `tbltest_question_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `tblquestion` (`ID`);
 
-ALTER TABLE `tblstudent_question`
+ALTER TABLE `tblstudent_testquestion`
   ADD CONSTRAINT `tblstudent_question_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),
-  ADD CONSTRAINT `tblstudent_question_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `tbltest_question` (`ID`);
+  ADD CONSTRAINT `tblstudent_question_ibfk_2` FOREIGN KEY (`test_id`) REFERENCES `tbltest` (`ID`),
+  ADD CONSTRAINT `tblstudent_question_ibfk_3` FOREIGN KEY (`question_id`) REFERENCES `tblquestion` (`ID`);
 
 ALTER TABLE `tblstudent_attendance`
   ADD CONSTRAINT `tblstudent_attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `tblstudent` (`ID`),
