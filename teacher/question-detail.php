@@ -50,14 +50,15 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
   if (isset($_POST['edit'])) {
     $eid = $_GET['editid'];
     $qname = $_POST['qname'];
+    $ansUpdate = [];
     for ($i = 0; $i < count($answers); $i++) {
       if (empty($_POST['correct' . $answers[$i]]) || empty($_POST['ans' . $answers[$i]])) {
-        $answers[$i] = '';
+        $ansUpdate[] = '';
       } else {
-        $answers[$i] = $_POST['correct' . $answers[$i]];
+        $ansUpdate[] = $_POST['correct' . $answers[$i]];
       }
     }
-    $correct_ans = implode('', $answers);
+    $correct_ans = implode('', $ansUpdate);
     if ($correct_ans == '') {
       echo '<script>alert("Please select a correct answer")</script>';
     } else {
@@ -172,14 +173,14 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                           </thead>
                           <tbody>
                           <?php
-                          foreach ($answers as $answer) {
+                          for ($i = 0; $i < count($answers); $i++) {
                           echo '<tr>';
-                          echo '<td>' . $answer . '</td>';
+                          echo '<td>' . $answers[$i] . '</td>';
                           echo '<td>';
-                          echo '<input type="text" name="ans' . $answer . '" value="' . htmlentities($row->{'Ans' . $answer}) . '" class="form-control" placeholder="Add answer">';
+                          echo '<input type="text" name="ans' . $answers[$i] . '" value="' . htmlentities($row->{'Ans' . $answers[$i]}) . '" class="form-control" placeholder="Add answer">';
                           echo '</td>';
                           echo '<td>';
-                          echo '<input type="checkbox" name="correct' . $answer . '" value="' . $answer . '" ' . (strpos($row->CorrectAns, $answer) !== false ? 'checked' : '') . '>';
+                          echo '<input type="checkbox" name="correct' . $answers[$i] . '" value="' . $answers[$i] . '" ' . (strpos($row->CorrectAns, $answers[$i]) !== false ? 'checked' : '') . '>';
                           echo '</td>';
                           echo '</tr>';
                           }

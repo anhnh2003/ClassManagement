@@ -5,7 +5,7 @@ include('includes/dbconnection.php');
 $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
 
 function updateTestPoint($dbh, $uid, $tid) {
-  $sql = "SELECT ID, CorrectAns, Point, ChooseAns FROM tbltest_question q LEFT JOIN (SELECT * FROM tblstudent_question WHERE student_id=:uid) sq ON q.ID = sq.question_id WHERE test_id=:tid";
+  $sql = "SELECT tq.ID, CorrectAns, Point, ChooseAns FROM (SELECT * FROM tblstudent_testquestion WHERE student_id=:uid and test_id=:tid) sq RIGHT JOIN (SELECT Point, q.* FROM tbltest_question, tblquestion q WHERE question_id=q.ID and test_id=:tid) tq ON tq.ID = sq.question_id";
   $query = $dbh->prepare($sql);
   $query->bindParam(':uid', $uid, PDO::PARAM_STR);
   $query->bindParam(':tid', $tid, PDO::PARAM_STR);

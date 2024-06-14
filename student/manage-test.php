@@ -142,7 +142,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                                   if ($results1[0]->SubmitTime != Null) {
                                     echo htmlentities($results1[0]->SubmitTime);
                                   } else {
-                                    echo "On Going";
+                                    echo "<b>On Going</b>";
                                   }
                                 }
                                 
