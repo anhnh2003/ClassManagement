@@ -1,8 +1,11 @@
 <?php
 session_start();
 include('../includes/dbconnection.php');
+include('../includes/updateScore.php');
 
 $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
+$eid = $_GET['editid'];
+$uid = $_COOKIE['uid'] ?? '';
 
 if (strlen($_SESSION['sturecmstuid']) == 0) {
   header('location:logout.php');
@@ -27,9 +30,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
     header('location:logout.php');
     exit();
   } else {
-    $uid = $_COOKIE['uid'] ?? '';
-    $eid = $_GET['editid'];
-
     $sql = "SELECT * FROM tbltest, tblclass, tblteacher, tbltoken WHERE tbltest.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=tbltest.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
     $query = $dbh->prepare($sql);
     $query->bindParam(':uid', $uid, PDO::PARAM_STR);
@@ -41,6 +41,17 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
     if ($query->rowCount() == 0) {
       header('location:manage-test.php');
       exit();
+    }
+  }
+
+  if (isset($_POST['rescore'])) {
+    $sql = "SELECT student_id FROM tblstudent_test WHERE test_id=:eid AND TotalPoint is not null";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_OBJ);
+    foreach ($results as $row) {
+      updateTestPoint($dbh, $row->student_id, $eid, $updateSubmitTime = false);
     }
   }
 }
@@ -187,7 +198,12 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                       </tbody>
                     </table>
                   </div>
-                </form>
+                      </form>
+                    <form class="forms-sample" method="post">
+                    <div class="form-group">
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2" name="rescore">Recalculate Scores</button>
+                    </form>
               </div>
             </div>
 
