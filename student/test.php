@@ -228,7 +228,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
           </nav>
         </div>
                 <?php
-                $sql = "SELECT tq.ID, Question, AnsA, AnsB, AnsC, AnsD, CorrectAns, Point, ChooseAns, isMultipleChoice FROM (SELECT * FROM tblstudent_testquestion WHERE student_id=:uid and test_id=:tid) sq RIGHT JOIN (SELECT Point, q.* FROM tbltest_question, tblquestion q WHERE question_id=q.ID and test_id=:tid) tq ON tq.ID = sq.question_id";
+                $sql = "SELECT tq.ID, Question, AnsA, AnsB, AnsC, AnsD, CorrectAns, Point, ChooseAns, isMultipleChoice FROM (SELECT * FROM tblstudent_testquestion WHERE student_id=:uid and test_id=:tid) sq RIGHT JOIN (SELECT Point, q.* FROM tbltest_question, tblquestion q WHERE question_id=q.ID and test_id=:tid) tq ON tq.ID = sq.question_id ORDER BY tq.ID ASC";
                 $query = $dbh->prepare($sql);
                 $query->bindParam(':uid', $uid, PDO::PARAM_STR);
                 $query->bindParam(':tid', $tid, PDO::PARAM_STR);
