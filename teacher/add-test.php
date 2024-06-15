@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 
 $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
 if (strlen($_SESSION['sturecmstuid']) == 0) {
@@ -96,7 +96,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
             <div class="col-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title" style="text-align: center;">Add Test</h4>
+                  <h4 class="card-title" style="text-align: center;">Create New Test</h4>
 
                   <form class="forms-sample" method="post">
 
@@ -128,7 +128,9 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                       <label for="exampleInputName1">End Time</label>
                       <input type="datetime-local" name="etime" value="" class="form-control" required='true'>
                     </div>
-                    <button type="submit" class="btn btn-primary mr-2" name="submit">Add</button>
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary mr-2" name="submit">Add</button>
+                    </div>
 
                   </form>
                 </div>

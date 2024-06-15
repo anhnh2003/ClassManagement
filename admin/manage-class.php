@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
   // Code for deletion
   if (isset($_GET['delid'])) {
     if (strlen($_SESSION['sturecmsaid']) == 0) {

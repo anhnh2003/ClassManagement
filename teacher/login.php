@@ -24,7 +24,7 @@ ini_set('session.gc_maxlifetime', 3600); // 1 hour
 // Implement HTTPS enforcement in .htaccess or web server configuration
 
 error_reporting(0);
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

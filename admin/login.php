@@ -26,7 +26,7 @@ ini_set('session.cookie_lifetime', 3600); // 1 hour
 //set cookie to same site = strict
 ini_set('session.cookie_samesite', 'Strict');
 error_reporting(0);
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 
 if(isset($_POST['login'])) 
   {

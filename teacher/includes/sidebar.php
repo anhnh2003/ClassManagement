@@ -53,6 +53,8 @@ foreach($results as $row)
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="add-test.php">Add Test</a></li>
                   <li class="nav-item"> <a class="nav-link" href="manage-test.php">Manage Tests</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="add-question.php">Add Questions</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="manage-question.php">Manage Questions</a></li>
                 </ul>
               </div>
             </li>

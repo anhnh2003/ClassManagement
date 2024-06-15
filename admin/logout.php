@@ -3,7 +3,7 @@ session_start();
 session_unset();
 session_destroy();
 // clear the row in the db 
-include('includes/dbconnection.php');
+include('../includes/dbconnection.php');
 $uid=$_COOKIE['uid'];
 $sessToken=$_COOKIE['session_token'];
 $sql = "DELETE FROM tbltoken WHERE UserID = :uid and UserToken= :sessToken";
