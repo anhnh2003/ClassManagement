@@ -1,6 +1,6 @@
 <?php
 include('../includes/dbconnection.php');
-
+include('../includes/studentVerify.php');
 if (isset($_POST['imgData'])) {
     $imgData = $_POST['imgData'];
     $uid = $_POST['uid'];

@@ -1,28 +1,7 @@
 <?php
 session_start();
 include('../includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsaid']) == 0) {
-  echo '<script>alert("Please login again.")</script>';
-  header('location:logout.php');
-  exit();
-} else {
-  // Retrieve the 'uid' and 'session_token' cookies
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-  // Prepare the SQL statement to select the token from the database
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-  // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 1)) {
-      // Token is invalid or expired, redirect to logout
-      echo '<script>alert("Please login again.")</script>';
-      header('location:logout.php');
-      exit();
-} else {
+include('../includes/adminVerify.php');
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
     $classid = $_POST['classid'];
@@ -39,7 +18,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
 
     echo '<script>alert("Notice has been updated")</script>';
   }
-}}
+
 ?>
 
 <!DOCTYPE html>

@@ -21,3 +21,9 @@ RewriteRule ^includes/dbconnection\.php - [F,L]
 RewriteRule ^database/ - [F,L]
 #deny access to the '.htaccess' file
 RewriteRule ^\.htaccess - [F,L]
+#deny access to the 'includes' directory
+RewriteRule ^includes/studentVerify\.php - [F,L]
+#deny access to the 'includes' directory
+RewriteRule ^includes/teacherVerify\.php - [F,L]
+#deny access to the 'includes' directory
+RewriteRule ^includes/adminVerify\.php - [F,L]

@@ -2,10 +2,8 @@
 session_start();
 error_reporting(0);
 include('../includes/dbconnection.php');
+include('../includes/adminVerify.php');
 
-if (strlen($_SESSION['sturecmsaid']) == 0) {
-  header('location:logout.php');
-} else {
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
     $notmsg = $_POST['notmsg'];
@@ -18,7 +16,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
     $query->execute();
     echo '<script>alert("Notice has been updated")</script>';
   }
-}
+
 ?>
 
 <!DOCTYPE html>

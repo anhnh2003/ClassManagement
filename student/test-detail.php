@@ -2,33 +2,9 @@
 session_start();
 include('../includes/dbconnection.php');
 include('../includes/updateScore.php');
-
+include('../includes/studentVerify.php');
 $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
 
-
-if (strlen($_SESSION['sturecmstuid']) == 0) {
-  header('location:logout.php');
-  exit();
-} else {
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-
-  if (($query->rowCount() == 0) || ($role_id != 3)) {
-    header('location:logout.php');
-    exit();
-  }
-
-  if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)) {
-    header('location:logout.php');
-    exit();
-  } else {
     $uid = $_COOKIE['uid'] ?? '';
     $eid = $_GET['editid'];
 
@@ -44,7 +20,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
       header('location:manage-test.php');
       exit();
     }
-  }
+  
 
   if (isset($_POST['start'])) {
     $uid = $_COOKIE['uid'] ?? '';
@@ -60,7 +36,7 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
     echo '<script>alert("Test started successfully.")</script>';
     echo "<script>window.location.href ='test.php?testid=$eid'</script>";
   }
-}
+
 ?>
 
 <!DOCTYPE html>
