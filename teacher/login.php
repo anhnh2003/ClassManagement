@@ -7,7 +7,8 @@ error_reporting(E_ALL);
 // Set secure session cookie flags
 ini_set('session.cookie_secure', '1');
 ini_set('session.cookie_httponly', '1');
-
+//set cookie to same site = strict
+ini_set('session.cookie_samesite', 'Strict');
 // Use strict mode
 ini_set('session.use_strict_mode', '1');
 // start session
@@ -47,13 +48,13 @@ function generateSessionToken($dbh, $userid, $uid) {
   $tokenQuery->execute();
 
   // Send the token to the client to save it
-  setcookie("session_token", $token, time() + 7200); // 7200 seconds = 2 hours
+  setcookie("session_token", $token, time() + 7200,"/","",0,1); // 7200 seconds = 2 hours
 
   if(!empty($_POST["remember"])) {
     //COOKIES for username
-    setcookie ("uid",$uid,time()+7200);
+    setcookie ("uid",$uid,time()+3600,"","",0,1);
   } else {
-    setcookie ("uid",$uid,time()+9999);
+    setcookie ("uid",$uid,time()+7200,"","",0,1);
   }
 
   $_SESSION['login']=$_POST['username'];

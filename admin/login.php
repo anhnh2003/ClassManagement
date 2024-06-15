@@ -22,7 +22,9 @@ if (!isset($_SESSION['initialized'])) {
 // Set session expiration time
 ini_set('session.gc_maxlifetime', 3600); // 1 hour
 // Set session cookie lifetime
-ini_set('session.cookie_lifetime', 9999); 
+ini_set('session.cookie_lifetime', 3600); // 1 hour
+//set cookie to same site = strict
+ini_set('session.cookie_samesite', 'Strict');
 error_reporting(0);
 include('includes/dbconnection.php');
 
@@ -67,15 +69,15 @@ $_SESSION['sturecmsaid']=$result->ID;
     $tokenQuery->execute();
 
     // Send the token to the client to save it
-    setcookie("session_token", $token, time() + 7200); // 7200 seconds = 2 hours
+    setcookie("session_token", $token, time() + 7200,"/","",0,1); // 7200 seconds = 2 hours
 
 
   if(!empty($_POST["remember"])) {
 //COOKIES for username
-setcookie ("uid",$result->ID,time()+7200);
+setcookie ("uid",$result->ID,time()+3600,"","",0,1);
 } else {
 
-setcookie ("uid",$result->ID,time()+9999);
+setcookie ("uid",$result->ID,time()+7200,"","",0,1);
 
      
 }

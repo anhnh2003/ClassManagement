@@ -2,29 +2,15 @@
 RewriteEngine On
 # Hide Apache server version and other sensitive information
 ServerSignature Off
-
 ErrorDocument 403 /studentms/error.html
 # Disable directory listing
 Options -Indexes
-
-
 #Deny access to the 'includes' directory
 RewriteRule ^student/includes/ - [F,L]
-
-
 #Deny access to the 'includes' directory
 RewriteRule ^admin/includes - [F,L]
-#Deny access to the 'vendors' directory
-#RewriteRule ^admin/vendors/ - [F,L]
-
-
-
 #Deny access to the 'includes' directory
 RewriteRule ^teacher/includes/- [F,L]
-#Deny access to the 'vendors' directory
-#RewriteRule ^teacher/vendors/ - [F,L]
-
-
 #deny access to the 'phpqrcode' directory
 RewriteRule ^phpqrcode/ - [F,L]
 #deny access to the 'lib' directory
