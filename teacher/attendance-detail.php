@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+require '../vendor/autoload.php';
 $uid = $_COOKIE['uid'] ?? '';
 $eid = $_GET['editid'];
 
@@ -30,7 +31,6 @@ if ($query->rowCount() == 0) {
 $pngAbsoluteFilePath = '';
 if (isset($_POST['genqr'])) {
   // Generate QR code
-  include_once('../lib/phpqrcode/qrlib.php');
   $tempDir = 'temp/';
   // Create /temp folder if not existed
   if (!is_dir($tempDir)) {
@@ -52,7 +52,7 @@ if (isset($_POST['genqr'])) {
   date_default_timezone_set('Asia/Ho_Chi_Minh');
   $gentime = date('Y-m-d H:i:s');
   $pngAbsoluteFilePath = $tempDir . $qrImgName;
-  QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 15, 2);
+  \QR\QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 15, 2);
 
   // Update the QR code and the last generated time in the database
   $sql = "UPDATE tblattendance SET Secret=:qrContent, LastGeneratedTime=:gentime WHERE ID=:eid";
