@@ -23,11 +23,9 @@ ini_set('session.gc_maxlifetime', 3600); // 1 hour
 
 error_reporting(0);
 include('../includes/dbconnection.php');
-require '../vendor/autoload.php';
 require '../includes/randomGen.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
+require '../includes/sendEmail.php';
+
 $hideOTP = "display: none;";
 $hideLogin = "";
 
@@ -95,26 +93,7 @@ if(password_verify($password, $result->Password)){
     $_SESSION['uid'] = $result->ID;
 
     // Send Email OTP
-    $mail = new PHPMailer(true);
-    $mail->isSMTP();
-    $mail->SMTPDebug = 0;
-    $mail->SMTPAuth = true;
-    $mail->SMTPSecure = 'tls';
-    $mail->Host = 'smtp.gmail.com';
-    $mail->Post = 587;
-    $mail->isHTML(true);
-    $mail->Username = 'nguyenquochuy712@gmail.com';
-    $mail->Password = 'cthcwberksoutoss';
-    
-    $mail->setFrom('nguyenquochuy712@gmail.com');
-    $mail->addAddress($result->Email, 'Teacher'); 
-    
-    $mail->Subject = '2FA Login OTP - Student Management System';
-    $mail->Body = '<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2"> <div style="margin:50px auto;width:70%;padding:20px 0"> <div style="border-bottom:1px solid #eee"> <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Student Management System</a> </div> <p style="font-size:1.1em">Hi, '. $results->uname .'</p> <p>Use the following OTP to complete your 2FA Login procedures.</p> <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">'. $genotp .'</h2> <hr style="border:none;border-top:1px solid #eee" /> <p style="font-size:0.9em;"><em>If this is not you, please do not share this OTP.</em></p> </div> </div>';
-    if (!$mail->send()) {
-        echo "<script>alert('" . $mail->ErrorInfo ."');</script>";
-    }
-    $mail->smtpClose();
+    sendEmail($result->uname, $genotp, $result->Email, 'login');
   } else {
     generateSessionToken($dbh, $result->TeaID, $result->ID);
   }

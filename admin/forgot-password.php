@@ -2,11 +2,8 @@
 session_start();
 error_reporting(0);
 include('../includes/dbconnection.php');
-require '../vendor/autoload.php';
-require '../includes/randomGen.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
+include('../includes/sendEmail.php');
+include('../includes/randomGen.php');
 
 $btnSubmit = "";
 $btnConfirm = "display: none;";
@@ -27,53 +24,37 @@ if (isset($_POST['submit'])) {
     $results = $query->fetchAll(PDO::FETCH_OBJ);
 
     if ($query->rowCount() > 0) {
-        if (false) {
-            echo "<script>alert('Contact Number not set! Please contact an Admin');</script>";
+        $newpassword = $_POST['newpassword'];
+        $confirmpassword = $_POST['confirmpassword'];
+
+        if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
+            $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
+            header('Location: forgot-password.php');
+        exit();
+        }
+
+        if ($newpassword != $confirmpassword) {
+            echo "<script>alert('New Password and Confirm Password do not match');</script>";
         } else {
-            $newpassword = $_POST['newpassword'];
-            $confirmpassword = $_POST['confirmpassword'];
+            // Update fields
+            $valueEmail = $email;
+            $readonlyEmail = "readonly";
+            $valueNewPassword = $newpassword;
+            $readonlyNewPassword = "readonly";
+            $valueConfirmPassword = $confirmpassword;
+            $readonlyConfirmPassword = "readonly";
+            $btnSubmit = "display: none;";
+            $btnConfirm = "";
+            $hideOTP = "";
 
-            if ($newpassword != $confirmpassword) {
-                echo "<script>alert('New Password and Confirm Password do not match');</script>";
-            } else {
-                // Update fields
-                $valueEmail = $email;
-                $readonlyEmail = "readonly";
-                $valueNewPassword = $newpassword;
-                $readonlyNewPassword = "readonly";
-                $valueConfirmPassword = $confirmpassword;
-                $readonlyConfirmPassword = "readonly";
-                $btnSubmit = "display: none;";
-                $btnConfirm = "";
-                $hideOTP = "";
+            // Save OTP
+            $genotp = randomGen(6);
+            $_SESSION['otp'] = $genotp;
+            $_SESSION['newpassword'] = $newpassword;
+            $_SESSION['email'] = $email;
 
-                // Save OTP
-                $genotp = randomGen(6);
-                $_SESSION['otp'] = $genotp;
-                $_SESSION['newpassword'] = $newpassword;
-                $_SESSION['email'] = $email;
-
-                $mail = new PHPMailer(true);
-                $mail->isSMTP();
-                $mail->SMTPDebug = 0;
-                $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'tls';
-                $mail->Host = 'smtp.gmail.com';
-                $mail->Post = 587;
-                $mail->isHTML(true);
-                $mail->Username = 'nguyenquochuy712@gmail.com';
-                $mail->Password = 'cthcwberksoutoss';
-                
-                $mail->setFrom('nguyenquochuy712@gmail.com');
-                $mail->addAddress($email, 'Admin'); 
-                
-                $mail->Subject = 'Reset Password OTP - Student Management System';
-                $mail->Body = '<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2"> <div style="margin:50px auto;width:70%;padding:20px 0"> <div style="border-bottom:1px solid #eee"> <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Student Management System</a> </div> <p style="font-size:1.1em">Hi, '. $results[0]->AdminName .'</p> <p>Use the following OTP to complete your Reset Password procedures.</p> <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">'. $genotp .'</h2> <hr style="border:none;border-top:1px solid #eee" /> <p style="font-size:0.9em;"><em>If this is not you, please do not share this OTP.</em></p> </div> </div>';
-                if (!$mail->send()) {
-                    echo "<script>alert('" . $mail->ErrorInfo ."');</script>";
-                }
-                $mail->smtpClose();
-            }
+            // Send OTP
+            sendEmail($results[0]->AdminName, $genotp, $email, 'reset');
         }
     } else {
         echo "<script>alert('Email is invalid');</script>";
@@ -133,6 +114,11 @@ if (isset($_POST['confirm'])) {
                                 <div class="form-group">
                                     <input class="form-control form-control-lg" type="password" name="confirmpassword" value="<?php echo htmlentities($valueConfirmPassword); ?>" placeholder="Confirm Password" required="true" <?php echo htmlentities($readonlyConfirmPassword); ?> />
                                 </div>
+                                <?php
+                                if (isset($_SESSION['error'])) {
+                                echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
+                                unset($_SESSION['error']);}
+                                ?>
                                 <div class="mt-3" style="<?php echo htmlentities($btnSubmit); ?>">
                                     <button class="btn btn-success btn-block loginbtn" name="submit" type="submit">Reset</button>
                                 </div>
