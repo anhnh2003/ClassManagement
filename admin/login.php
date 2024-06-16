@@ -41,7 +41,7 @@ if(isset($_POST['login']))
     }
     else {
       $secret = $_ENV['RECAPTCHA_SECRET'];
-      $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha);
+      $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' .  urlencode($secret) . '&response=' .  urlencode($captcha));
       $response_data = json_decode($verify_response);
       if (!$response_data->success) {
         $_SESSION['error'] = "Invalid Captcha. Please try again.";
