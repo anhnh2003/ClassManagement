@@ -1,11 +1,9 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/studentVerify.php');
 if (strlen($_SESSION['sturecmsuid']) == 0) {
   header('location:logout.php');
 } else {
+  // Check if the student is in the class
   $eid = $_GET['editid'];
   $uid = $_SESSION['sturecmsuid'];
   $sql = "SELECT * FROM tblstudent_class WHERE student_id=:uid AND class_id=:eid";

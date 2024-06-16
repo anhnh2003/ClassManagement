@@ -1,156 +1,130 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
+include('../includes/studentVerify.php');
 include('../includes/updateScore.php');
-
-$_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
 $uid = $_COOKIE['uid'] ?? '';
 $tid = $_GET['testid'];
 $answers = ['A', 'B', 'C', 'D'];
 $redirectBack = '<script>window.location.replace("test-detail.php?editid=' . $tid. '")</script>';
 
-if (strlen($_SESSION['sturecmstuid']) == 0) {
-  header('location:logout.php');
+// Check if the user has the right to access the test
+$sql = "SELECT * from tbltest t, tblclass c, tblstudent_class sc, tbltoken where t.ID=:tid and sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+$query = $dbh->prepare($sql);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->bindParam(':tid', $tid, PDO::PARAM_STR);
+$query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_OBJ);
+
+if ($query->rowCount() == 0) {
+  echo $redirectBack;
+  exit();
+}
+
+// Check if the user has submitted the test
+$sql = "SELECT * from tblstudent_test where student_id=:uid and test_id=:tid";
+$query = $dbh->prepare($sql);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->bindParam(':tid', $tid, PDO::PARAM_STR);
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_OBJ);
+
+if ($query->rowCount() == 0) {
+  echo $redirectBack;
   exit();
 } else {
-  $sessionToken = $_COOKIE['session_token'] ?? '';
+  if ($results[0]->SubmitTime != Null || $results[0]->TotalPoint != Null) {
+    echo '<script>alert("Test has been submitted.")</script>';
+    echo $redirectBack;
+    exit();
+  } else {
+    // Check if the test has started or ended
+    $sql = "SELECT StartTime, EndTime FROM tbltest WHERE ID=:tid";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':tid', $tid, PDO::PARAM_STR);
+    $query->execute();
+    $results1 = $query->fetchAll(PDO::FETCH_OBJ);
 
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
+    $startTime = $results1[0]->StartTime;
+    $endTime = $results1[0]->EndTime;
+    $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Ho_Chi_Minh'));
+    $currentDateTime = $currentDateTime->format('Y-m-d H:i:s');
 
-  if (($query->rowCount() == 0) || ($role_id != 3)) {
-    header('location:logout.php');
+    if ($currentDateTime < $startTime || $currentDateTime > $endTime) {
+      if ($currentDateTime > $endTime) {
+        updateTestPoint($dbh, $uid, $tid);
+      }
+      echo '<script>alert("Test has not started or ended.")</script>';
+      echo $redirectBack;
+      exit();
+    }
+  }
+}
+
+if (isset($_POST['submit'])) {
+  updateTestPoint($dbh, $uid, $tid);
+  echo '<script>alert("Test has been submitted.")</script>';
+  echo $redirectBack;
+  exit();
+}
+
+
+if (isset($_POST['choose'])) {
+  if ($results[0]->TotalPoint != Null) {
+    echo '<script>alert("Test has been submitted.")</script>';
+    echo $redirectBack;
     exit();
   }
 
-  if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)) {
-    header('location:logout.php');
+  $sql = "SELECT EndTime FROM tbltest WHERE ID=:tid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':tid', $tid, PDO::PARAM_STR);
+  $query->execute();
+  $results = $query->fetchAll(PDO::FETCH_OBJ);
+
+  $endTime = $results[0]->EndTime;
+  $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Ho_Chi_Minh'));
+  $currentDateTime = $currentDateTime->format('Y-m-d H:i:s');
+  if ($currentDateTime > $endTime) {
+    updateTestPoint($dbh, $uid, $tid);
+    echo '<script>alert("Test has ended and auto-submitted!")</script>';
+    echo $redirectBack;
     exit();
   } else {
-
-    $sql = "SELECT * from tbltest t, tblclass c, tblstudent_class sc, tbltoken where t.ID=:tid and sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-    $query->bindParam(':tid', $tid, PDO::PARAM_STR);
-    $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-    if ($query->rowCount() == 0) {
-      echo $redirectBack;
-      exit();
-    }
-
-    $sql = "SELECT * from tblstudent_test where student_id=:uid and test_id=:tid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-    $query->bindParam(':tid', $tid, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-    if ($query->rowCount() == 0) {
-      echo $redirectBack;
-      exit();
+    $qid = $_POST['qid'];
+    $chooseAns = '';
+    if (isset($_POST['chooseOne'])) {
+      $chooseAns = $_POST['chooseOne'];
     } else {
-      if ($results[0]->SubmitTime != Null || $results[0]->TotalPoint != Null) {
-        echo '<script>alert("Test has been submitted.")</script>';
-        echo $redirectBack;
-        exit();
-      } else {
-        $sql = "SELECT StartTime, EndTime FROM tbltest WHERE ID=:tid";
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':tid', $tid, PDO::PARAM_STR);
-        $query->execute();
-        $results1 = $query->fetchAll(PDO::FETCH_OBJ);
-
-        $startTime = $results1[0]->StartTime;
-        $endTime = $results1[0]->EndTime;
-        $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Ho_Chi_Minh'));
-        $currentDateTime = $currentDateTime->format('Y-m-d H:i:s');
-
-        if ($currentDateTime < $startTime || $currentDateTime > $endTime) {
-          if ($currentDateTime > $endTime) {
-            updateTestPoint($dbh, $uid, $tid);
-          }
-          echo '<script>alert("Test has not started or ended.")</script>';
-          echo $redirectBack;
-          exit();
+      for ($i = 0; $i < count($answers); $i++) {
+        if (isset($_POST['choose'.$answers[$i]])) {
+          $chooseAns = $chooseAns . $answers[$i];
         }
       }
     }
 
-    if (isset($_POST['submit'])) {
-      updateTestPoint($dbh, $uid, $tid);
-      echo '<script>alert("Test has been submitted.")</script>';
-      echo $redirectBack;
-      exit();
-    }
-  
+    $sql = "SELECT * from tblstudent_testquestion where student_id=:uid and question_id=:qid and test_id=:tid";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
+    $query->bindParam(':qid', $qid, PDO::PARAM_STR);
+    $query->bindParam(':tid', $tid, PDO::PARAM_STR);
+    $query->execute();
 
-    if (isset($_POST['choose'])) {
-      if ($results[0]->TotalPoint != Null) {
-        echo '<script>alert("Test has been submitted.")</script>';
-        echo $redirectBack;
-        exit();
-      }
-
-      $sql = "SELECT EndTime FROM tbltest WHERE ID=:tid";
+    if ($query->rowCount() == 0) {
+      $sql = "INSERT INTO tblstudent_testquestion (student_id, test_id, question_id, ChooseAns) VALUES (:uid, :tid, :qid, :chooseAns)";
       $query = $dbh->prepare($sql);
+      $query->bindParam(':uid', $uid, PDO::PARAM_STR);
       $query->bindParam(':tid', $tid, PDO::PARAM_STR);
+      $query->bindParam(':qid', $qid, PDO::PARAM_STR);
+      $query->bindParam(':chooseAns', $chooseAns, PDO::PARAM_STR);
       $query->execute();
-      $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-      $endTime = $results[0]->EndTime;
-      $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Ho_Chi_Minh'));
-      $currentDateTime = $currentDateTime->format('Y-m-d H:i:s');
-      if ($currentDateTime > $endTime) {
-        updateTestPoint($dbh, $uid, $tid);
-        echo '<script>alert("Test has ended and auto-submitted!")</script>';
-        echo $redirectBack;
-        exit();
-      } else {
-        $qid = $_POST['qid'];
-        $chooseAns = '';
-        if (isset($_POST['chooseOne'])) {
-          $chooseAns = $_POST['chooseOne'];
-        } else {
-          for ($i = 0; $i < count($answers); $i++) {
-            if (isset($_POST['choose'.$answers[$i]])) {
-              $chooseAns = $chooseAns . $answers[$i];
-            }
-          }
-        }
-
-        $sql = "SELECT * from tblstudent_testquestion where student_id=:uid and question_id=:qid and test_id=:tid";
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-        $query->bindParam(':qid', $qid, PDO::PARAM_STR);
-        $query->bindParam(':tid', $tid, PDO::PARAM_STR);
-        $query->execute();
-
-        if ($query->rowCount() == 0) {
-          $sql = "INSERT INTO tblstudent_testquestion (student_id, test_id, question_id, ChooseAns) VALUES (:uid, :tid, :qid, :chooseAns)";
-          $query = $dbh->prepare($sql);
-          $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-          $query->bindParam(':tid', $tid, PDO::PARAM_STR);
-          $query->bindParam(':qid', $qid, PDO::PARAM_STR);
-          $query->bindParam(':chooseAns', $chooseAns, PDO::PARAM_STR);
-          $query->execute();
-        } else {
-          $sql = "UPDATE tblstudent_testquestion SET ChooseAns=:chooseAns WHERE student_id=:uid AND question_id=:qid AND test_id=:tid";
-          $query = $dbh->prepare($sql);
-          $query->bindParam(':chooseAns', $chooseAns, PDO::PARAM_STR);
-          $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-          $query->bindParam(':tid', $tid, PDO::PARAM_STR);
-          $query->bindParam(':qid', $qid, PDO::PARAM_STR);
-          $query->execute();
-        }
-        //header('location:test.php?testid=' . $tid);
-      }
+    } else {
+      $sql = "UPDATE tblstudent_testquestion SET ChooseAns=:chooseAns WHERE student_id=:uid AND question_id=:qid AND test_id=:tid";
+      $query = $dbh->prepare($sql);
+      $query->bindParam(':chooseAns', $chooseAns, PDO::PARAM_STR);
+      $query->bindParam(':uid', $uid, PDO::PARAM_STR);
+      $query->bindParam(':tid', $tid, PDO::PARAM_STR);
+      $query->bindParam(':qid', $qid, PDO::PARAM_STR);
+      $query->execute();
     }
   }
 }
@@ -184,7 +158,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
     <?php include_once('includes/sidebar.php'); ?>
     <!-- partial -->
     <?php
-      $uid = $_SESSION['sturecmsuid'];
       $sql = "SELECT TestName, EndTime FROM tbltest t WHERE t.ID=:tid";
       $query = $dbh->prepare($sql);
       $query->bindParam(':tid', $tid, PDO::PARAM_STR);
@@ -274,7 +247,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
         
       <!-- content-wrapper ends -->
       <!-- partial:partials/_footer.html -->
-
       <!-- partial -->
     </div>
     <!-- main-panel ends -->

@@ -1,7 +1,4 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
-// Check if the user is logged in and the session variables are set
 include('../includes/studentVerify.php');
     // Token is valid, continue
   if (isset($_POST['join'])) {
@@ -11,6 +8,7 @@ include('../includes/studentVerify.php');
     $query->bindParam(':joinid', $joinid, PDO::PARAM_STR);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_OBJ);
+    
     if ($query->rowCount() > 0) {
       $cid = $results[0]->ID;
       $sql = "SELECT tblstudent_class.* from tblstudent_class, tbltoken where student_id=:uid and class_id=:cid and tbltoken.UserID=tblstudent_class.student_id and (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() and tbltoken.UserToken=:sessionToken;";

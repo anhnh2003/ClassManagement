@@ -1,10 +1,7 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/studentVerify.php');
-    // Token is valid, continue
-    if(isset($_POST['submit']))
+// Token is valid, continue
+if(isset($_POST['submit']))
   {
     $uid=$_SESSION['sturecmsuid'];
     $UName=$_POST['name'];
@@ -40,7 +37,7 @@ include('../includes/studentVerify.php');
 
     echo '<script>alert("Your profile has been updated")</script>';
     echo "<script>window.location.href ='student-profile.php'</script>";
-  }
+}
   ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,15 +88,13 @@ include('../includes/studentVerify.php');
                    
                     <form class="forms-sample" method="post">
                       <?php
-
-$sql="SELECT * from  tblstudent";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-$cnt=1;
-if($query->rowCount() > 0)
-{
-             ?>
+                        $sql="SELECT * from  tblstudent";
+                        $query = $dbh -> prepare($sql);
+                        $query->execute();
+                        $results=$query->fetchAll(PDO::FETCH_OBJ);
+                        $cnt=1;
+                        if($query->rowCount() > 0)
+                        {?>
                       <div class="form-group">
                         <label for="exampleInputName1">Student Name</label>
                         <input type="text" name="name" value="<?php  echo $row->StudentName;?>" class="form-control" required='true'>

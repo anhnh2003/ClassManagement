@@ -1,10 +1,11 @@
 <?php
 session_start();
+//error_reporting(0);
 include('../includes/dbconnection.php');
-// Check if the user is logged in and the session variables are set
-if (strlen($_SESSION['sturecmsstuid']) == 0 || strlen($_COOKIE['uid']) == 0 || strlen($_COOKIE['session_token']) == 0{
 
-  header('location:login.php');
+// Check if the user is logged in and the session variables are set
+if (strlen($_SESSION['sturecmsstuid']) == 0 || strlen($_COOKIE['uid']) == 0 || strlen($_COOKIE['session_token']) == 0) {
+  header('location:logout.php');
   exit();
 } else {
   // Retrieve the 'uid' and 'session_token' cookies
@@ -20,7 +21,8 @@ if (strlen($_SESSION['sturecmsstuid']) == 0 || strlen($_COOKIE['uid']) == 0 || s
   // Check if the token exists and is not expired
   if (($query->rowCount() == 0) || ($role_id != 2)) {
       // Token is invalid or expired, redirect to logout
-      header('location:login.php');
+      header('location:logout.php');
       exit();
-
-  }}?>
+    }
+  }
+?>

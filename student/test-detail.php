@@ -1,42 +1,39 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
-include('../includes/updateScore.php');
 include('../includes/studentVerify.php');
-$_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
+include('../includes/updateScore.php');
 
-    $uid = $_COOKIE['uid'] ?? '';
-    $eid = $_GET['editid'];
+$uid = $_COOKIE['uid'] ?? '';
+$eid = $_GET['editid'];
 
-    $sql = "SELECT * from tbltest t, tblclass c, tblstudent_class sc, tbltoken where t.ID=:eid and sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
+// Check if the user has the right to view this test
+$sql = "SELECT * from tbltest t, tblclass c, tblstudent_class sc, tbltoken where t.ID=:eid and sc.student_id=:uid and t.class_id=c.ID and c.ID=sc.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+$query = $dbh->prepare($sql);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->bindParam(':eid', $eid, PDO::PARAM_STR);
+$query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_OBJ);
 
-    if ($query->rowCount() == 0) {
-      header('location:manage-test.php');
-      exit();
-    }
+if ($query->rowCount() == 0) {
+  header('location:manage-test.php');
+  exit();
+}
   
 
-  if (isset($_POST['start'])) {
-    $uid = $_COOKIE['uid'] ?? '';
-    $eid = $_GET['editid'];
+if (isset($_POST['start'])) {
+  $uid = $_COOKIE['uid'] ?? '';
+  $eid = $_GET['editid'];
 
-    $sql = "INSERT INTO tblstudent_test (student_id, test_id, IP) VALUES (:uid, :eid, :ip)";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-    $query->execute();
+  $sql = "INSERT INTO tblstudent_test (student_id, test_id, IP) VALUES (:uid, :eid, :ip)";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':uid', $uid, PDO::PARAM_STR);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->bindParam(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+  $query->execute();
 
-    echo '<script>alert("Test started successfully.")</script>';
-    echo "<script>window.location.href ='test.php?testid=$eid'</script>";
-  }
-
+  echo '<script>alert("Test started successfully.")</script>';
+  echo "<script>window.location.href ='test.php?testid=$eid'</script>";
+}
 ?>
 
 <!DOCTYPE html>
@@ -188,16 +185,13 @@ $_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
                 <div class="text-center">
                       <a href="<?php echo ('test.php?testid=' . $eid); ?>" class="btn btn-primary mr-2" style="<?php echo $stylebtnContinue ?>">Continue Test</a>
                 </div>
-                
               </form>
             </div>
           </div>
-
         </div>
       </div>
       <!-- content-wrapper ends -->
       <!-- partial:partials/_footer.html -->
-
       <!-- partial -->
     </div>
     <!-- main-panel ends -->

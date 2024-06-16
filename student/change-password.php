@@ -1,44 +1,37 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
-error_reporting(0);
 include('../includes/studentVerify.php');
     // Token is valid, continue
-if(isset($_POST['submit']))
-{
-$uid=$_COOKIE['uid'] ?? '';
-$cpassword=($_POST['currentpassword']);
-$newpassword=($_POST['newpassword']);
-// Password policy enforcement
-if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
-  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
-  header('Location: change-password.php');
-  exit();
-}
-$sql ="SELECT ID, Password FROM tblstudent WHERE ID=:uid";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$query-> execute();
-$result = $query -> fetch(PDO::FETCH_OBJ);
-if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->Password)))
-{
-//insert value in the Password col, the value is the hashed password of the Password col
-$password = password_hash($newpassword, PASSWORD_DEFAULT);
-$chngpwd2 = $dbh->prepare("UPDATE tblstudent SET Password=:password where ID=:uid");
-$chngpwd2-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$chngpwd2-> bindParam(':password', $password, PDO::PARAM_STR);
-$chngpwd2->execute();
+if(isset($_POST['submit'])) {
+  $uid=$_COOKIE['uid'] ?? '';
+  $cpassword=($_POST['currentpassword']);
+  $newpassword=($_POST['newpassword']);
 
-//echo the alert message that show the uid
-echo '<script>alert("Your password successfully changed.")</script>';
+  // Password policy enforcement
+  if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
+    $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
+    header('Location: change-password.php');
+    exit();
+  }
 
+  $sql ="SELECT ID, Password FROM tblstudent WHERE ID=:uid";
+  $query= $dbh -> prepare($sql);
+  $query-> bindParam(':uid', $uid, PDO::PARAM_STR);
+  $query-> execute();
+  $result = $query -> fetch(PDO::FETCH_OBJ);
+  if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->Password)))
+  {
+    //insert value in the Password col, the value is the hashed password of the Password col
+    $password = password_hash($newpassword, PASSWORD_DEFAULT);
+    $chngpwd2 = $dbh->prepare("UPDATE tblstudent SET Password=:password where ID=:uid");
+    $chngpwd2-> bindParam(':uid', $uid, PDO::PARAM_STR);
+    $chngpwd2-> bindParam(':password', $password, PDO::PARAM_STR);
+    $chngpwd2->execute();
 
-//echo '<script>alert("Your password successully changed")</script>';
-} else {
-echo '<script>alert("Your current password is wrong")</script>';
-
-}
+    //echo the alert message that show the uid
+    echo '<script>alert("Your password successfully changed.")</script>';
+  } else {
+    echo '<script>alert("Your current password is wrong")</script>';
+  }
 }
   ?>
 <!DOCTYPE html>

@@ -29,7 +29,6 @@ if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', sessi
 }
 error_reporting(0);
 include('../includes/dbconnection.php');
-include('../includes/studentVerify.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;

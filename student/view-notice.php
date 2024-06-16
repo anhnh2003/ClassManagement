@@ -1,13 +1,9 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
-// Check if the user is logged in and the session variables are set
 include('../includes/studentVerify.php');
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
   <title>Student Management System || View Notice</title>

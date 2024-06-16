@@ -1,5 +1,6 @@
 <?php
 session_start();
+//error_reporting(0);
 include('../includes/dbconnection.php');
 
 // Check if the user is logged in and the session variables are set

@@ -1,6 +1,4 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
 $uid = $_COOKIE['uid'] ?? '';
 include('../includes/studentVerify.php');
 if (strlen($_SESSION['sturecmsuid']) == 0) {
