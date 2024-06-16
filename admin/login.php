@@ -25,6 +25,9 @@ ini_set('session.cookie_lifetime', 3600); // 1 hour
 ini_set('session.cookie_samesite', 'Strict');
 error_reporting(0);
 include('../includes/dbconnection.php');
+require '../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 if(isset($_POST['login'])) 
   {
@@ -131,7 +134,7 @@ echo "<script type='text/javascript'> document.location ='dashboard.php'; </scri
                   <div class="form-group">
                     <input type="password" class="form-control form-control-lg" placeholder="Enter password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo htmlentities($_COOKIE["userpassword"]); } ?>">
                   </div>
-                  <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
+                  <div class="g-recaptcha" data-sitekey="<?php echo htmlentities($_ENV['RECAPTCHA_SITEKEY']); ?>"></div>
                   <?php
               if (isset($_SESSION['error'])) {
                   echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';

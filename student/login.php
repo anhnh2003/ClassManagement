@@ -31,6 +31,9 @@ error_reporting(0);
 include('../includes/dbconnection.php');
 require '../includes/randomGen.php';
 require '../includes/sendEmail.php';
+require '../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 $hideOTP = "display: none;";
 $hideLogin = "";
@@ -168,7 +171,7 @@ if (isset($_POST['confirm'])) {
   <div class="form-group">
     <input type="password" class="form-control form-control-lg" placeholder="Enter password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo htmlentities($_COOKIE["userpassword"]); } ?>">
   </div>
-  <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
+  <div class="g-recaptcha" data-sitekey="<?php echo htmlentities($_ENV['RECAPTCHA_SITEKEY']); ?>"></div>
   <?php
   if (isset($_SESSION['error'])) {
       echo '<p style="color: red;">' . htmlentities($_SESSION['error']) . '</p>';
