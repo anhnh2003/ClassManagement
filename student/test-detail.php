@@ -32,7 +32,8 @@ if (isset($_POST['start'])) {
   $query->execute();
 
   echo '<script>alert("Test started successfully.")</script>';
-  echo "<script>window.location.href ='test.php?testid=$eid'</script>";
+  header("Location: test.php?testid=$eid");
+  exit;
 }
 ?>
 
