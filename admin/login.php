@@ -40,7 +40,7 @@ if(isset($_POST['login']))
       exit();
     }
     else {
-      $secret = '6LctYtwpAAAAAEP0w5UdNiqxoKbvdQo8WfQI-QtG';
+      $secret = $_ENV['RECAPTCHA_SECRET'];
       $verify_response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $captcha);
       $response_data = json_decode($verify_response);
       if (!$response_data->success) {
