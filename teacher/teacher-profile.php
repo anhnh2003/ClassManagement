@@ -77,29 +77,29 @@ if(isset($_POST['submit'])) {
                         if($query->rowCount() > 0){
                       ?>
                       <div class="form-group">
-                        <label for="exampleInputName1">Teacher Name</label>
-                        <input type="text" name="name" value="<?php  echo $row->TeacherName;?>" class="form-control" required='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputEmail3">User Name</label>
-                        <input type="text" name="username" value="<?php  echo $row->UserName;?>" class="form-control" readonly="">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputPassword4">Contact Number</label>
-                        <input type="text" name="connum" value="<?php  echo $row->ContactNumber;?>"  class="form-control" maxlength='15' required='true' pattern="[0-9]+">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputCity1">Email</label>
-                         <input type="email" name="email" value="<?php  echo $row->Email;?>" class="form-control" required='true'>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputCity1">Creation Date</label>
-                         <input type="text" name="" value="<?php  echo $row->CreationTime;?>" readonly="" class="form-control">
-                         </div>
-                      <div class="form-group">
-                        <label for="exampleInputName1">Two Factor Authentication</label>
-                        <select name="is2FA" value="" class="form-control" required='true'>
-                          <option value="<?php  echo $row->is2FA;?>">
+  <label for="exampleInputName1">Teacher Name</label>
+  <input type="text" name="name" value="<?php echo htmlentities($row->TeacherName);?>" class="form-control" required='true'>
+</div>
+<div class="form-group">
+  <label for="exampleInputEmail3">User Name</label>
+  <input type="text" name="username" value="<?php echo htmlentities($row->UserName);?>" class="form-control" readonly="">
+</div>
+<div class="form-group">
+  <label for="exampleInputPassword4">Contact Number</label>
+  <input type="text" name="connum" value="<?php echo htmlentities($row->ContactNumber);?>"  class="form-control" maxlength='15' required='true' pattern="[0-9]+">
+</div>
+<div class="form-group">
+  <label for="exampleInputCity1">Email</label>
+  <input type="email" name="email" value="<?php echo htmlentities($row->Email);?>" class="form-control" required='true'>
+</div>
+<div class="form-group">
+  <label for="exampleInputCity1">Creation Date</label>
+  <input type="text" name="" value="<?php echo htmlentities($row->CreationTime);?>" readonly="" class="form-control">
+</div>
+<div class="form-group">
+  <label for="exampleInputName1">Two Factor Authentication</label>
+  <select name="is2FA" value="" class="form-control" required='true'>
+    <option value="<?php echo htmlentities($row->is2FA);?>">
                           <?php if($row->is2FA==1)
                           {
                             echo "Enabled";

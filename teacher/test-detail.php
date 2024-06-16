@@ -164,7 +164,7 @@ if (isset($_POST['edit_ques'])) {
                     } ?>
 
                     <button type="submit" class="btn btn-primary mr-2" name="edit">Save Change</button>
-                    <a href="test-result.php?editid=<?php echo $eid; ?>" class="btn btn-info">View Results</a>
+                    <a href="test-result.php?editid=<?php echo htmlentities($eid); ?>" class="btn btn-info">View Results</a>
                       </form>
                 </div>
               </div>
@@ -260,7 +260,7 @@ if (isset($_POST['edit_ques'])) {
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" <?php echo $btnAddStyle ?> name="add_ques">Add</button>
+                            <button type="submit" <?php echo htmlentities($btnAddStyle); ?> name="add_ques">Add</button>
                           </div>
                         </form>
                       </div>

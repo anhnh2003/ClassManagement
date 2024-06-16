@@ -175,40 +175,38 @@ if (isset($_POST['confirm'])) {
                 <div class="brand-logo">
                   <img src="images/logo.svg">
                 </div>
-                <h4 style="<?php echo $hideLogin; ?>">Hello! Let's get started</h4>
-                <h6 class="font-weight-light" style="<?php echo $hideLogin; ?>">Sign in to continue. </h6>
-                <form class="pt-3" id="user_login" method="post" name="user_login" style="<?php echo $hideLogin; ?>">
-                  <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
-                  </div>
-                  <div class="form-group">
-                    
-                    <input type="password" class="form-control form-control-lg" placeholder="Enter password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
-                  </div>
-                  <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
-                  <?php
-              if (isset($_SESSION['error'])) {
-                  echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
-                  unset($_SESSION['error']);
-              }
-              ?>
-                  <div class="mt-3">
-                    <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
-                  </div>
-                  <div class="my-2 d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                      <label class="form-check-label text-muted">
-                        <input type="checkbox" id="remember" class="form-check-input" name="remember" <?php if(isset($_COOKIE["user_login"])) { ?> checked <?php } ?> /> Keep me signed in </label>
-                    </div>
-                    <a href="forgot-password.php" class="auth-link text-black">Forgot password?</a>
-                  </div>
-                  <div class="mb-2">
-                    <a href="../index.php" class="btn btn-block btn-facebook auth-form-btn">
-                      <i class="icon-social-home mr-2"></i>Back Home </a>
-                  </div>
-                  
-                </form>
-                <form class="pt-3" id="user_otp" method="post" name="user_otp" style="<?php echo $hideOTP; ?>">
+                <h4 style="<?php echo htmlentities($hideLogin); ?>">Hello! Let's get started</h4>
+<h6 class="font-weight-light" style="<?php echo htmlentities($hideLogin); ?>">Sign in to continue. </h6>
+<form class="pt-3" id="user_login" method="post" name="user_login" style="<?php echo htmlentities($hideLogin); ?>">
+  <div class="form-group">
+    <input type="text" class="form-control form-control-lg" placeholder="Enter username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo htmlentities($_COOKIE["user_login"]); } ?>" >
+  </div>
+  <div class="form-group">
+    <input type="password" class="form-control form-control-lg" placeholder="Enter password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo htmlentities($_COOKIE["userpassword"]); } ?>">
+  </div>
+  <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
+  <?php
+  if (isset($_SESSION['error'])) {
+      echo '<p style="color: red;">' . htmlentities($_SESSION['error']) . '</p>';
+      unset($_SESSION['error']);
+  }
+  ?>
+  <div class="mt-3">
+    <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
+  </div>
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="form-check">
+      <label class="form-check-label text-muted">
+        <input type="checkbox" id="remember" class="form-check-input" name="remember" <?php if(isset($_COOKIE["user_login"])) { ?> checked <?php } ?> /> Keep me signed in </label>
+    </div>
+    <a href="forgot-password.php" class="auth-link text-black">Forgot password?</a>
+  </div>
+  <div class="mb-2">
+    <a href="../index.php" class="btn btn-block btn-facebook auth-form-btn">
+      <i class="icon-social-home mr-2"></i>Back Home </a>
+  </div>
+</form>
+<form class="pt-3" id="user_otp" method="post" name="user_otp" style="<?php echo htmlentities($hideOTP); ?>">
                 <h4>Two-Factor Authentication</h4>
                 <div class="form-group">
                     <input type="text" class="form-control form-control-lg" placeholder="Enter OTP sent to Email" required="true" name="otp" value="" maxlength="6">

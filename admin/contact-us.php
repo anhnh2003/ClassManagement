@@ -78,15 +78,15 @@ if(isset($_POST['submit'])) {
                       ?>    
                       <div class="form-group">
                         <label for="exampleInputName1">Page Title:</label>
-                        <input type="text" name="pagetitle" value="<?php  echo $row->PageTitle;?>" class="form-control" required='true'>
+                        <input type="text" name="pagetitle" value="<?php  echo htmlentities($row->PageTitle);?>" class="form-control" required='true'>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Page Description:</label>
-                        <textarea type="text" name="pagedes" class="form-control" required='true'><?php  echo $row->PageDescription;?></textarea>
+                        <textarea type="text" name="pagedes" class="form-control" required='true'><?php  echo htmlentities($row->PageDescription);?></textarea>
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Email:</label>
-                        <input type="text" name="email" id="email" required="true" value="<?php  echo $row->Email;?>" class="form-control">
+                        <input type="text" name="email" id="email" required="true" value="<?php  echo htmlentities($row->Email);?>" class="form-control">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Mobile Number:</label>

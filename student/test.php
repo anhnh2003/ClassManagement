@@ -16,7 +16,7 @@ $query->execute();
 $results = $query->fetchAll(PDO::FETCH_OBJ);
 
 if ($query->rowCount() == 0) {
-  echo $redirectBack;
+  echo htmlentities($redirectBack);
   exit();
 }
 
@@ -29,12 +29,12 @@ $query->execute();
 $results = $query->fetchAll(PDO::FETCH_OBJ);
 
 if ($query->rowCount() == 0) {
-  echo $redirectBack;
+  echo htmlentities($redirectBack);
   exit();
 } else {
   if ($results[0]->SubmitTime != Null || $results[0]->TotalPoint != Null) {
     echo '<script>alert("Test has been submitted.")</script>';
-    echo $redirectBack;
+    echo htmlentities($redirectBack);
     exit();
   } else {
     // Check if the test has started or ended
@@ -54,7 +54,7 @@ if ($query->rowCount() == 0) {
         updateTestPoint($dbh, $uid, $tid);
       }
       echo '<script>alert("Test has not started or ended.")</script>';
-      echo $redirectBack;
+      echo htmlentities($redirectBack);
       exit();
     }
   }
@@ -63,7 +63,7 @@ if ($query->rowCount() == 0) {
 if (isset($_POST['submit'])) {
   updateTestPoint($dbh, $uid, $tid);
   echo '<script>alert("Test has been submitted.")</script>';
-  echo $redirectBack;
+  echo htmlentities($redirectBack);
   exit();
 }
 
@@ -71,7 +71,7 @@ if (isset($_POST['submit'])) {
 if (isset($_POST['choose'])) {
   if ($results[0]->TotalPoint != Null) {
     echo '<script>alert("Test has been submitted.")</script>';
-    echo $redirectBack;
+    echo htmlentities($redirectBack);
     exit();
   }
 
@@ -87,7 +87,7 @@ if (isset($_POST['choose'])) {
   if ($currentDateTime > $endTime) {
     updateTestPoint($dbh, $uid, $tid);
     echo '<script>alert("Test has ended and auto-submitted!")</script>';
-    echo $redirectBack;
+    echo htmlentities($redirectBack);
     exit();
   } else {
     $qid = $_POST['qid'];

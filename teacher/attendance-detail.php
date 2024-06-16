@@ -140,7 +140,7 @@ if (isset($_POST['stopqr'])) {
             <h3 class="page-title"> Manage Attendance </h3>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="class-detail.php?editid=<?php echo $_GET['classid']; ?>">Class Details</a></li>
+                <li class="breadcrumb-item"><a href="class-detail.php?editid=<?php echo htmlentities( $_GET['classid']); ?>">Class Details</a></li>
                 <li class="breadcrumb-item active" aria-current="page"> Attendance Details</li>
               </ol>
             </nav>

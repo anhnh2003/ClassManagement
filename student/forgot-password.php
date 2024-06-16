@@ -126,23 +126,23 @@ if (isset($_POST['confirm'])) {
                             <h6 class="font-weight-light">Enter your Email address to reset password!</h6>
                             <form class="pt-3" id="login" method="post" name="login">
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-lg" placeholder="Email Address" required="true" name="email" value="<?php echo $valueEmail; ?>" <?php echo $readonlyEmail; ?>>
+                                    <input type="email" class="form-control form-control-lg" placeholder="Email Address" required="true" name="email" value="<?php echo htmlentities($valueEmail); ?>" <?php echo htmlentities($readonlyEmail); ?>>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control form-control-lg" type="password" name="newpassword" value="<?php echo $valueNewPassword; ?>" placeholder="New Password" required="true" <?php echo $readonlyNewPassword; ?> />
+                                    <input class="form-control form-control-lg" type="password" name="newpassword" value="<?php echo htmlentities($valueNewPassword); ?>" placeholder="New Password" required="true" <?php echo htmlentities($readonlyNewPassword); ?> />
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control form-control-lg" type="password" name="confirmpassword" value="<?php echo $valueConfirmPassword; ?>" placeholder="Confirm Password" required="true" <?php echo $readonlyConfirmPassword; ?> />
+                                    <input class="form-control form-control-lg" type="password" name="confirmpassword" value="<?php echo htmlentities($valueConfirmPassword); ?>" placeholder="Confirm Password" required="true" <?php echo htmlentities($readonlyConfirmPassword); ?> />
                                 </div>
-                                <div class="mt-3" style="<?php echo $btnSubmit; ?>">
+                                <div class="mt-3" style="<?php echo htmlentities($btnSubmit); ?>">
                                     <button class="btn btn-success btn-block loginbtn" name="submit" type="submit">Reset</button>
                                 </div>
                             </form>
                             <form class="pt-3" id="sendotp" method="post" name="sendotp">
-                                <div class="form-group" style="<?php echo $hideOTP; ?>">
+                                <div class="form-group" style="<?php echo htmlentities($hideOTP); ?>">
                                     <input class="form-control form-control-lg" type="text" name="otp" placeholder="Enter OTP sent to Email" maxlength='6' required='true' />
                                 </div>
-                                <div class="mt-3" style="<?php echo $btnConfirm; ?>">
+                                <div class="mt-3" style="<?php echo htmlentities($btnConfirm); ?>">
                                     <button class="btn btn-success btn-block loginbtn" name="confirm" type="submit">Confirm OTP</button>
                                 </div>
                                 <div class="mt-2">

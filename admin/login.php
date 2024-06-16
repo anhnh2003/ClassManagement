@@ -126,10 +126,10 @@ echo "<script type='text/javascript'> document.location ='dashboard.php'; </scri
                 
                 <form class="pt-3" id="login" method="post" name="login">
                   <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter username" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo htmlentities($_COOKIE["user_login"]); } ?>" >
                   </div>
                   <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" placeholder="Enter password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
+                    <input type="password" class="form-control form-control-lg" placeholder="Enter password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo htmlentities($_COOKIE["userpassword"]); } ?>">
                   </div>
                   <div class="g-recaptcha" data-sitekey="6LctYtwpAAAAAGqtbFtdwU1jq_hcUDl0rgjxmYSU"></div>
                   <?php

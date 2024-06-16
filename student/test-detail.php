@@ -164,27 +164,27 @@ if (isset($_POST['start'])) {
                              value="<?php echo htmlentities($row->EndTime); ?>"
                              class="form-control" required='true' readonly>
                       </div>
-                      <div class="form-group" style="<?php echo $hideSubmitTime ?>">
-                        <label for="exampleInputName1">Submit Time</label>
-                        <input type="datetime-local" name="subtime" 
-                               value="<?php echo htmlentities($row->SubmitTime); ?>"
-                               class="form-control" required='true' readonly>
-                      </div>
-                      <div class="form-group" style="<?php echo $hideScore ?>">
-                        <label for="exampleInputName1">Score</label>
-                        <input type="text" name="point" 
-                               value="<?php echo htmlentities($row->TotalPoint); ?>"
-                               class="form-control" required='true' readonly>
-                      </div>
-                      <?php $cnt = $cnt + 1;
-                  }
-                } ?>
-                <div class="text-center">
-                      <button type="submit" class="btn btn-primary mr-2" name="start" style="<?php echo $stylebtnStart; ?>" <?php echo $disablebtnStart; ?>><?php echo $btnStart; ?></button>
-                </div>
-                <div class="text-center">
-                      <a href="<?php echo ('test.php?testid=' . $eid); ?>" class="btn btn-primary mr-2" style="<?php echo $stylebtnContinue ?>">Continue Test</a>
-                </div>
+                      <div class="form-group" style="<?php echo htmlentities($hideSubmitTime); ?>">
+  <label for="exampleInputName1">Submit Time</label>
+  <input type="datetime-local" name="subtime" 
+         value="<?php echo htmlentities($row->SubmitTime); ?>"
+         class="form-control" required='true' readonly>
+</div>
+<div class="form-group" style="<?php echo htmlentities($hideScore); ?>">
+  <label for="exampleInputName1">Score</label>
+  <input type="text" name="point" 
+         value="<?php echo htmlentities($row->TotalPoint); ?>"
+         class="form-control" required='true' readonly>
+</div>
+<?php $cnt = $cnt + 1;
+}
+} ?>
+<div class="text-center">
+  <button type="submit" class="btn btn-primary mr-2" name="start" style="<?php echo htmlentities($stylebtnStart); ?>" <?php echo htmlentities($disablebtnStart); ?>><?php echo htmlentities($btnStart); ?></button>
+</div>
+<div class="text-center">
+  <a href="<?php echo htmlentities('test.php?testid=' . $eid); ?>" class="btn btn-primary mr-2" style="<?php echo htmlentities($stylebtnContinue); ?>">Continue Test</a>
+</div>
               </form>
             </div>
           </div>

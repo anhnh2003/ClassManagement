@@ -242,8 +242,8 @@ if (isset($_POST['rescore'])) {
                               ?></td>
                             <td><?php echo htmlentities($total); ?></td>
                             <td>
-                              <a href="#" data-toggle="modal" data-target="#myModal<?php echo $row->question_id; ?>"><?php echo htmlentities($row->Question); ?></a>
-                              <div class="modal fade" id="myModal<?php echo $row->question_id; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                              <a href="#" data-toggle="modal" data-target="#myModal<?php echo htmlentities( $row->question_id); ?>"><?php echo htmlentities($row->Question); ?></a>
+                              <div class="modal fade" id="myModal<?php echo htmlentities( $row->question_id); ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                   <div class="modal-content">
                                     <div class="modal-header">

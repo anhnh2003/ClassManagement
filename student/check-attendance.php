@@ -160,7 +160,7 @@ if (strlen($_SESSION['sturecmsuid']) == 0) {
       $.ajax({
         url: 'scanQR.php',
         type: 'post',
-        data: { imgData: dataUrl, uid: '<?php echo $uid; ?>'},
+        data: { imgData: dataUrl, uid: '<?php echo htmlentities($uid); ?>'},
         success: function(response) {
           if (response == 1) {
             alert('Attendance recorded!');

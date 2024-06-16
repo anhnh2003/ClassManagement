@@ -104,7 +104,7 @@ foreach($results as $row)
                       <div class="form-group">
                         <label for="exampleInputName1">Two Factor Authentication</label>
                         <select name="is2FA" value="" class="form-control" required='true'>
-                          <option value="<?php  echo $row->is2FA;?>">
+                          <option value="<?php  echo htmlentities($row->is2FA);?>">
                           <?php if($row->is2FA==1)
                           {
                             echo "Enabled";

@@ -64,15 +64,15 @@ include('../includes/teacherVerify.php');
                         </tr>
                         <tr class="table-info">
                           <th>Noticed Date</th>
-                          <td><?php echo $row->CreationTime; ?></td>
+                          <td><?php  echo htmlentities($row->CreationTime); ?></td>
                         </tr>
                         <tr class="table-info">
                           <th>Title</th>
-                          <td><?php echo $row->NoticeTitle; ?></td>
+                          <td><?php echo htmlentities($row->NoticeTitle); ?></td>
                         </tr>
                         <tr class="table-info">
                           <th>Message</th>
-                          <td><?php echo $row->NoticeMsg; ?></td>
+                          <td><?php echo htmlentities($row->NoticeMsg); ?></td>
                         </tr>
 
                     <?php

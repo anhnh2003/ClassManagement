@@ -168,7 +168,7 @@ include('../includes/teacherVerify.php');
                                 echo "?pageno=" . ($pageno + 1);
                               } ?>"><strong style="padding-left: 10px">Next></strong></a>
                       </li>
-                      <li><a href="?pageno=<?php echo $total_pages; ?>"><strong style="padding-left: 10px">Last</strong></a></li>
+                      <li><a href="?pageno=<?php echo htmlentities( $total_pages); ?>"><strong style="padding-left: 10px">Last</strong></a></li>
                     </ul>
                   </div>
                 </div>
