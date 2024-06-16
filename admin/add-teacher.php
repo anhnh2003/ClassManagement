@@ -1,11 +1,7 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/adminVerify.php');
     // Token is valid, continue
-   if(isset($_POST['submit']))
-  {
+if(isset($_POST['submit'])) {
   $name=$_POST['name'];
   $teaid=
   $teaid = "";
@@ -63,7 +59,7 @@ echo "<script>window.location.href ='add-teacher.php'</script>";
 else
 {
 
-echo "<script>alert('Username or Teacher Id  already exist. Please try again');</script>";
+echo "<script>alert('Username or Teacher ID already exist. Please try again');</script>";
 }
 }
   ?>

@@ -1,8 +1,7 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
 include('../includes/adminVerify.php');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,7 +106,7 @@ include('../includes/adminVerify.php');
                       ?>
                       <span class="report-title">Total Public Notice</span>
                       <h4><?php echo htmlentities($totpublicnotice); ?></h4>
-                      <a href="manage-public-notice.php"><span class="report-count"> View PublicNotices</span></a>
+                      <a href="manage-public-notice.php"><span class="report-count"> View Notices</span></a>
                     </div>
                     <div class="inner-card-icon bg-primary">
                       <i class="icon-doc"></i>

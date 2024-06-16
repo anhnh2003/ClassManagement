@@ -1,30 +1,26 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/adminVerify.php');
     // Token is valid, continue
-  if (isset($_POST['submit'])) {
-    $nottitle = $_POST['nottitle'];
-    $classid = $_POST['classid'];
-    $notmsg = $_POST['notmsg'];
+if (isset($_POST['submit'])) {
+  $nottitle = $_POST['nottitle'];
+  $classid = $_POST['classid'];
+  $notmsg = $_POST['notmsg'];
 
-    $sql = "INSERT INTO tblnotice (NoticeTitle, ClassId, NoticeMsg) VALUES (:nottitle, :classid, :notmsg)";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
-    $query->bindParam(':classid', $classid, PDO::PARAM_STR);
-    $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
-    $query->execute();
+  $sql = "INSERT INTO tblnotice (NoticeTitle, ClassId, NoticeMsg) VALUES (:nottitle, :classid, :notmsg)";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
+  $query->bindParam(':classid', $classid, PDO::PARAM_STR);
+  $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
+  $query->execute();
 
-    $LastInsertId = $dbh->lastInsertId();
-    if ($LastInsertId > 0) {
-      echo '<script>alert("Notice has been added.")</script>';
-      echo "<script>window.location.href ='add-notice.php'</script>";
-    } else {
-      echo '<script>alert("Something Went Wrong. Please try again")</script>';
-    }
+  $LastInsertId = $dbh->lastInsertId();
+  if ($LastInsertId > 0) {
+    echo '<script>alert("Notice has been added.")</script>';
+    echo "<script>window.location.href ='add-notice.php'</script>";
+  } else {
+    echo '<script>alert("Something Went Wrong. Please try again")</script>';
   }
-
+}
 ?>
 
 <!DOCTYPE html>

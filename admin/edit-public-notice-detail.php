@@ -1,22 +1,18 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/adminVerify.php');
 
-  if (isset($_POST['submit'])) {
-    $nottitle = $_POST['nottitle'];
-    $notmsg = $_POST['notmsg'];
-    $eid = $_GET['editid'];
-    $sql = "UPDATE tblpublicnotice SET NoticeTitle=:nottitle, NoticeMessage=:notmsg WHERE ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
-    $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    echo '<script>alert("Notice has been updated")</script>';
-  }
-
+if (isset($_POST['submit'])) {
+  $nottitle = $_POST['nottitle'];
+  $notmsg = $_POST['notmsg'];
+  $eid = $_GET['editid'];
+  $sql = "UPDATE tblpublicnotice SET NoticeTitle=:nottitle, NoticeMessage=:notmsg WHERE ID=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
+  $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->execute();
+  echo '<script>alert("Notice has been updated")</script>';
+}
 ?>
 
 <!DOCTYPE html>

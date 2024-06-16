@@ -1,42 +1,37 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/adminVerify.php');
     // Token is valid, continue
-  if (isset($_POST['submit'])) {
-    $teaid = $_POST['teaid'];
-    $cname = $_POST['cname'];
-    $room = $_POST['room'];
-    $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    $joincode = '';
-    for ($i = 0; $i < 6; $i++) {
-      $index = rand(0, strlen($characters) - 1);
-      $joincode .= $characters[$index];
-    }
-
-    $sql = "INSERT INTO tblclass(ClassName, Room, teacher_id, JoinCode) VALUES(:cname, :room, :teaid, :joincode)";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':cname', $cname, PDO::PARAM_STR);
-    $query->bindParam(':room', $room, PDO::PARAM_STR);
-    $query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
-    $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
-    $query->execute();
-    $lastInsertId = $dbh->lastInsertId();
-    if ($lastInsertId > 0) {
-      echo '<script>alert("Class has been added.")</script>';
-      echo "<script>window.location.href ='add-class.php'</script>";
-    } else {
-      echo '<script>alert("Something went wrong... Please try again")</script>';
-    }
+if (isset($_POST['submit'])) {
+  $teaid = $_POST['teaid'];
+  $cname = $_POST['cname'];
+  $room = $_POST['room'];
+  $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  $joincode = '';
+  for ($i = 0; $i < 6; $i++) {
+    $index = rand(0, strlen($characters) - 1);
+    $joincode .= $characters[$index];
   }
+
+  $sql = "INSERT INTO tblclass(ClassName, Room, teacher_id, JoinCode) VALUES(:cname, :room, :teaid, :joincode)";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':cname', $cname, PDO::PARAM_STR);
+  $query->bindParam(':room', $room, PDO::PARAM_STR);
+  $query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
+  $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
+  $query->execute();
+  $lastInsertId = $dbh->lastInsertId();
+  if ($lastInsertId > 0) {
+    echo '<script>alert("Class has been added.")</script>';
+    echo "<script>window.location.href ='add-class.php'</script>";
+  } else {
+    echo '<script>alert("Something went wrong... Please try again")</script>';
+  }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <title>Student Management System || Add Class</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
@@ -107,7 +102,6 @@ include('../includes/adminVerify.php');
                       </select>
                     </div>
                     <button type="submit" class="btn btn-primary mr-2" name="submit">Add</button>
-
                   </form>
                 </div>
               </div>

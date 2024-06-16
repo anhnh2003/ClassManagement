@@ -1,24 +1,18 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/adminVerify.php');
     // Token is valid, continue
-   if(isset($_POST['submit']))
-  {
- $pagetitle=$_POST['pagetitle'];
-$pagedes=$_POST['pagedes'];
-$sql="update tblpage set PageTitle=:pagetitle,PageDescription=:pagedes where  PageType='aboutus'";
-$query=$dbh->prepare($sql);
-$query->bindParam(':pagetitle',$pagetitle,PDO::PARAM_STR);
-$query->bindParam(':pagedes',$pagedes,PDO::PARAM_STR);
+if(isset($_POST['submit'])) {
+  $pagetitle=$_POST['pagetitle'];
+  $pagedes=$_POST['pagedes'];
+  $sql="update tblpage set PageTitle=:pagetitle,PageDescription=:pagedes where  PageType='aboutus'";
+  $query=$dbh->prepare($sql);
+  $query->bindParam(':pagetitle',$pagetitle,PDO::PARAM_STR);
+  $query->bindParam(':pagedes',$pagedes,PDO::PARAM_STR);
 
-$query->execute();
-echo '<script>alert("About us has been updated")</script>';
-
-
-  }
-  ?>
+  $query->execute();
+  echo '<script>alert("About us has been updated")</script>';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -66,19 +60,17 @@ echo '<script>alert("About us has been updated")</script>';
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Update About Us</h4>
-                   
                     <form class="forms-sample" method="post">
                       <?php
-
-$sql="SELECT * from  tblpage where PageType='aboutus'";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{               ?>      
+                        $sql="SELECT * from  tblpage where PageType='aboutus'";
+                        $query = $dbh -> prepare($sql);
+                        $query->execute();
+                        $results=$query->fetchAll(PDO::FETCH_OBJ);
+                        $cnt=1;
+                        if($query->rowCount() > 0)
+                        {
+                        foreach($results as $row)
+                        {               ?>      
                       <div class="form-group">
                         <label for="exampleInputName1">Page Title:</label>
                         <input type="text" name="pagetitle" value="<?php  echo $row->PageTitle;?>" class="form-control" required='true'>
@@ -89,7 +81,6 @@ foreach($results as $row)
                       </div>
                       <?php $cnt=$cnt+1;}} ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
-                     
                     </form>
                   </div>
                 </div>

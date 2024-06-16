@@ -1,8 +1,6 @@
 <?php
 // Set the error display level
 ini_set('display_errors', '0');
-// report all errors
-error_reporting(E_ALL);
 
 // Set secure session cookie flags
 ini_set('session.cookie_secure', '1');

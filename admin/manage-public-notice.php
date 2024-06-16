@@ -1,21 +1,14 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
+include('../includes/adminVerify.php');
 
-if (strlen($_SESSION['sturecmsaid']) == 0) {
-  header('location:logout.php');
-} else {
-  // Code for deletion
-  if (isset($_GET['delid'])) {
-    $rid = intval($_GET['delid']);
-    $sql = "delete from tblpublicnotice where ID=:rid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':rid', $rid, PDO::PARAM_STR);
-    $query->execute();
-    echo "<script>alert('Data deleted');</script>";
-    echo "<script>window.location.href = 'manage-public-notice.php'</script>";
-  }
+if (isset($_GET['delid'])) {
+  $rid = intval($_GET['delid']);
+  $sql = "delete from tblpublicnotice where ID=:rid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':rid', $rid, PDO::PARAM_STR);
+  $query->execute();
+  echo "<script>alert('Data deleted');</script>";
+  echo "<script>window.location.href = 'manage-public-notice.php'</script>";
 }
 ?>
 

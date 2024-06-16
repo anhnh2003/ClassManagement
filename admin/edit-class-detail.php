@@ -1,64 +1,37 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
+include('../includes/adminVerify.php');
+// Token is valid, continue
+if (isset($_POST['submit'])) {
+  $teaid = $_POST['teaid'];
+  $cname = $_POST['cname'];
+  $room = $_POST['room'];
+  $eid = $_GET['editid'];
 
-if (strlen($_SESSION['sturecmsaid']) == 0) {
-  echo '<script>alert("Please login again.")</script>';
-  header('location:logout.php');
-  exit();
-} else {
-  // Retrieve the 'uid' and 'session_token' cookies
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-  // Prepare the SQL statement to select the token from the database
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
+  $sql = "UPDATE tblclass SET ClassName=:cname, Room=:room, teacher_id=:teaid WHERE ID=:eid";
   $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+  $query->bindParam(':cname', $cname, PDO::PARAM_STR);
+  $query->bindParam(':room', $room, PDO::PARAM_STR);
+  $query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-  // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 1)) {
-      // Token is invalid or expired, redirect to logout
-      echo '<script>alert("Please login again.")</script>';
-      header('location:logout.php');
-      exit();
+  echo '<script>alert("Class has been updated")</script>';
+}
 
-  } else {
-    // Token is valid, continue
-  if (isset($_POST['submit'])) {
-    $teaid = $_POST['teaid'];
-    $cname = $_POST['cname'];
-    $room = $_POST['room'];
-    $eid = $_GET['editid'];
-
-    $sql = "UPDATE tblclass SET ClassName=:cname, Room=:room, teacher_id=:teaid WHERE ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':cname', $cname, PDO::PARAM_STR);
-    $query->bindParam(':room', $room, PDO::PARAM_STR);
-    $query->bindParam(':teaid', $teaid, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    echo '<script>alert("Class has been updated")</script>';
+if (isset($_POST['regencode'])) {
+  $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  $joincode = '';
+  for ($i = 0; $i < 6; $i++) {
+    $index = rand(0, strlen($characters) - 1);
+    $joincode .= $characters[$index];
   }
-
-  if (isset($_POST['regencode'])) {
-    $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    $joincode = '';
-    for ($i = 0; $i < 6; $i++) {
-      $index = rand(0, strlen($characters) - 1);
-      $joincode .= $characters[$index];
-    }
-    $eid = $_GET['editid'];
-    $sql = "UPDATE tblclass SET JoinCode=:joincode WHERE ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    echo '<script>alert("Join Code has been changed")</script>';
-  }
-}}
+  $eid = $_GET['editid'];
+  $sql = "UPDATE tblclass SET JoinCode=:joincode WHERE ID=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->execute();
+  echo '<script>alert("Join Code has been changed")</script>';
+}
 ?>
 
 <!DOCTYPE html>

@@ -1,29 +1,26 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
 include('../includes/adminVerify.php');
-   if(isset($_POST['submit']))
-  {
- $name=$_POST['name'];
- $email=$_POST['email'];
- $gender=$_POST['gender'];
- $connum=$_POST['connum'];
- $is2FA=$_POST['is2FA'];
- $eid=$_GET['editid'];
-$sql="update tblteacher set TeacherName=:name,Email=:email,Gender=:gender,ContactNumber=:connum,is2FA=:is2FA where ID=:eid";
-$query=$dbh->prepare($sql);
-$query->bindParam(':name',$name,PDO::PARAM_STR);
-$query->bindParam(':email',$email,PDO::PARAM_STR);
-$query->bindParam(':gender',$gender,PDO::PARAM_STR);
-$query->bindParam(':connum',$connum,PDO::PARAM_STR);
-$query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
-$query->bindParam(':eid',$eid,PDO::PARAM_STR);
- $query->execute();
+
+if(isset($_POST['submit'])) {
+  $name=$_POST['name'];
+  $email=$_POST['email'];
+  $gender=$_POST['gender'];
+  $connum=$_POST['connum'];
+  $is2FA=$_POST['is2FA'];
+  $eid=$_GET['editid'];
+  $sql="UPDATE tblteacher set TeacherName=:name,Email=:email,Gender=:gender,ContactNumber=:connum,is2FA=:is2FA where ID=:eid";
+  $query=$dbh->prepare($sql);
+  $query->bindParam(':name',$name,PDO::PARAM_STR);
+  $query->bindParam(':email',$email,PDO::PARAM_STR);
+  $query->bindParam(':gender',$gender,PDO::PARAM_STR);
+  $query->bindParam(':connum',$connum,PDO::PARAM_STR);
+  $query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
+  $query->bindParam(':eid',$eid,PDO::PARAM_STR);
+  $query->execute();
   echo '<script>alert("Teacher has been updated")</script>';
 }
+?>
 
-  ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
