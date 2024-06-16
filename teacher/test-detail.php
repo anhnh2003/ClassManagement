@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+include('../includes/util.php');
 $uid = $_COOKIE['uid'] ?? '';
 $eid = $_GET['editid'];
 
@@ -29,6 +30,7 @@ if (isset($_POST['edit'])) {
   $query->bindParam(':etime', $etime, PDO::PARAM_STR);
   $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->execute();
+  writeLog("Test #" . $eid ." - Updated by Teacher #" . $uid);
   echo '<script>alert("Test details have been updated")</script>';
 }
 

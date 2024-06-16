@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+include('../includes/util.php');
 $uid = $_COOKIE['uid'] ?? '';
 
 if(isset($_POST['submit'])) {
@@ -18,6 +19,7 @@ if(isset($_POST['submit'])) {
 
   echo '<script>alert("Your profile has been updated")</script>';
   echo "<script>window.location.href ='teacher-profile.php'</script>";
+  writeLog("Teacher #" . $uid ." - Profile updated");
 }
 ?>
 

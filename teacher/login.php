@@ -23,7 +23,7 @@ ini_set('session.gc_maxlifetime', 3600); // 1 hour
 
 error_reporting(0);
 include('../includes/dbconnection.php');
-require '../includes/randomGen.php';
+require '../includes/util.php';
 require '../includes/sendEmail.php';
 require '../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');

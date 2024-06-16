@@ -1,5 +1,7 @@
 <?php
 include('../includes/adminVerify.php');
+require '../includes/util.php';
+
     // Token is valid, continue
 if(isset($_POST['submit'])) {
   $name=$_POST['name'];
@@ -47,6 +49,7 @@ $query->bindParam(':password',$password,PDO::PARAM_STR);
  $query->execute();
    $LastInsertId=$dbh->lastInsertId();
    if ($LastInsertId>0) {
+    writeLog("Teacher #" . $teaid . " - Added teacher");
     echo '<script>alert("Teacher has been added.")</script>';
 echo "<script>window.location.href ='add-teacher.php'</script>";
   }

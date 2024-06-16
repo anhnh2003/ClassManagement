@@ -1,6 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
-require '../includes/randomGen.php';
+require '../includes/util.php';
 $eid = $_GET['editid'];
 
 function getRandomStringShuffle($length = 43) {
@@ -40,6 +40,7 @@ if (isset($_POST['regencode'])) {
   $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
   $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->execute();
+  writeLog("Class #" . $eid . " - Join code changed by Teacher #" . $uid);
   echo '<script>alert("Join Code has been changed")</script>';
 }
 
@@ -48,6 +49,7 @@ if (isset($_POST['new_attendance'])) {
   $query = $dbh->prepare($sql);
   $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->execute();
+  writeLog("Class #" . $eid . " - New attendance record created by Teacher #" . $uid);
   echo '<script>alert("New attendance record has been created")</script>';
 }
 
@@ -61,6 +63,7 @@ if (isset($_POST['delete_attendance'])) {
   $query2->bindParam(':aid', $aid, PDO::PARAM_STR);
   $query->execute();
   $query2->execute();
+  writeLog("Attendance #" . $aid . " - Deleted by Teacher #" . $uid);
   echo '<script>alert("Attendance record has been deleted")</script>';
 }
 ?>

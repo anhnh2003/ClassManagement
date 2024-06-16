@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+require '../includes/util.php';
 $uid = $_COOKIE['uid'] ?? '';
 
 if (isset($_POST['submit'])) {
@@ -18,6 +19,7 @@ if (isset($_POST['submit'])) {
   $lastInsertId = $dbh->lastInsertId();
   if ($lastInsertId > 0) {
     echo '<script>alert("Test has been added.")</script>';
+    writeLog("Test #" . $lastInsertId . " - Added by Teacher #" . $uid . ".");
     echo "<script>window.location.href ='manage-test.php'</script>";
   } else {
     echo '<script>alert("Something went wrong... Please try again")</script>';

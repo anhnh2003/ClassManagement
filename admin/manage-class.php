@@ -1,5 +1,6 @@
 <?php
 include('../includes/adminVerify.php');
+require '../includes/util.php';
 
 if (isset($_GET['delid'])) {
   $rid = intval($_GET['delid']);
@@ -7,7 +8,8 @@ if (isset($_GET['delid'])) {
   $query = $dbh->prepare($sql);
   $query->bindParam(':rid', $rid, PDO::PARAM_STR);
   $query->execute();
-  echo "<script>alert('Data deleted');</script>";
+  echo "<script>alert('Class deleted');</script>";
+  writeLog("Class #" . $rid . " - Deleted by Admin #" . $uid . ".");
   echo "<script>window.location.href = 'manage-class.php'</script>";
 }
 ?>

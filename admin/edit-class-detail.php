@@ -1,6 +1,6 @@
 <?php
 include('../includes/adminVerify.php');
-require '../includes/randomGen.php';
+require '../includes/util.php';
 $eid = isset($_GET['editid']) ? $_GET['editid'] : header("Location: manage-class.php");
 // Token is valid, continue
 if (isset($_POST['submit'])) {

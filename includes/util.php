@@ -12,4 +12,14 @@ function randomGen($length = 6) {
 
   return $randomString;
 }
+
+function writeLog($logMessage) {
+  $logFile = "../sms.log";
+  if (!file_exists($logFile)) {
+      touch($logFile);
+  }
+  date_default_timezone_set('Asia/Ho_Chi_Minh');
+  $logContent = date("Y-m-d H:i:s") . " UTC+7 - " . $logMessage . "\n";
+  file_put_contents($logFile, $logContent, FILE_APPEND);
+}
 ?>

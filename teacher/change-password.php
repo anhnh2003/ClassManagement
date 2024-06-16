@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+include('../includes/util.php');
 
 if(isset($_POST['submit'])) {
   $uid = $_COOKIE['uid'] ?? '';
@@ -25,6 +26,7 @@ if(isset($_POST['submit'])) {
     $chngpwd2->execute();
 
     echo '<script>alert("Your password successfully changed.")</script>';
+    writeLog("Teacher #" . $uid ." - Password Changed");
   } else {
     echo '<script>alert("Your current password is wrong")</script>';
   }

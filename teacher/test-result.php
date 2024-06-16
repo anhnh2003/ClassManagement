@@ -1,6 +1,7 @@
 <?php
 include('../includes/teacherVerify.php');
 include('../includes/updateScore.php');
+include('../includes/util.php');
 
 $eid = $_GET['editid'];
 $uid = $_COOKIE['uid'] ?? '';
@@ -28,6 +29,7 @@ if (isset($_POST['rescore'])) {
   foreach ($results as $row) {
     updateTestPoint($dbh, $row->student_id, $eid, $updateSubmitTime = false);
   }
+  writeLog("Test #" . $eid ." - Score recalculated by Teacher #" . $uid);
 }
 ?>
 

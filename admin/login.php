@@ -26,6 +26,8 @@ ini_set('session.cookie_samesite', 'Strict');
 error_reporting(0);
 include('../includes/dbconnection.php');
 require '../vendor/autoload.php';
+require '../includes/util.php';
+
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
@@ -84,6 +86,7 @@ setcookie ("uid",$result->ID,time()+7200,"","",0,1);
 }
 $_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+writeLog("Admin #" . $result->ID . " - Logged in.");
 } else { 
   $_SESSION['error'] = "Wrong username or password.";
   header('Location: login.php');

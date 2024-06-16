@@ -1,6 +1,6 @@
 <?php
 include('../includes/adminVerify.php');
-require '../includes/randomGen.php';
+require '../includes/util.php';
     // Token is valid, continue
 if (isset($_POST['submit'])) {
   $teaid = $_POST['teaid'];

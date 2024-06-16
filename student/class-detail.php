@@ -1,30 +1,28 @@
 <?php
 include('../includes/studentVerify.php');
-if (strlen($_SESSION['sturecmsuid']) == 0) {
-  header('location:logout.php');
-} else {
-  // Check if the student is in the class
-  $eid = $_GET['editid'];
-  $uid = $_SESSION['sturecmsuid'];
-  $sql = "SELECT * FROM tblstudent_class WHERE student_id=:uid AND class_id=:eid";
+require '../includes/util.php';
+// Check if the student is in the class
+$eid = $_GET['editid'];
+$uid = $_SESSION['sturecmsuid'];
+$sql = "SELECT * FROM tblstudent_class WHERE student_id=:uid AND class_id=:eid";
+$query = $dbh->prepare($sql);
+$query->bindParam(':eid', $eid, PDO::PARAM_STR);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->execute();
+if ($query->rowCount() == 0) {
+  header('location:manage-class.php');
+  exit();
+}
+
+if (isset($_POST['leave'])) {
+  $sql = "DELETE FROM tblstudent_class WHERE student_id=:uid AND class_id=:eid";
   $query = $dbh->prepare($sql);
   $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->bindParam(':uid', $uid, PDO::PARAM_STR);
   $query->execute();
-  if ($query->rowCount() == 0) {
-    header('location:manage-class.php');
-    exit();
-  }
-
-  if (isset($_POST['leave'])) {
-    $sql = "DELETE FROM tblstudent_class WHERE student_id=:uid AND class_id=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-    $query->execute();
-    echo "<script>alert('You have left the class');</script>";
-    echo "<script>window.location.href = 'manage-class.php'</script>";
-  }
+  echo "<script>alert('You have left the class');</script>";
+  writeLog("Student #" . $uid . " - Left class #" . $eid . ".");
+  echo "<script>window.location.href = 'manage-class.php'</script>";
 }
 ?>
 

@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+require '../includes/util.php';
 $answers = ['A', 'B', 'C', 'D'];
 $uid = $_COOKIE['uid'] ?? '';
 
@@ -34,6 +35,7 @@ if (isset($_POST['submit'])) {
     $query->execute();
 
     echo '<script>alert("Question has been added.")</script>';
+    writeLog("Question #" . $dbh->lastInsertId() . " - Added by Teacher #" . $uid . ".");
     echo "<script>window.location.href ='manage-question.php'</script>";
   }
 }

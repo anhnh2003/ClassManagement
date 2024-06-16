@@ -1,38 +1,40 @@
 <?php
 include('../includes/studentVerify.php');
+require '../includes/util.php';
     // Token is valid, continue
-  if (isset($_POST['join'])) {
-    $joinid = $_POST['joinid'];
-    $sql = "SELECT ID from tblclass where JoinCode=:joinid";
+if (isset($_POST['join'])) {
+  $joinid = $_POST['joinid'];
+  $sql = "SELECT ID from tblclass where JoinCode=:joinid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':joinid', $joinid, PDO::PARAM_STR);
+  $query->execute();
+  $results = $query->fetchAll(PDO::FETCH_OBJ);
+  
+  if ($query->rowCount() > 0) {
+    $cid = $results[0]->ID;
+    $sql = "SELECT tblstudent_class.* from tblstudent_class, tbltoken where student_id=:uid and class_id=:cid and tbltoken.UserID=tblstudent_class.student_id and (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() and tbltoken.UserToken=:sessionToken;";
     $query = $dbh->prepare($sql);
-    $query->bindParam(':joinid', $joinid, PDO::PARAM_STR);
+    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
+    $query->bindParam(':cid', $cid, PDO::PARAM_STR);
+    $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_OBJ);
-    
     if ($query->rowCount() > 0) {
-      $cid = $results[0]->ID;
-      $sql = "SELECT tblstudent_class.* from tblstudent_class, tbltoken where student_id=:uid and class_id=:cid and tbltoken.UserID=tblstudent_class.student_id and (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW() and tbltoken.UserToken=:sessionToken;";
+      echo "<script>alert('You have already joined this class!');</script>";
+    } else {
+      $sql = "INSERT INTO tblstudent_class(student_id, class_id) VALUES(:uid, :cid)";
       $query = $dbh->prepare($sql);
       $query->bindParam(':uid', $uid, PDO::PARAM_STR);
       $query->bindParam(':cid', $cid, PDO::PARAM_STR);
-      $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
       $query->execute();
       $results = $query->fetchAll(PDO::FETCH_OBJ);
-      if ($query->rowCount() > 0) {
-        echo "<script>alert('You have already joined this class!');</script>";
-      } else {
-        $sql = "INSERT INTO tblstudent_class(student_id, class_id) VALUES(:uid, :cid)";
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-        $query->bindParam(':cid', $cid, PDO::PARAM_STR);
-        $query->execute();
-        $results = $query->fetchAll(PDO::FETCH_OBJ);
-        echo "<script>alert('Class joined successfully!');</script>";
-      }
-    } else {
-      echo "<script>alert('Invalid Class ID');</script>";
+      echo "<script>alert('Class joined successfully!');</script>";
+      writeLog("Student #" . $uid . " - Joined class #" . $cid . ".");
     }
+  } else {
+    echo "<script>alert('Invalid Class ID');</script>";
   }
+}
 
 ?>
 

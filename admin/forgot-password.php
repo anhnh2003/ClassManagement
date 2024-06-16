@@ -3,7 +3,7 @@ session_start();
 error_reporting(0);
 include('../includes/dbconnection.php');
 include('../includes/sendEmail.php');
-include('../includes/randomGen.php');
+include('../includes/util.php');
 
 $btnSubmit = "";
 $btnConfirm = "display: none;";

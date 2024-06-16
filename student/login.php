@@ -29,7 +29,7 @@ if (isset($_SESSION['user_id']) && !preg_match('/^[a-zA-Z0-9,-]{26,40}$/', sessi
 }
 error_reporting(0);
 include('../includes/dbconnection.php');
-require '../includes/randomGen.php';
+require '../includes/util.php';
 require '../includes/sendEmail.php';
 require '../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');

@@ -1,7 +1,7 @@
 <?php
 include('../includes/studentVerify.php');
 include('../includes/updateScore.php');
-
+require '../includes/util.php';
 $uid = $_COOKIE['uid'] ?? '';
 $eid = $_GET['editid'];
 
@@ -32,6 +32,7 @@ if (isset($_POST['start'])) {
   $query->execute();
 
   echo '<script>alert("Test started successfully.")</script>';
+  writeLog("Student #" . $uid . " - Started test #" . $eid . ".");
   header("Location: test.php?testid=$eid");
   exit;
 }

@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+include('../includes/util.php');
 $answers = ['A', 'B', 'C', 'D'];
 $eid = $_GET['editid'];
 
@@ -50,6 +51,7 @@ if (isset($_POST['edit'])) {
     $query->bindParam(':eid', $eid, PDO::PARAM_STR);
     $query->execute();
 
+    writeLog("Question #" . $eid ." - Updated by Teacher #" . $uid);
     echo '<script>alert("Question has been updated")</script>';
   }
 }
@@ -63,6 +65,7 @@ if (isset($_POST['delete'])) {
   $query->execute();
 
   echo '<script>alert("Question has been deleted")</script>';
+  writeLog("Question #" . $eid ." - Deleted by Teacher #" . $uid);
   echo "<script>window.location.href ='manage-question.php'</script>";
 }
 ?>

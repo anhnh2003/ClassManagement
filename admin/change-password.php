@@ -1,5 +1,7 @@
 <?php
 include('../includes/adminVerify.php');
+require '../includes/util.php';
+
     // Token is valid, continue
 if(isset($_POST['submit'])) {
   $adminid=$_SESSION['sturecmsaid'];
@@ -23,6 +25,7 @@ if(isset($_POST['submit'])) {
     $chngpwd2-> bindParam(':password', $password, PDO::PARAM_STR);
     $chngpwd2->execute();
 
+    writeLog("Admin #" . $adminid . " - Changed password.");
     echo '<script>alert("Your password successully changed")</script>';
   } else {
     echo '<script>alert("Your current password is wrong")</script>';

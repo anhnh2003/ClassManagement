@@ -1,5 +1,6 @@
 <?php
 include('../includes/studentVerify.php');
+require '../includes/util.php';
     // Token is valid, continue
 if(isset($_POST['submit'])) {
   $uid=$_COOKIE['uid'] ?? '';
@@ -29,6 +30,7 @@ if(isset($_POST['submit'])) {
 
     //echo the alert message that show the uid
     echo '<script>alert("Your password successfully changed.")</script>';
+    writeLog("Student #" . $uid . " - Changed password.");
   } else {
     echo '<script>alert("Your current password is wrong")</script>';
   }

@@ -1,5 +1,6 @@
 <?php
 include('../includes/adminVerify.php');
+require '../includes/util.php';
 
 if(isset($_POST['submit'])) {
   $name=$_POST['name'];
@@ -17,6 +18,7 @@ if(isset($_POST['submit'])) {
   $query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
   $query->bindParam(':eid',$eid,PDO::PARAM_STR);
   $query->execute();
+  writeLog("Teacher #".$eid." - Updated by Admin #".$uid.".");
   echo '<script>alert("Teacher has been updated")</script>';
 }
 ?>

@@ -1,5 +1,6 @@
 <?php
 include('../includes/adminVerify.php');
+require '../includes/util.php';
 
 if (isset($_POST['submit'])) {
   $nottitle = $_POST['nottitle'];
@@ -14,7 +15,8 @@ if (isset($_POST['submit'])) {
   $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
   $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->execute();
-
+  
+  writeLog("Notice #" . $eid . " - Updated by Admin #" . $uid . ".");
   echo '<script>alert("Notice has been updated")</script>';
 }
 ?>

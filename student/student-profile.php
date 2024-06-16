@@ -1,5 +1,6 @@
 <?php
 include('../includes/studentVerify.php');
+require '../includes/util.php';
 // Token is valid, continue
 if(isset($_POST['submit']))
   {
@@ -36,6 +37,7 @@ if(isset($_POST['submit']))
     $query->execute();
 
     echo '<script>alert("Your profile has been updated")</script>';
+    writeLog("Student #" . $uid . " - Updated profile.");
     echo "<script>window.location.href ='student-profile.php'</script>";
 }
   ?>
