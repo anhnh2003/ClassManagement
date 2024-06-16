@@ -1,66 +1,35 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
-error_reporting(0);
-if (strlen($_SESSION['sturecmsstuid']) == 0) {
+include('../includes/teacherVerify.php');
 
-  header('location:logout.php');
-  exit();
-} else {
-  // Retrieve the 'uid' and 'session_token' cookies
+if(isset($_POST['submit'])) {
   $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-  // Prepare the SQL statement to select the token from the database
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-  // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
-      // Token is invalid or expired, redirect to logout
-      header('location:logout.php');
-      exit();
+  $cpassword=($_POST['currentpassword']);
+  $newpassword=($_POST['newpassword']);
+  if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
+    $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
+    header('Location: change-password.php');
+    exit();
+  }
 
+  $sql ="SELECT ID, Password FROM tblteacher WHERE ID=:uid";
+  $query= $dbh -> prepare($sql);
+  $query-> bindParam(':uid', $uid, PDO::PARAM_STR);
+  $query-> execute();
+  $result = $query -> fetch(PDO::FETCH_OBJ);
+  if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->Password))) {
+    //insert value in the Password col, the value is the hashed password of the Password col
+    $password = password_hash($newpassword, PASSWORD_DEFAULT);
+    $chngpwd2 = $dbh->prepare("UPDATE tblteacher SET Password=:password where ID=:uid");
+    $chngpwd2-> bindParam(':uid', $uid, PDO::PARAM_STR);
+    $chngpwd2-> bindParam(':password', $password, PDO::PARAM_STR);
+    $chngpwd2->execute();
+
+    echo '<script>alert("Your password successfully changed.")</script>';
   } else {
-    // Token is valid, continue
-if(isset($_POST['submit']))
-{
-$uid=$_COOKIE['uid'] ?? '';
-$cpassword=($_POST['currentpassword']);
-$newpassword=($_POST['newpassword']);
-if(!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/', $newpassword)) {
-  $_SESSION['error'] = "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one symbol.";
-  header('Location: change-password.php');
-  exit();
+    echo '<script>alert("Your current password is wrong")</script>';
+  }
 }
-$sql ="SELECT ID, Password FROM tblteacher WHERE ID=:uid";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$query-> execute();
-$result = $query -> fetch(PDO::FETCH_OBJ);
-if(($query -> rowCount() > 0) && (password_verify($cpassword, $result->Password)))
-{
-//insert value in the Password col, the value is the hashed password of the Password col
-$password = password_hash($newpassword, PASSWORD_DEFAULT);
-$chngpwd2 = $dbh->prepare("UPDATE tblteacher SET Password=:password where ID=:uid");
-$chngpwd2-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$chngpwd2-> bindParam(':password', $password, PDO::PARAM_STR);
-$chngpwd2->execute();
-
-//echo the alert message that show the uid
-echo '<script>alert("Your password successfully changed.")</script>';
-
-
-//echo '<script>alert("Your password successully changed")</script>';
-} else {
-echo '<script>alert("Your current password is wrong")</script>';
-
-}
-}
-  ?>
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -173,4 +142,4 @@ return true;
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php } } ?>
+</html>

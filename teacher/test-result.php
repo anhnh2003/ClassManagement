@@ -1,58 +1,32 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
+include('../includes/teacherVerify.php');
 include('../includes/updateScore.php');
 
-$_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
 $eid = $_GET['editid'];
 $uid = $_COOKIE['uid'] ?? '';
 
-if (strlen($_SESSION['sturecmstuid']) == 0) {
-  header('location:logout.php');
+// Check if teacher has access to this test
+$sql = "SELECT * FROM tbltest, tblclass, tblteacher, tbltoken WHERE tbltest.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=tbltest.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+$query = $dbh->prepare($sql);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->bindParam(':eid', $eid, PDO::PARAM_STR);
+$query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_OBJ);
+
+if ($query->rowCount() == 0) {
+  header('location:manage-test.php');
   exit();
-} else {
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
+}
 
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
+if (isset($_POST['rescore'])) {
+  $sql = "SELECT student_id FROM tblstudent_test WHERE test_id=:eid AND TotalPoint is not null";
   $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
-    header('location:logout.php');
-    exit();
-  }
-
-  if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)) {
-    header('location:logout.php');
-    exit();
-  } else {
-    $sql = "SELECT * FROM tbltest, tblclass, tblteacher, tbltoken WHERE tbltest.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=tbltest.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-    if ($query->rowCount() == 0) {
-      header('location:manage-test.php');
-      exit();
-    }
-  }
-
-  if (isset($_POST['rescore'])) {
-    $sql = "SELECT student_id FROM tblstudent_test WHERE test_id=:eid AND TotalPoint is not null";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-    foreach ($results as $row) {
-      updateTestPoint($dbh, $row->student_id, $eid, $updateSubmitTime = false);
-    }
+  $results = $query->fetchAll(PDO::FETCH_OBJ);
+  foreach ($results as $row) {
+    updateTestPoint($dbh, $row->student_id, $eid, $updateSubmitTime = false);
   }
 }
 ?>

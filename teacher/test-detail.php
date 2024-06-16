@@ -1,113 +1,81 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
+include('../includes/teacherVerify.php');
+$uid = $_COOKIE['uid'] ?? '';
+$eid = $_GET['editid'];
 
-$_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
+// Check if the teacher has access to the test
+$sql = "SELECT * FROM tbltest, tblclass, tblteacher, tbltoken WHERE tbltest.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=tbltest.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+$query = $dbh->prepare($sql);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->bindParam(':eid', $eid, PDO::PARAM_STR);
+$query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_OBJ);
 
-if (strlen($_SESSION['sturecmstuid']) == 0) {
-  header('location:logout.php');
+if ($query->rowCount() == 0) {
+  header('location:manage-test.php');
   exit();
-} else {
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
+}
 
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
+if (isset($_POST['edit'])) {
+  $tname = $_POST['tname'];
+  $stime = $_POST['stime'];
+  $etime = $_POST['etime'];
+
+  $sql = "UPDATE tbltest set TestName=:tname, StartTime=:stime, EndTime=:etime where ID=:eid";
   $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+  $query->bindParam(':tname', $tname, PDO::PARAM_STR);
+  $query->bindParam(':stime', $stime, PDO::PARAM_STR);
+  $query->bindParam(':etime', $etime, PDO::PARAM_STR);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
   $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
+  echo '<script>alert("Test details have been updated")</script>';
+}
 
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
-    header('location:logout.php');
-    exit();
-  }
+if (isset($_POST['add_ques'])) {
+  $qid = $_POST['qid'];
+  if (strlen($qid) > 0) {
+    $sql_check = "SELECT * FROM tbltest_question WHERE test_id=:eid AND question_id=:qid";
+    $query_check = $dbh->prepare($sql_check);
+    $query_check->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query_check->bindParam(':qid', $qid, PDO::PARAM_STR);
+    $query_check->execute();
 
-  if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)) {
-    header('location:logout.php');
-    exit();
-  } else {
-    $uid = $_COOKIE['uid'] ?? '';
-    $eid = $_GET['editid'];
-
-    $sql = "SELECT * FROM tbltest, tblclass, tblteacher, tbltoken WHERE tbltest.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=tbltest.class_id AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-    if ($query->rowCount() == 0) {
-      header('location:manage-test.php');
-      exit();
+    if ($query_check->rowCount() == 0) {
+      $sql = "INSERT INTO tbltest_question(test_id, question_id, Point) VALUES(:eid, :qid , 1)";
+      $query = $dbh->prepare($sql);
+      $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+      $query->bindParam(':qid', $qid, PDO::PARAM_STR);
+      $query->execute();
     }
   }
+}
 
-  if (isset($_POST['edit'])) {
-    $eid = $_GET['editid'];
-    $tname = $_POST['tname'];
-    $stime = $_POST['stime'];
-    $etime = $_POST['etime'];
+if (isset($_POST['del_ques'])) {
+  $qid = $_POST['qid'];
+  $sql = "DELETE FROM tbltest_question WHERE test_id=:eid AND question_id=:qid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->bindParam(':qid', $qid, PDO::PARAM_STR);
+  $query->execute();
+}
 
-    $sql = "update tbltest set TestName=:tname, StartTime=:stime, EndTime=:etime where ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':tname', $tname, PDO::PARAM_STR);
-    $query->bindParam(':stime', $stime, PDO::PARAM_STR);
-    $query->bindParam(':etime', $etime, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    echo '<script>alert("Test details have been updated")</script>';
-  }
-
-  if (isset($_POST['add_ques'])) {
-    $eid = $_GET['editid'];
-    $qid = $_POST['qid'];
-    if (strlen($qid) > 0) {
-      $sql_check = "SELECT * FROM tbltest_question WHERE test_id=:eid AND question_id=:qid";
-      $query_check = $dbh->prepare($sql_check);
-      $query_check->bindParam(':eid', $eid, PDO::PARAM_STR);
-      $query_check->bindParam(':qid', $qid, PDO::PARAM_STR);
-      $query_check->execute();
-
-      if ($query_check->rowCount() == 0) {
-        $sql = "INSERT INTO tbltest_question(test_id, question_id, Point) VALUES(:eid, :qid , 1)";
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-        $query->bindParam(':qid', $qid, PDO::PARAM_STR);
-        $query->execute();
-      }
-    }
-  }
-
-  if (isset($_POST['del_ques'])) {
-    $qid = $_POST['qid'];
-    $eid = $_GET['editid'];
-    $sql = "DELETE FROM tbltest_question WHERE test_id=:eid AND question_id=:qid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':qid', $qid, PDO::PARAM_STR);
-    $query->execute();
-  }
-
-  if (isset($_POST['edit_ques'])) {
-    $eid = $_GET['editid'];
-    $sql = "SELECT * FROM tbltest_question WHERE test_id=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-    if ($query->rowCount() > 0) {
-      foreach ($results as $row) {
-        $qid = $row->question_id;
-        $new_point = $_POST["point_q".$qid];
-        $sql1 = "UPDATE tbltest_question SET Point=:point WHERE test_id=:eid AND question_id=:qid";
-        $query1 = $dbh->prepare($sql1);
-        $query1->bindParam(':point', $new_point, PDO::PARAM_INT);
-        $query1->bindParam(':eid', $eid, PDO::PARAM_STR);
-        $query1->bindParam(':qid', $qid, PDO::PARAM_STR);
-        $query1->execute();
-      }
+if (isset($_POST['edit_ques'])) {
+  $sql = "SELECT * FROM tbltest_question WHERE test_id=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->execute();
+  $results = $query->fetchAll(PDO::FETCH_OBJ);
+  if ($query->rowCount() > 0) {
+    foreach ($results as $row) {
+      $qid = $row->question_id;
+      $new_point = $_POST["point_q".$qid];
+      $sql1 = "UPDATE tbltest_question SET Point=:point WHERE test_id=:eid AND question_id=:qid";
+      $query1 = $dbh->prepare($sql1);
+      $query1->bindParam(':point', $new_point, PDO::PARAM_INT);
+      $query1->bindParam(':eid', $eid, PDO::PARAM_STR);
+      $query1->bindParam(':qid', $qid, PDO::PARAM_STR);
+      $query1->execute();
     }
   }
 }
@@ -159,7 +127,6 @@ if (strlen($_SESSION['sturecmstuid']) == 0) {
                 <div class="card-body">
                   <?php
                   $uid = $_SESSION['sturecmsuid'];
-                  $eid = $_GET['editid'];
                   $sql = "SELECT tbltest.*, ClassName, Room FROM tblclass, tbltest WHERE class_id=tblclass.ID AND tbltest.ID=:eid";
                   $query = $dbh->prepare($sql);
                   $query->bindParam(':eid', $eid, PDO::PARAM_STR);

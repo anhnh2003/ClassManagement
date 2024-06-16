@@ -1,31 +1,7 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
-
-// Check if the user is logged in and the session variables are set
-if (strlen($_SESSION['sturecmsstuid']) == 0) {
-  header('location:logout.php');
-  exit();
-} else {
-  // Retrieve the 'uid' and 'session_token' cookies
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-
-  // Prepare the SQL statement to select the token from the database
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-
-  // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
-    // Token is invalid or expired, redirect to logout
-    header('location:logout.php');
-    exit();
-  }
-}
+include('../includes/teacherVerify.php');
+$uid = $_COOKIE['uid'] ?? '';
+$eid = $_GET['editid'];
 
 function getRandomStringShuffle($length = 43)
 {
@@ -37,104 +13,95 @@ function getRandomStringShuffle($length = 43)
   return $randomString;
 }
 
-if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)) {
-  header('location:logout.php');
+// Check if attendance from a class belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
+$sql = "SELECT * FROM tblattendance, tblclass, tblteacher, tbltoken WHERE tblattendance.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND class_id=tblclass.ID AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+$query = $dbh->prepare($sql);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->bindParam(':eid', $eid, PDO::PARAM_STR);
+$query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_OBJ);
+
+if ($query->rowCount() == 0) {
+  header('location:manage-class.php');
   exit();
-} else {
-  $uid = $_COOKIE['uid'] ?? '';
-  $eid = $_GET['editid'];
+}
 
-  // Check if attendance from a class belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
-  $sql = "SELECT * FROM tblattendance, tblclass, tblteacher, tbltoken WHERE tblattendance.ID=:eid and teacher_id=:uid AND tblteacher.ID=:uid AND class_id=tblclass.ID AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_STR);
-  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-  if ($query->rowCount() == 0) {
-    header('location:manage-class.php');
-    exit();
+$pngAbsoluteFilePath = '';
+if (isset($_POST['genqr'])) {
+  // Generate QR code
+  include_once('../lib/phpqrcode/qrlib.php');
+  $tempDir = 'temp/';
+  // Create /temp folder if not existed
+  if (!is_dir($tempDir)) {
+    mkdir($tempDir);
   }
-
-  $pngAbsoluteFilePath = '';
-
-  if (isset($_POST['genqr'])) {
-    // Generate QR code
-    include_once('../lib/phpqrcode/qrlib.php');
-    $tempDir = 'temp/';
-    // Create /temp folder if not existed
-    if (!is_dir($tempDir)) {
-      mkdir($tempDir);
-    }
-    // Clean /temp folder
-    $files = glob($tempDir . '*.png');
-    if (count($files) > 5) {
-      foreach ($files as $file) {
-        if (is_file($file)) {
-          unlink($file);
-        }
+  // Clean /temp folder
+  $files = glob($tempDir . '*.png');
+  if (count($files) > 5) {
+    foreach ($files as $file) {
+      if (is_file($file)) {
+        unlink($file);
       }
     }
+  }
 
-    // Generate QR code
-    $qrContent = getRandomStringShuffle();
-    $qrImgName = "qr" . getRandomStringShuffle(10) . ".png";
-    date_default_timezone_set('Asia/Ho_Chi_Minh');
-    $gentime = date('Y-m-d H:i:s');
-    $pngAbsoluteFilePath = $tempDir . $qrImgName;
-    QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 15, 2);
+  // Generate QR code
+  $qrContent = getRandomStringShuffle();
+  $qrImgName = "qr" . getRandomStringShuffle(10) . ".png";
+  date_default_timezone_set('Asia/Ho_Chi_Minh');
+  $gentime = date('Y-m-d H:i:s');
+  $pngAbsoluteFilePath = $tempDir . $qrImgName;
+  QRcode::png($qrContent, $pngAbsoluteFilePath, QR_ECLEVEL_L, 15, 2);
 
-    // Update the QR code and the last generated time in the database
-    $sql = "UPDATE tblattendance SET Secret=:qrContent, LastGeneratedTime=:gentime WHERE ID=:eid";
+  // Update the QR code and the last generated time in the database
+  $sql = "UPDATE tblattendance SET Secret=:qrContent, LastGeneratedTime=:gentime WHERE ID=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->bindParam(':qrContent', $qrContent, PDO::PARAM_STR);
+  $query->bindParam(':gentime', $gentime, PDO::PARAM_STR);
+  $query->execute();
+}
+
+if (isset($_POST['update_ttl'])) {
+  // Update the TimeToLive of QR
+  $eid = $_GET['editid'];
+  $ttl = $_POST['ttl'];
+  $sql = "UPDATE tblattendance SET TimeToLive=:ttl WHERE ID=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->bindParam(':ttl', $ttl, PDO::PARAM_STR);
+  $query->execute();
+}
+
+if (isset($_POST['toggle_attendance'])) {
+  $sid = $_POST['student_id'];
+  $isAttended = $_POST['isAttended'];
+  $aid = $_GET['editid'];
+
+  if ($isAttended == null) {
+    // Insert the attendance
+    $sql = "INSERT INTO tblstudent_attendance (student_id, attendance_id) VALUES (:sid, :aid)";
     $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':qrContent', $qrContent, PDO::PARAM_STR);
-    $query->bindParam(':gentime', $gentime, PDO::PARAM_STR);
+    $query->bindParam(':sid', $sid, PDO::PARAM_STR);
+    $query->bindParam(':aid', $aid, PDO::PARAM_STR);
+    $query->execute();
+  } else {
+    // Delete the attendance
+    $sql = "DELETE FROM tblstudent_attendance WHERE student_id=:sid AND attendance_id=:aid";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':sid', $sid, PDO::PARAM_STR);
+    $query->bindParam(':aid', $aid, PDO::PARAM_STR);
     $query->execute();
   }
+}
 
-  if (isset($_POST['update_ttl'])) {
-    // Update the TimeToLive of QR
-    $eid = $_GET['editid'];
-    $ttl = $_POST['ttl'];
-    $sql = "UPDATE tblattendance SET TimeToLive=:ttl WHERE ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->bindParam(':ttl', $ttl, PDO::PARAM_STR);
-    $query->execute();
-  }
-
-  if (isset($_POST['toggle_attendance'])) {
-    $sid = $_POST['student_id'];
-    $isAttended = $_POST['isAttended'];
-    $aid = $_GET['editid'];
-
-    if ($isAttended == null) {
-      // Insert the attendance
-      $sql = "INSERT INTO tblstudent_attendance (student_id, attendance_id) VALUES (:sid, :aid)";
-      $query = $dbh->prepare($sql);
-      $query->bindParam(':sid', $sid, PDO::PARAM_STR);
-      $query->bindParam(':aid', $aid, PDO::PARAM_STR);
-      $query->execute();
-    } else {
-      // Delete the attendance
-      $sql = "DELETE FROM tblstudent_attendance WHERE student_id=:sid AND attendance_id=:aid";
-      $query = $dbh->prepare($sql);
-      $query->bindParam(':sid', $sid, PDO::PARAM_STR);
-      $query->bindParam(':aid', $aid, PDO::PARAM_STR);
-      $query->execute();
-    }
-  }
-
-  if (isset($_POST['stopqr'])) {
-    // Stop the QR code
-    $sql = "UPDATE tblattendance SET Secret=NULL, LastGeneratedTime=NULL WHERE ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-  }
+if (isset($_POST['stopqr'])) {
+  // Stop the QR code
+  $sql = "UPDATE tblattendance SET Secret=NULL, LastGeneratedTime=NULL WHERE ID=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->execute();
 }
 ?>
 
@@ -311,7 +278,6 @@ if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) ||
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
-
         <!-- partial -->
       </div>
       <!-- main-panel ends -->

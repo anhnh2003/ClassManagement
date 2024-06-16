@@ -1,51 +1,26 @@
 <?php
-session_start();
-error_reporting(0);
-include('../includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsstuid']) == 0) {
+include('../includes/teacherVerify.php');
+$uid = $_COOKIE['uid'] ?? '';
 
-  header('location:logout.php');
-  exit();
-} else {
-  // Retrieve the 'uid' and 'session_token' cookies
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-  // Prepare the SQL statement to select the token from the database
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-  // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
-      // Token is invalid or expired, redirect to logout
-      header('location:logout.php');
-      exit();
-
-  } else {
-    // Token is valid, continue
-    if(isset($_POST['submit']))
-  {
-    $uid=$_SESSION['sturecmsuid'];
-    $UName=$_POST['name'];
+if(isset($_POST['submit'])) {
+  $UName=$_POST['name'];
   $connum=$_POST['connum'];
   $email=$_POST['email'];
   $is2FA=$_POST['is2FA'];
   $sql="update tblteacher set TeacherName=:name,ContactNumber=:connum,Email=:email,is2FA=:is2FA where ID=:uid";
-     $query = $dbh->prepare($sql);
-     $query->bindParam(':name',$UName,PDO::PARAM_STR);
-     $query->bindParam(':email',$email,PDO::PARAM_STR);
-     $query->bindParam(':connum',$connum,PDO::PARAM_STR);
-      $query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
-     $query->bindParam(':uid',$uid,PDO::PARAM_STR);
-$query->execute();
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':name',$UName,PDO::PARAM_STR);
+  $query->bindParam(':email',$email,PDO::PARAM_STR);
+  $query->bindParam(':connum',$connum,PDO::PARAM_STR);
+  $query->bindParam(':is2FA',$is2FA,PDO::PARAM_STR);
+  $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+  $query->execute();
 
-    echo '<script>alert("Your profile has been updated")</script>';
-    echo "<script>window.location.href ='teacher-profile.php'</script>";
+  echo '<script>alert("Your profile has been updated")</script>';
+  echo "<script>window.location.href ='teacher-profile.php'</script>";
+}
+?>
 
-  }
-  ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -92,18 +67,15 @@ $query->execute();
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Teacher Profile</h4>
-                   
                     <form class="forms-sample" method="post">
                       <?php
-
-$sql="SELECT * from  tblteacher";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-$cnt=1;
-if($query->rowCount() > 0)
-{
-             ?>
+                        $sql="SELECT * from  tblteacher";
+                        $query = $dbh -> prepare($sql);
+                        $query->execute();
+                        $results=$query->fetchAll(PDO::FETCH_OBJ);
+                        $cnt=1;
+                        if($query->rowCount() > 0){
+                      ?>
                       <div class="form-group">
                         <label for="exampleInputName1">Teacher Name</label>
                         <input type="text" name="name" value="<?php  echo $row->TeacherName;?>" class="form-control" required='true'>
@@ -182,4 +154,4 @@ if($query->rowCount() > 0)
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php } } ?>
+</html>

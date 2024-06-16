@@ -1,35 +1,8 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
+include('../includes/teacherVerify.php');
+$eid = $_GET['editid'];
 
-// Check if the user is logged in and the session variables are set
-if (strlen($_SESSION['sturecmsstuid']) == 0) {
-  header('location:logout.php');
-  exit();
-} else {
-  // Retrieve the 'uid' and 'session_token' cookies
-  $uid = $_COOKIE['uid'] ?? '';
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-
-  // Prepare the SQL statement to select the token from the database
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-
-  // Check if the token exists and is not expired
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
-    // Token is invalid or expired, redirect to logout
-    header('location:logout.php');
-    exit();
-  }
-}
-
-// Token is valid, continue to the dashboard
-function getRandomStringShuffle($length = 43)
-{
+function getRandomStringShuffle($length = 43) {
   $stringSpace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   $stringLength = strlen($stringSpace);
   $string = str_repeat($stringSpace, ceil($length / $stringLength));
@@ -38,69 +11,61 @@ function getRandomStringShuffle($length = 43)
   return $randomString;
 }
 
-if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)) {
-  header('location:logout.php');
+// Check if the class belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
+$sql = "SELECT * FROM tblclass, tblteacher, tbltoken WHERE teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=:eid AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+$query = $dbh->prepare($sql);
+$query->bindParam(':uid', $uid, PDO::PARAM_STR);
+$query->bindParam(':eid', $eid, PDO::PARAM_STR);
+$query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_OBJ);
+
+if ($query->rowCount() == 0) {
+  header('location:manage-class.php');
   exit();
-} else {
-  $uid = $_COOKIE['uid'] ?? '';
-  $eid = $_GET['editid'];
+}
 
-  // Check if the class belongs to the teacher in tblclass and check the teacher has a valid token in tbltoken
-  $sql = "SELECT * FROM tblclass, tblteacher, tbltoken WHERE teacher_id=:uid AND tblteacher.ID=:uid AND tblclass.ID=:eid AND tbltoken.UserID=:uid AND tbltoken.UserToken=:sessionToken AND (tbltoken.CreationTime + INTERVAL 2 HOUR) >= NOW()";
+$sql1 = "SELECT * from tblstudent_class where class_id=:eid";
+$query1 = $dbh->prepare($sql1);
+$query1->bindParam(':eid', $eid, PDO::PARAM_STR);
+$query1->execute();
+$results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+$students_in_class = $query1->rowCount();
+
+if (isset($_POST['regencode'])) {
+  $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  $joincode = '';
+  for ($i = 0; $i < 6; $i++) {
+    $index = rand(0, strlen($characters) - 1);
+    $joincode .= $characters[$index];
+  }
+  $sql = "UPDATE tblclass SET JoinCode=:joincode WHERE ID=:eid";
   $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_STR);
+  $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
   $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
   $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_OBJ);
+  echo '<script>alert("Join Code has been changed")</script>';
+}
 
-  if ($query->rowCount() == 0) {
-    header('location:manage-class.php');
-    exit();
-  }
+if (isset($_POST['new_attendance'])) {
+  $sql = "insert into tblattendance (class_id) values (:eid)";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->execute();
+  echo '<script>alert("New attendance record has been created")</script>';
+}
 
-  $sql1 = "SELECT * from tblstudent_class where class_id=:eid";
-  $query1 = $dbh->prepare($sql1);
-  $query1->bindParam(':eid', $eid, PDO::PARAM_STR);
-  $query1->execute();
-  $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
-  $students_in_class = $query1->rowCount();
-
-  if (isset($_POST['regencode'])) {
-    $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    $joincode = '';
-    for ($i = 0; $i < 6; $i++) {
-      $index = rand(0, strlen($characters) - 1);
-      $joincode .= $characters[$index];
-    }
-    $sql = "UPDATE tblclass SET JoinCode=:joincode WHERE ID=:eid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    echo '<script>alert("Join Code has been changed")</script>';
-  }
-
-  if (isset($_POST['new_attendance'])) {
-    $sql = "insert into tblattendance (class_id) values (:eid)";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $query->execute();
-    echo '<script>alert("New attendance record has been created")</script>';
-  }
-
-  if (isset($_POST['delete_attendance'])) {
-    $aid = $_POST['attendance_id'];
-    $sql = "delete from tblattendance where ID=:aid";
-    $sql2 = "delete from tblstudent_attendance where attendance_id=:aid";
-    $query = $dbh->prepare($sql);
-    $query2 = $dbh->prepare($sql2);
-    $query->bindParam(':aid', $aid, PDO::PARAM_STR);
-    $query2->bindParam(':aid', $aid, PDO::PARAM_STR);
-    $query->execute();
-    $query2->execute();
-    echo '<script>alert("Attendance record has been deleted")</script>';
-  }
+if (isset($_POST['delete_attendance'])) {
+  $aid = $_POST['attendance_id'];
+  $sql = "delete from tblattendance where ID=:aid";
+  $sql2 = "delete from tblstudent_attendance where attendance_id=:aid";
+  $query = $dbh->prepare($sql);
+  $query2 = $dbh->prepare($sql2);
+  $query->bindParam(':aid', $aid, PDO::PARAM_STR);
+  $query2->bindParam(':aid', $aid, PDO::PARAM_STR);
+  $query->execute();
+  $query2->execute();
+  echo '<script>alert("Attendance record has been deleted")</script>';
 }
 ?>
 

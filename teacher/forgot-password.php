@@ -2,7 +2,6 @@
 session_start();
 error_reporting(0);
 include('../includes/dbconnection.php');
-//require("../lib/SpeedSMSAPI_PHP/SpeedSMSAPI.php");
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -30,7 +29,6 @@ if (isset($_POST['submit'])) {
     $results = $query->fetchAll(PDO::FETCH_OBJ);
 
     if ($query->rowCount() > 0) {
-        //if ($results[0]->ContactNumber == null) {
         if (false) {
             echo "<script>alert('Contact Number not set! Please contact an Admin');</script>";
         } else {
@@ -57,13 +55,6 @@ if (isset($_POST['submit'])) {
                 $_SESSION['newpassword'] = $newpassword;
                 $_SESSION['email'] = $email;
 
-                //Send OTP
-                //$smsAPI = new SpeedSMSAPI("uD16jYm9g6Y1xfR06asEGEESQp1w7seK");
-                //$phones = [$results[0]->ContactNumber];
-                //$content = "Your OTP code to Reset Password is: " . $genotp;
-                //$type = 2;
-                //$sender = "Verify";
-                //$response = $smsAPI->sendSMS($phones, $content, $type, $sender);
                 $mail = new PHPMailer(true);
                 $mail->isSMTP();
                 $mail->SMTPDebug = 0;
@@ -84,7 +75,6 @@ if (isset($_POST['submit'])) {
                     echo "<script>alert('" . $mail->ErrorInfo ."');</script>";
                 }
                 $mail->smtpClose();
-                //echo "<script>alert('" . implode(" ", $response) . $genotp . "');</script>";
             }
         }
     } else {

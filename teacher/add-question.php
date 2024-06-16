@@ -1,68 +1,40 @@
 <?php
-session_start();
-include('../includes/dbconnection.php');
-
-$_SESSION['sturecmstuid'] = $_SESSION['sturecmsstuid'];
+include('../includes/teacherVerify.php');
 $answers = ['A', 'B', 'C', 'D'];
 $uid = $_COOKIE['uid'] ?? '';
 
-
-if (strlen($_SESSION['sturecmstuid']) == 0) {
-  header('location:logout.php');
-  exit();
-} else {
-  $sessionToken = $_COOKIE['session_token'] ?? '';
-
-  $sql = "SELECT UserToken, role_id FROM tbltoken WHERE UserID = :uid AND UserToken = :sessionToken AND (CreationTime + INTERVAL 2 HOUR) >= NOW()";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':uid', $uid, PDO::PARAM_INT);
-  $query->bindParam(':sessionToken', $sessionToken, PDO::PARAM_STR);
-  $query->execute();
-  $role_id = $query->fetch(PDO::FETCH_OBJ)->role_id;
-
-  if (($query->rowCount() == 0) || ($role_id != 2)) {
-    header('location:logout.php');
-    exit();
-  }
-
-  if ((strlen($_SESSION['sturecmsuid']) == 0) || (strlen($_COOKIE['uid']) == 0) || (strlen($_COOKIE['session_token']) == 0)) {
-    header('location:logout.php');
-    exit();
-  }
-  
-  if (isset($_POST['submit'])) {
-    $qname = $_POST['qname'];
-    $ansUpdate = [];
-    for ($i = 0; $i < count($answers); $i++) {
-      if (empty($_POST['correct' . $answers[$i]]) || empty($_POST['ans' . $answers[$i]])) {
-        $ansUpdate[] = '';
-      } else {
-        $ansUpdate[] = $_POST['correct' . $answers[$i]];
-      }
-    }
-    $correct_ans = implode('', $ansUpdate);
-    if ($correct_ans == '') {
-      echo '<script>alert("Please select a correct answer")</script>';
+if (isset($_POST['submit'])) {
+  $qname = $_POST['qname'];
+  $ansUpdate = [];
+  for ($i = 0; $i < count($answers); $i++) {
+    if (empty($_POST['correct' . $answers[$i]]) || empty($_POST['ans' . $answers[$i]])) {
+      $ansUpdate[] = '';
     } else {
-      $ismul = $_POST['ismul'];
-      if (strlen($correct_ans) > 1 && $ismul == 0) {
-        $ismul = 1;
-      }
-      
-      $sql = "INSERT INTO tblquestion (Question, AnsA, AnsB, AnsC, AnsD, CorrectAns, isMultipleChoice) VALUES (:qname, :ansA, :ansB, :ansC, :ansD, :correct_ans, :ismul)";
-      $query = $dbh->prepare($sql);
-      $query->bindParam(':qname', $qname, PDO::PARAM_STR);
-      $query->bindParam(':correct_ans', $correct_ans, PDO::PARAM_STR);
-      $query->bindValue(':ansA', $_POST['ansA'] ?: "Untitled", PDO::PARAM_STR);
-      $query->bindValue(':ansB', $_POST['ansB'] ?: null, PDO::PARAM_STR);
-      $query->bindValue(':ansC', $_POST['ansC'] ?: null, PDO::PARAM_STR);
-      $query->bindValue(':ansD', $_POST['ansD'] ?: null, PDO::PARAM_STR);
-      $query->bindParam(':ismul', $ismul, PDO::PARAM_INT);
-      $query->execute();
-
-      echo '<script>alert("Question has been added.")</script>';
-      echo "<script>window.location.href ='manage-question.php'</script>";
+      $ansUpdate[] = $_POST['correct' . $answers[$i]];
     }
+  }
+  $correct_ans = implode('', $ansUpdate);
+  if ($correct_ans == '') {
+    echo '<script>alert("Please select a correct answer")</script>';
+  } else {
+    $ismul = $_POST['ismul'];
+    if (strlen($correct_ans) > 1 && $ismul == 0) {
+      $ismul = 1;
+    }
+    
+    $sql = "INSERT INTO tblquestion (Question, AnsA, AnsB, AnsC, AnsD, CorrectAns, isMultipleChoice) VALUES (:qname, :ansA, :ansB, :ansC, :ansD, :correct_ans, :ismul)";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':qname', $qname, PDO::PARAM_STR);
+    $query->bindParam(':correct_ans', $correct_ans, PDO::PARAM_STR);
+    $query->bindValue(':ansA', $_POST['ansA'] ?: "Untitled", PDO::PARAM_STR);
+    $query->bindValue(':ansB', $_POST['ansB'] ?: null, PDO::PARAM_STR);
+    $query->bindValue(':ansC', $_POST['ansC'] ?: null, PDO::PARAM_STR);
+    $query->bindValue(':ansD', $_POST['ansD'] ?: null, PDO::PARAM_STR);
+    $query->bindParam(':ismul', $ismul, PDO::PARAM_INT);
+    $query->execute();
+
+    echo '<script>alert("Question has been added.")</script>';
+    echo "<script>window.location.href ='manage-question.php'</script>";
   }
 }
 ?>
