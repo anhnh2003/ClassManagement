@@ -2,6 +2,7 @@
 session_start();
 error_reporting(0);
 include('../includes/dbconnection.php');
+require '../includes/randomGen.php';
 require '../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -47,7 +48,7 @@ if (isset($_POST['submit'])) {
                 $hideOTP = "";
 
                 // Save OTP
-                $genotp = rand(100000, 999999);
+                $genotp = randomGen(6);
                 $_SESSION['otp'] = $genotp;
                 $_SESSION['newpassword'] = $newpassword;
                 $_SESSION['email'] = $email;
@@ -138,7 +139,7 @@ if (isset($_POST['confirm'])) {
                             </form>
                             <form class="pt-3" id="sendotp" method="post" name="sendotp">
                                 <div class="form-group" style="<?php echo $hideOTP; ?>">
-                                    <input class="form-control form-control-lg" type="text" name="otp" placeholder="Enter OTP sent to Email" maxlength='6' required='true' pattern="[0-9]+" />
+                                    <input class="form-control form-control-lg" type="text" name="otp" placeholder="Enter OTP sent to Email" maxlength='6' required='true' />
                                 </div>
                                 <div class="mt-3" style="<?php echo $btnConfirm; ?>">
                                     <button class="btn btn-success btn-block loginbtn" name="confirm" type="submit">Confirm OTP</button>

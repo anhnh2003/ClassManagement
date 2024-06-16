@@ -1,11 +1,12 @@
 <?php
 include('../includes/adminVerify.php');
+require '../includes/randomGen.php';
+$eid = isset($_GET['editid']) ? $_GET['editid'] : header("Location: manage-class.php");
 // Token is valid, continue
 if (isset($_POST['submit'])) {
   $teaid = $_POST['teaid'];
   $cname = $_POST['cname'];
   $room = $_POST['room'];
-  $eid = $_GET['editid'];
 
   $sql = "UPDATE tblclass SET ClassName=:cname, Room=:room, teacher_id=:teaid WHERE ID=:eid";
   $query = $dbh->prepare($sql);
@@ -18,13 +19,7 @@ if (isset($_POST['submit'])) {
 }
 
 if (isset($_POST['regencode'])) {
-  $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  $joincode = '';
-  for ($i = 0; $i < 6; $i++) {
-    $index = rand(0, strlen($characters) - 1);
-    $joincode .= $characters[$index];
-  }
-  $eid = $_GET['editid'];
+  $joincode = randomGen(6);
   $sql = "UPDATE tblclass SET JoinCode=:joincode WHERE ID=:eid";
   $query = $dbh->prepare($sql);
   $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);

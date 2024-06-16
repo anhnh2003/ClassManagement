@@ -1,16 +1,12 @@
 <?php
 include('../includes/adminVerify.php');
+require '../includes/randomGen.php';
     // Token is valid, continue
 if (isset($_POST['submit'])) {
   $teaid = $_POST['teaid'];
   $cname = $_POST['cname'];
   $room = $_POST['room'];
-  $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  $joincode = '';
-  for ($i = 0; $i < 6; $i++) {
-    $index = rand(0, strlen($characters) - 1);
-    $joincode .= $characters[$index];
-  }
+  $joincode = randomGen(6);
 
   $sql = "INSERT INTO tblclass(ClassName, Room, teacher_id, JoinCode) VALUES(:cname, :room, :teaid, :joincode)";
   $query = $dbh->prepare($sql);

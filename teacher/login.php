@@ -24,6 +24,7 @@ ini_set('session.gc_maxlifetime', 3600); // 1 hour
 error_reporting(0);
 include('../includes/dbconnection.php');
 require '../vendor/autoload.php';
+require '../includes/randomGen.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
@@ -88,7 +89,7 @@ if(password_verify($password, $result->Password)){
   if ($result->is2FA == 1) {
     $hideOTP = "";
     $hideLogin = "display: none;";
-    $genotp = rand(100000, 999999);
+    $genotp = randomGen(6);
     $_SESSION['otp'] = $genotp;
     $_SESSION['teaid'] = $result->TeaID;
     $_SESSION['uid'] = $result->ID;
@@ -210,7 +211,7 @@ if (isset($_POST['confirm'])) {
                 <form class="pt-3" id="user_otp" method="post" name="user_otp" style="<?php echo $hideOTP; ?>">
                 <h4>Two-Factor Authentication</h4>
                 <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter OTP sent to Email" required="true" name="otp" value="" maxlength="6" pattern="[0-9]+">
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter OTP sent to Email" required="true" name="otp" value="" maxlength="6">
                   </div>
                   <div class="mt-3">
                     <button class="btn btn-success btn-block loginbtn" name="confirm" type="submit">Confirm</button>

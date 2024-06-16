@@ -1,5 +1,6 @@
 <?php
 include('../includes/teacherVerify.php');
+require '../includes/randomGen.php';
 $eid = $_GET['editid'];
 
 function getRandomStringShuffle($length = 43) {
@@ -33,12 +34,7 @@ $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
 $students_in_class = $query1->rowCount();
 
 if (isset($_POST['regencode'])) {
-  $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  $joincode = '';
-  for ($i = 0; $i < 6; $i++) {
-    $index = rand(0, strlen($characters) - 1);
-    $joincode .= $characters[$index];
-  }
+  $joincode = randomGen(6);
   $sql = "UPDATE tblclass SET JoinCode=:joincode WHERE ID=:eid";
   $query = $dbh->prepare($sql);
   $query->bindParam(':joincode', $joincode, PDO::PARAM_STR);
