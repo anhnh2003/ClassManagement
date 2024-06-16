@@ -58,6 +58,15 @@ if (isset($_POST['edit'])) {
 
 if (isset($_POST['delete'])) {
   $eid = $_GET['editid'];
+  $sql = "DELETE FROM tbltest_question WHERE question_id=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->execute();
+
+  $sql = "DELETE FROM tblstudent_testquestion WHERE question_id=:eid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+  $query->execute();
 
   $sql = "DELETE FROM tblquestion WHERE ID=:eid";
   $query = $dbh->prepare($sql);
