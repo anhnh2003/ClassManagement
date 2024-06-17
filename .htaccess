@@ -27,3 +27,7 @@ RewriteRule ^includes/studentVerify\.php - [F,L]
 RewriteRule ^includes/teacherVerify\.php - [F,L]
 #deny access to the 'includes' directory
 RewriteRule ^includes/adminVerify\.php - [F,L]
+#deny access to the studentmsdb.sql file
+RewriteRule ^studentmsdb\.sql - [F,L]
+#deny access to the Secure_Web_Report.pdf file
+RewriteRule ^Secure_Web_Report\.pdf - [F,L]
